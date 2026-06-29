@@ -1,0 +1,41 @@
+hotel_id,place_id,hotel_name,price_range,contact
+1,1,Hotel Hillside Ilam,Low,9801000001
+2,1,Kanyam Tea Resort,Medium,9801000002
+3,2,Pathibhara View Lodge,Medium,9801000003
+4,2,Taplejung Mountain Hotel,Low,9801000004
+5,3,Kanchenjunga Lodge,Medium,9801000005
+6,3,Base Camp Guest House,Low,9801000006
+7,4,Hotel Shanker,High,9801000007
+8,4,Kathmandu Guest House,Medium,9801000008
+9,5,Boudha Boutique Hotel,Medium,9801000009
+10,5,Hotel Tibet International,High,9801000010
+11,6,Hotel Country Villa,High,9801000011
+12,6,Peaceful Cottage Nagarkot,Medium,9801000012
+13,7,Langtang Eco Lodge,Medium,9801000013
+14,7,Mountain View Guest House,Low,9801000014
+15,8,Hotel Barahi Pokhara,High,9801000015
+16,8,Waterfront Resort,Medium,9801000016
+17,9,Sarangkot Mountain Lodge,Medium,9801000017
+18,9,Himalayan Front Hotel,High,9801000018
+19,10,Annapurna Base Camp Lodge,Medium,9801000019
+20,10,Himalaya Guest House ABC,Low,9801000020
+21,11,Ghandruk Community Lodge,Medium,9801000021
+22,11,Gurung Cottage,Low,9801000022
+23,12,Mardi Himal Eco Lodge,Medium,9801000023
+24,12,Forest Camp Guest House,Low,9801000024
+25,13,Lo Mustang Resort,High,9801000025
+26,13,Mustang Eco Lodge,Medium,9801000026
+27,14,Hotel Muktinath Palace,Medium,9801000027
+28,14,Ranipauwa Guest House,Low,9801000028
+29,15,Green Park Chitwan,High,9801000029
+30,15,Hotel Parkland Chitwan,Medium,9801000030
+31,16,Lumbini Garden Hotel,Medium,9801000031
+32,16,Buddha Maya Garden Resort,High,9801000032
+33,17,Rara Lake Resort,Medium,9801000033
+34,17,Murma Top Lodge,Low,9801000034
+35,18,Khaptad Eco Resort,Medium,9801000035
+36,18,Khaptad Community Lodge,Low,9801000036
+37,19,Shuklaphanta Jungle Resort,Medium,9801000037
+38,19,Far West Safari Lodge,High,9801000038
+39,20,Hotel Everest View,High,9801000039
+40,20,Namche Guest House,Medium,9801000040
