@@ -1,10 +1,10 @@
 hotel_id,place_id,hotel_name,price_range,contact
 1,1,Hotel Hillside Ilam,Low,9801000001
-2,1,Kanyam Tea Resort,Medium,9801000002
-3,2,Pathibhara View Lodge,Medium,9801000003
+2,1,Summit hotel Ilam,Medium,9801000002
+3,1,Brichalaya Accom Hotel,Medium,9801000003
 4,2,Taplejung Mountain Hotel,Low,9801000004
-5,3,Kanchenjunga Lodge,Medium,9801000005
-6,3,Base Camp Guest House,Low,9801000006
+5,3,Kanchanjunga Guest House,Medium,9801000005
+6,3,Kanchenjunga White House,Low,9801000006
 7,4,Hotel Shanker,High,9801000007
 8,4,Kathmandu Guest House,Medium,9801000008
 9,5,Boudha Boutique Hotel,Medium,9801000009
