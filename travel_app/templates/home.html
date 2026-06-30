@@ -52,15 +52,11 @@ data-bs-target="#menu">
 </li>
 
 <li class="nav-item">
-<a class="nav-link" href="#">Explore</a>
-</li>
-
-<li class="nav-item">
 <a class="nav-link" href="{% url 'recommendation' %}">Recommendation</a>
 </li>
 
 <li class="nav-item">
-<a class="nav-link" href="#">About</a>
+    <a class="nav-link" href="{% url 'explore' %}">Explore</a>
 </li>
 
 <li class="nav-item">
@@ -112,10 +108,8 @@ Get Started
 
 </a>
 
-<a href="#" class="btn btn-light btn-lg">
-
-Explore Places
-
+<a href="{% url 'explore' %}" class="btn btn-light btn-lg">
+    Explore Places
 </a>
 
 </div>
@@ -285,7 +279,9 @@ Search Destination
 
 <h2>Popular Destinations</h2>
 
-<a href="#" class="btn btn-success">View All</a>
+<a href="{% url 'explore' %}" class="btn btn-success">
+    View All
+</a>
 
 </div>
 
@@ -297,7 +293,7 @@ Search Destination
 
 <div class="place-card">
 
-<img src="{% static 'images/phewa lake.avif' %}" class="img-fluid">
+<img src="{% static 'images/phewa_lake.jpg' %}" class="img-fluid">
 
 <div class="place-content">
 
@@ -327,7 +323,7 @@ Search Destination
 
 <div class="place-card">
 
-<img src="{% static 'images/chitwan_nationalpark.jpg' %}" class="img-fluid">
+<img src="{% static 'images/chitwan.jpg' %}" class="img-fluid">
 
 <div class="place-content">
 
@@ -357,7 +353,7 @@ Search Destination
 
 <div class="place-card">
 
-<img src="{% static 'images/lumbini.png' %}" class="img-fluid">
+<img src="{% static 'images/lumbini.jpg' %}" class="img-fluid">
 
 <div class="place-content">
 
@@ -387,7 +383,7 @@ Search Destination
 
 <div class="place-card">
 
-<img src="{% static 'images/rara lake.jpeg' %}" class="img-fluid">
+<img src="{% static 'images/rara.jpeg' %}" class="img-fluid">
 
 <div class="place-content">
 
@@ -417,7 +413,7 @@ Search Destination
 
 <div class="place-card">
 
-<img src="{% static 'images/everest mount tour.jpg' %}" class="img-fluid">
+<img src="{% static 'images/everest_base_camp.jpg' %}" class="img-fluid">
 
 <div class="place-content">
 
@@ -447,7 +443,7 @@ Search Destination
 
 <div class="place-card">
 
-<img src="{% static 'images/ilam.jpg' %}" class="img-fluid">
+<img src="{% static 'images/ilam_kanyam.jpg' %}" class="img-fluid">
 
 <div class="place-content">
 
