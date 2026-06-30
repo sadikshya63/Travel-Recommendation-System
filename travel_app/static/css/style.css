@@ -63,12 +63,12 @@ body{
 ================================ */
 
 .hero{
-background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
-url('https://cdn.britannica.com/05/58605-050-86F58113/Annapurna-massif-village-Nepal.jpg') center/cover no-repeat;
-height: 100vh;
-display: flex;
-align-items: center;
-color: white;
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+    url('https://cdn.britannica.com/05/58605-050-86F58113/Annapurna-massif-village-Nepal.jpg') center/cover no-repeat;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    color: white;
 }
 .overlay{
 
