@@ -56,7 +56,7 @@ data-bs-target="#menu">
 </li>
 
 <li class="nav-item">
-<a class="nav-link" href="#">Recommendation</a>
+<a class="nav-link" href="{% url 'recommendation' %}">Recommendation</a>
 </li>
 
 <li class="nav-item">
@@ -106,7 +106,7 @@ and enjoy your perfect trip.
 
 <div class="hero-buttons">
 
-<a href="#" class="btn btn-success btn-lg">
+<a href="{% url 'recommendation' %}" class="btn btn-success btn-lg">
 
 Get Started
 
@@ -553,18 +553,6 @@ Search Destination
 
 </div>
 
-<div class="col-md-2 col-6">
-
-<div class="category-card">
-
-<i class="fa-solid fa-camera"></i>
-
-<h5>Photography</h5>
-
-</div>
-
-</div>
-
 </div>
 
 </div>
@@ -714,15 +702,15 @@ Search Destination
 
 <div class="hotel-card">
 
-<img src="{% static 'images/hotel1.jpg' %}" class="img-fluid">
+<img src="{% static 'images/summithotel.jpg' %}" class="img-fluid">
 
 <div class="hotel-content">
 
-<h4>Hotel Pokhara Grande</h4>
+<h4>Summit Hotel</h4>
 
-<p>⭐⭐⭐⭐⭐</p>
 
-<p>Pokhara</p>
+
+<p>Ilam</p>
 
 <button class="btn btn-outline-success w-100">
 
@@ -740,15 +728,13 @@ View Hotel
 
 <div class="hotel-card">
 
-<img src="{% static 'images/hotel2.jpg' %}" class="img-fluid">
+<img src="{% static 'images/boudhaboutique.jpg' %}" class="img-fluid">
 
 <div class="hotel-content">
 
-<h4>Temple Tree Resort</h4>
+<h4>Boudha Boutique</h4>
 
-<p>⭐⭐⭐⭐</p>
-
-<p>Pokhara</p>
+<p>Kathmandu</p>
 
 <button class="btn btn-outline-success w-100">
 
@@ -766,15 +752,13 @@ View Hotel
 
 <div class="hotel-card">
 
-<img src="{% static 'images/hotel3.jpg' %}" class="img-fluid">
+<img src="{% static 'images/waterfront_resort.jpg' %}" class="img-fluid">
 
 <div class="hotel-content">
 
-<h4>Green Park Resort</h4>
+<h4>Water front Resort</h4>
 
-<p>⭐⭐⭐⭐⭐</p>
-
-<p>Chitwan</p>
+<p></p>
 
 <button class="btn btn-outline-success w-100">
 
