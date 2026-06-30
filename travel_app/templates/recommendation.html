@@ -3,41 +3,40 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Recommendation | Nepal Tourist Guide</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/recommendation.css' %}">
+
 </head>
 
 <body>
 
 <!-- ================= NAVBAR ================= -->
+<nav class="navbar navbar-expand-lg navbar-dark">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm">
     <div class="container">
 
-        <a class="navbar-brand fw-bold" href="/">
+        <a class="navbar-brand" href="/">
             <i class="fa-solid fa-mountain-sun"></i>
             Nepal Tourist Guide
         </a>
 
-        <button class="navbar-toggler"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarNav">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse"
-            id="navbarNav">
+        <div class="collapse navbar-collapse" id="navbarNav">
 
             <ul class="navbar-nav ms-auto">
 
@@ -46,15 +45,9 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Explore</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link active" href="#">Recommendation</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
+                    <a class="nav-link active" href="{% url 'recommendation' %}">
+                        Recommendation
+                    </a>
                 </li>
 
                 <li class="nav-item">
@@ -66,288 +59,201 @@
         </div>
 
     </div>
+
 </nav>
 
-
-<!-- ================= PAGE HEADER ================= -->
-
+<!-- ================= MAIN SECTION ================= -->
 <section class="recommendation-banner">
 
-    <div class="container text-center">
+<div class="container-fluid">
 
-        <h1>Find Your Perfect Destination</h1>
+    <div class="row align-items-start">
 
-        <p>
-            Select your travel preferences and receive personalized destination recommendations.
-        </p>
+        <!-- ================= LEFT SIDE: FORM ================= -->
+        <div class="col-lg-5 col-md-12">
+
+            <div class="recommendation-card">
+
+                <h2>
+                    <i class="fa-solid fa-map-location-dot text-success"></i>
+                    Travel Preference Form
+                </h2>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <!-- Category -->
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" name="category" required>
+                            <option disabled selected>Select Category</option>
+                            <option>Nature</option>
+                            <option>Cultural</option>
+                            <option>Trekking</option>
+                            <option>Adventure</option>
+                            <option>Wildlife</option>
+                        </select>
+                    </div>
+
+                    <!-- Activity -->
+                    <div class="mb-3">
+                        <label class="form-label">Activities</label>
+                        <select class="form-select" name="activities" required>
+                            <option disabled selected>Select Activity</option>
+                            <option>Photography</option>
+                            <option>Hiking</option>
+                            <option>Boating</option>
+                            <option>Temple Visit</option>
+                            <option>Meditation</option>
+                            <option>Camping</option>
+                            <option>Safari</option>
+                            <option>Paragliding</option>
+                            <option>Culture</option>
+                            <option>Walking</option>
+                        </select>
+                    </div>
+
+                    <!-- Region -->
+                    <div class="mb-3">
+                        <label class="form-label">Preferred Region</label>
+                        <select class="form-select" name="region">
+                            <option>Any Region</option>
+                            <option>Koshi Province</option>
+                            <option>Bagmati Province</option>
+                            <option>Gandaki Province</option>
+                            <option>Lumbini Province</option>
+                            <option>Karnali Province</option>
+                            <option>Sudurpashchim Province</option>
+                        </select>
+                    </div>
+
+                    <!-- Budget -->
+                    <div class="mb-3">
+                        <label class="form-label">Budget</label>
+                        <select class="form-select" name="budget_level" required>
+                            <option disabled selected>Select Budget</option>
+                            <option value="Low">Low (Below Rs.10,000)</option>
+                            <option value="Medium">Medium (Rs.10,000 - Rs.30,000)</option>
+                            <option value="High">High (Above Rs.30,000)</option>
+                        </select>
+                    </div>
+
+                    <!-- Duration -->
+                    <div class="mb-3">
+                        <label class="form-label">Travel Duration</label>
+                        <select class="form-select" name="duration" required>
+                            <option disabled selected>Select Duration</option>
+                            <option>1 Day</option>
+                            <option>1-2 Days</option>
+                            <option>2-3 Days</option>
+                            <option>3-5 Days</option>
+                            <option>5-7 Days</option>
+                            <option>7-10 Days</option>
+                        </select>
+                    </div>
+
+                    <!-- Tourist Type -->
+                    <div class="mb-3">
+                        <label class="form-label">Tourist Type</label>
+                        <div>
+                            <input type="radio" name="tourist_type" value="Domestic" required> Domestic
+                            &nbsp;&nbsp;
+                            <input type="radio" name="tourist_type" value="International"> International
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success btn-lg w-100">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        Get Recommendation
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <!-- ================= RIGHT SIDE: RESULTS ================= -->
+        <div class="col-lg-7 col-md-12">
+
+            {% if message %}
+
+                <div class="alert alert-warning text-center mt-3">
+                    {{ message }}
+                </div>
+
+            {% endif %}
+
+            {% if recommendations %}
+
+                <h3 class="text-center text-white mb-4 mt-3">
+                    Recommended Places
+                </h3>
+
+                <div class="row">
+
+                    {% for place in recommendations %}
+
+                    <div class="col-md-6 mb-4">
+
+                        <div class="card shadow h-100">
+
+                            {% if place.image %}
+                            <img src="{% static 'images/' %}{{ place.image }}"
+                                 class="card-img-top"
+                                 alt="{{ place.place_name }}">
+                            {% endif %}
+
+                            <div class="card-body">
+
+                                <h4 class="card-title text-success">
+                                    {{ place.place_name }}
+                                </h4>
+
+                                <p>{{ place.description }}</p>
+
+                                <hr>
+
+                                <p><b>Category:</b> {{ place.category }}</p>
+                                <p><b>Activities:</b> {{ place.activities }}</p>
+                                <p><b>Region:</b> {{ place.region }}</p>
+                                <p><b>Budget:</b> {{ place.budget_level }}</p>
+                                <p><b>Duration:</b> {{ place.duration }}</p>
+                                <p><b>Tourist Type:</b> {{ place.tourist_type }}</p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% elif request.method == "POST" %}
+
+                <div class="alert alert-danger text-center mt-4">
+                    <h4>No Destination Found</h4>
+                    <p>Try changing category, budget or activity</p>
+                </div>
+
+            {% endif %}
+
+        </div>
 
     </div>
 
-</section>
-
-
-<!-- ================= RECOMMENDATION FORM ================= -->
-
-<section class="recommendation-section">
-
-<div class="container">
-
-<div class="row justify-content-center">
-
-<div class="col-lg-8">
-
-<div class="recommendation-card">
-
-<h2 class="text-center mb-4">
-
-<i class="fa-solid fa-map-location-dot text-success"></i>
-
-Travel Preference Form
-
-</h2>
-
-<form method="POST">
-
-{% csrf_token %}
-
-<!-- Category -->
-
-<div class="mb-3">
-
-<label class="form-label">
-
-Category
-
-</label>
-
-<select class="form-select" name="category" required>
-
-<option selected disabled>Select Category</option>
-
-<option>Nature</option>
-
-<option>Cultural</option>
-
-<option>Trekking</option>
-
-<option>Adventure</option>
-
-<option>Wildlife</option>
-
-</select>
-
-</div>
-
-<!-- Activities -->
-
-<div class="mb-3">
-
-<label class="form-label">
-
-Activities
-
-</label>
-
-<select class="form-select" name="activities" required>
-
-<option selected disabled>Select Activity</option>
-
-<option>Photography</option>
-
-<option>Hiking</option>
-
-<option>Boating</option>
-
-<option>Temple Visit</option>
-
-<option>Meditation</option>
-
-<option>Camping</option>
-
-<option>Safari</option>
-
-<option>Paragliding</option>
-
-<option>Culture</option>
-
-<option>Walking</option>
-
-</select>
-
-</div>
-
-<!-- Region -->
-
-<div class="mb-3">
-
-<label class="form-label">
-
-Preferred Region (Optional)
-
-</label>
-
-<select class="form-select" name="region">
-
-<option>Any Region</option>
-
-<option>Eastern Nepal</option>
-
-<option>Kathmandu Valley</option>
-
-<option>Pokhara</option>
-
-<option>Annapurna Region</option>
-
-<option>Mustang</option>
-
-<option>Terai</option>
-
-<option>Karnali</option>
-
-<option>Sudurpashchim</option>
-
-<option>Everest Region</option>
-
-<option>Langtang</option>
-
-<option>Lumbini</option>
-
-<option>Taplejung</option>
-
-</select>
-
-</div>
-
-<!-- Budget -->
-
-<div class="mb-3">
-
-<label class="form-label">
-
-Budget
-
-</label>
-
-<select class="form-select" name="budget_level" required>
-
-<option selected disabled>Select Budget</option>
-
-<option>Low (Below Rs.10,000)</option>
-
-<option>Medium (Rs.10,000 - Rs.30,000)</option>
-
-<option>High (Above Rs.30,000)</option>
-
-</select>
-
-</div>
-
-<!-- Duration -->
-
-<div class="mb-3">
-
-<label class="form-label">
-
-Travel Duration
-
-</label>
-
-<select class="form-select" name="duration" required>
-
-<option selected disabled>Select Duration</option>
-
-<option>1 Day</option>
-
-<option>1-2 Days</option>
-
-<option>2-3 Days</option>
-
-<option>3-5 Days</option>
-
-<option>5-7 Days</option>
-
-<option>7-10 Days</option>
-
-<option>10-14 Days</option>
-
-<option>12-16 Days</option>
-
-</select>
-
-</div>
-
-<!-- Tourist Type -->
-
-<div class="mb-4">
-
-<label class="form-label">
-
-Tourist Type
-
-</label>
-
-<div>
-
-<input type="radio"
-name="tourist_type"
-value="Domestic"
-required>
-
-Domestic
-
-&nbsp;&nbsp;&nbsp;
-
-<input type="radio"
-name="tourist_type"
-value="International">
-
-International
-
-</div>
-
-</div>
-
-<!-- Button -->
-
-<div class="text-center">
-
-<button class="btn btn-success btn-lg px-5">
-
-<i class="fa-solid fa-magnifying-glass"></i>
-
-Get Recommendation
-
-</button>
-
-</div>
-
-</form>
-
-</div>
-
-</div>
-
-</div>
-
 </div>
 
 </section>
-
 
 <!-- ================= FOOTER ================= -->
-
 <footer class="bg-dark text-white text-center py-4">
-
-<p>
-
-© 2026 Nepal Tourist Guide Recommendation System
-
-</p>
-
+    <p>© 2026 Nepal Tourist Guide Recommendation System</p>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
-
 </html>
