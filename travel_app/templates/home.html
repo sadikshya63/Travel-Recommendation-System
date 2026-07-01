@@ -3,861 +3,233 @@
 <html lang="en">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nepal Tourist Guide</title>
 
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Nepal Tourist Guide</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
-
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
 <body>
 
-<!--================ NAVBAR ================-->
-
+<!-- ================= NAVBAR ================= -->
 <nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container">
 
-<div class="container">
+    <a class="navbar-brand" href="#">
+      <i class="fa-solid fa-mountain-sun"></i>
+      Nepal Tourist Guide
+    </a>
 
-<a class="navbar-brand" href="#">
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-<i class="fa-solid fa-mountain-sun"></i>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav ms-auto">
 
-Nepal Tourist Guide
+        <li class="nav-item">
+          <a class="nav-link active" href="#">Home</a>
+        </li>
 
-</a>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'recommendation' %}">Recommendation</a>
+        </li>
 
-<button class="navbar-toggler"
-data-bs-toggle="collapse"
-data-bs-target="#menu">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'explore' %}">Explore</a>
+        </li>
 
-<span class="navbar-toggler-icon"></span>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Contact</a>
+        </li>
 
-</button>
+      </ul>
+    </div>
 
-<div class="collapse navbar-collapse" id="menu">
-
-<ul class="navbar-nav ms-auto">
-
-<li class="nav-item">
-<a class="nav-link active" href="#">Home</a>
-</li>
-
-<li class="nav-item">
-<a class="nav-link" href="{% url 'recommendation' %}">Recommendation</a>
-</li>
-
-<li class="nav-item">
-    <a class="nav-link" href="{% url 'explore' %}">Explore</a>
-</li>
-
-<li class="nav-item">
-<a class="nav-link" href="#">Contact</a>
-</li>
-
-</ul>
-
-</div>
-
-</div>
-
+  </div>
 </nav>
 
-<!--================ HERO ================-->
-
+<!-- ================= HERO ================= -->
 <section class="hero">
+  <div class="overlay">
+    <div class="container">
+      <div class="row align-items-center">
 
-<div class="overlay">
+        <div class="col-lg-7">
+          <h5>WELCOME TO NEPAL</h5>
 
-<div class="container">
+          <h1>Explore The Beauty Of Nepal</h1>
 
-<div class="row align-items-center">
+          <p>
+            Discover beautiful destinations, hotels, and travel recommendations.
+          </p>
 
-<div class="col-lg-7">
+          <div class="hero-buttons">
+            <a href="{% url 'recommendation' %}" class="btn btn-success btn-lg">Get Started</a>
+            <a href="{% url 'explore' %}" class="btn btn-light btn-lg">Explore Places</a>
+          </div>
+        </div>
 
-<h5>WELCOME TO NEPAL</h5>
-
-<h1>
-
-Explore The Beauty Of Nepal
-
-</h1>
-
-<p>
-
-Discover beautiful destinations,
-find hotels,
-get travel recommendations
-and enjoy your perfect trip.
-
-</p>
-
-<div class="hero-buttons">
-
-<a href="{% url 'recommendation' %}" class="btn btn-success btn-lg">
-
-Get Started
-
-</a>
-
-<a href="{% url 'explore' %}" class="btn btn-light btn-lg">
-    Explore Places
-</a>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
+      </div>
+    </div>
+  </div>
 </section>
+
 <!-- ================= WHY CHOOSE US ================= -->
-
 <section class="why-us py-5">
+  <div class="container text-center">
 
-<div class="container">
+    <h2>Why Choose Nepal Tourist Guide?</h2>
+    <p>Everything you need to plan your perfect trip in Nepal.</p>
 
-<div class="text-center mb-5">
+    <div class="row g-4 mt-4">
 
-<h2>Why Choose Nepal Tourist Guide?</h2>
+      <div class="col-md-3">
+        <div class="feature-card">
+          <i class="fa-solid fa-map-location-dot"></i>
+          <h4>Smart Recommendation</h4>
+        </div>
+      </div>
 
-<p>Everything you need to plan your perfect trip in Nepal.</p>
+      <div class="col-md-3">
+        <div class="feature-card">
+          <i class="fa-solid fa-route"></i>
+          <h4>Route Guidance</h4>
+        </div>
+      </div>
 
-</div>
+      <div class="col-md-3">
+        <div class="feature-card">
+          <i class="fa-solid fa-hotel"></i>
+          <h4>Nearby Hotels</h4>
+        </div>
+      </div>
 
-<div class="row g-4">
+      <div class="col-md-3">
+        <div class="feature-card">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <h4>Emergency Alerts</h4>
+        </div>
+      </div>
 
-<div class="col-md-3">
+    </div>
 
-<div class="feature-card">
-
-<i class="fa-solid fa-map-location-dot"></i>
-
-<h4>Smart Recommendation</h4>
-
-<p>Get destinations based on your interests and travel preferences.</p>
-
-</div>
-
-</div>
-
-<div class="col-md-3">
-
-<div class="feature-card">
-
-<i class="fa-solid fa-route"></i>
-
-<h4>Route Guidance</h4>
-
-<p>Navigate easily with Google Maps and route information.</p>
-
-</div>
-
-</div>
-
-<div class="col-md-3">
-
-<div class="feature-card">
-
-<i class="fa-solid fa-hotel"></i>
-
-<h4>Nearby Hotels</h4>
-
-<p>Find hotels near every tourist destination.</p>
-
-</div>
-
-</div>
-
-<div class="col-md-3">
-
-<div class="feature-card">
-
-<i class="fa-solid fa-triangle-exclamation"></i>
-
-<h4>Emergency Alerts</h4>
-
-<p>Receive travel alerts and emergency information.</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
+  </div>
 </section>
 
-<!-- ================= POPULAR DESTINATIONS ================= -->
-
+<!-- ================= POPULAR DESTINATIONS (DYNAMIC) ================= -->
 <section class="popular py-5">
+  <div class="container">
 
-<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Popular Destinations</h2>
+      <a href="{% url 'explore' %}" class="btn btn-success">View All</a>
+    </div>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="row g-4">
 
-<h2>Popular Destinations</h2>
+      {% for place in places %}
+      <div class="col-lg-4 col-md-6">
 
-<a href="{% url 'explore' %}" class="btn btn-success">
-    View All
-</a>
+        <div class="place-card">
 
-</div>
+          {% if place.image %}
+            <img src="{% static 'images/'|add:place.image %}" class="img-fluid">
+          {% else %}
+            <img src="{% static 'images/default.jpg' %}" class="img-fluid">
+          {% endif %}
 
-<div class="row g-4">
+          <div class="place-content">
 
-<!-- Card -->
+            <h4>{{ place.place_name }}</h4>
 
-<div class="col-lg-4 col-md-6">
+            <p>
+              <i class="fa-solid fa-location-dot"></i>
+              {{ place.province }}
+            </p>
 
-<div class="place-card">
+            <span class="badge bg-success">{{ place.category }}</span>
+            <span class="badge bg-warning text-dark">{{ place.budget_level }}</span>
 
-<img src="{% static 'images/phewa_lake.jpg' %}" class="img-fluid">
+            <div class="mt-3">
+              <a href="{% url 'place_detail' place.place_id %}"
+                 class="btn btn-outline-success w-100">
+                View Details
+              </a>
+            </div>
 
-<div class="place-content">
+          </div>
+        </div>
 
-<h4>Phewa Lake</h4>
+      </div>
+      {% endfor %}
 
-<p><i class="fa-solid fa-location-dot"></i> Pokhara</p>
+    </div>
 
-<span class="badge bg-success">Nature</span>
-
-<span class="badge bg-warning text-dark">Low Budget</span>
-
-<div class="mt-3">
-
-<a href="#" class="btn btn-outline-success w-100">View Details</a>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- Card -->
-
-<div class="col-lg-4 col-md-6">
-
-<div class="place-card">
-
-<img src="{% static 'images/chitwan.jpg' %}" class="img-fluid">
-
-<div class="place-content">
-
-<h4>Chitwan National Park</h4>
-
-<p><i class="fa-solid fa-location-dot"></i> Terai</p>
-
-<span class="badge bg-success">Wildlife</span>
-
-<span class="badge bg-primary">Medium Budget</span>
-
-<div class="mt-3">
-
-<a href="#" class="btn btn-outline-success w-100">View Details</a>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- Card -->
-
-<div class="col-lg-4 col-md-6">
-
-<div class="place-card">
-
-<img src="{% static 'images/lumbini.jpg' %}" class="img-fluid">
-
-<div class="place-content">
-
-<h4>Lumbini</h4>
-
-<p><i class="fa-solid fa-location-dot"></i> Rupandehi</p>
-
-<span class="badge bg-danger">Cultural</span>
-
-<span class="badge bg-primary">Medium Budget</span>
-
-<div class="mt-3">
-
-<a href="#" class="btn btn-outline-success w-100">View Details</a>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- Card -->
-
-<div class="col-lg-4 col-md-6">
-
-<div class="place-card">
-
-<img src="{% static 'images/rara.jpeg' %}" class="img-fluid">
-
-<div class="place-content">
-
-<h4>Rara Lake</h4>
-
-<p><i class="fa-solid fa-location-dot"></i> Karnali</p>
-
-<span class="badge bg-success">Nature</span>
-
-<span class="badge bg-primary">Medium Budget</span>
-
-<div class="mt-3">
-
-<a href="#" class="btn btn-outline-success w-100">View Details</a>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- Card -->
-
-<div class="col-lg-4 col-md-6">
-
-<div class="place-card">
-
-<img src="{% static 'images/everest_base_camp.jpg' %}" class="img-fluid">
-
-<div class="place-content">
-
-<h4>Everest Base Camp</h4>
-
-<p><i class="fa-solid fa-location-dot"></i> Everest Region</p>
-
-<span class="badge bg-dark">Trekking</span>
-
-<span class="badge bg-danger">High Budget</span>
-
-<div class="mt-3">
-
-<a href="#" class="btn btn-outline-success w-100">View Details</a>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- Card -->
-
-<div class="col-lg-4 col-md-6">
-
-<div class="place-card">
-
-<img src="{% static 'images/ilam_kanyam.jpg' %}" class="img-fluid">
-
-<div class="place-content">
-
-<h4>Ilam Tea Garden</h4>
-
-<p><i class="fa-solid fa-location-dot"></i> Eastern Nepal</p>
-
-<span class="badge bg-success">Nature</span>
-
-<span class="badge bg-warning text-dark">Low Budget</span>
-
-<div class="mt-3">
-
-<a href="#" class="btn btn-outline-success w-100">View Details</a>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
+  </div>
 </section>
 
-<!-- ================= EXPLORE BY CATEGORY ================= -->
-
+<!-- ================= CATEGORY ================= -->
 <section class="category-section py-5">
-
-<div class="container">
-
-<div class="text-center mb-5">
-
-<h2>Explore By Category</h2>
-
-<p>Choose the travel experience you love.</p>
-
-</div>
-
-<div class="row g-4">
-
-<div class="col-md-2 col-6">
-
-<div class="category-card">
-
-<i class="fa-solid fa-tree"></i>
-
-<h5>Nature</h5>
-
-</div>
-
-</div>
-
-<div class="col-md-2 col-6">
-
-<div class="category-card">
-
-<i class="fa-solid fa-landmark"></i>
-
-<h5>Cultural</h5>
-
-</div>
-
-</div>
-
-<div class="col-md-2 col-6">
-
-<div class="category-card">
-
-<i class="fa-solid fa-person-hiking"></i>
-
-<h5>Trekking</h5>
-
-</div>
-
-</div>
-
-<div class="col-md-2 col-6">
-
-<div class="category-card">
-
-<i class="fa-solid fa-paw"></i>
-
-<h5>Wildlife</h5>
-
-</div>
-
-</div>
-
-<div class="col-md-2 col-6">
-
-<div class="category-card">
-
-<i class="fa-solid fa-parachute-box"></i>
-
-<h5>Adventure</h5>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- ================= STATISTICS ================= -->
-
-<section class="stats py-5">
-
-<div class="container">
-
-<div class="row text-center">
-
-<div class="col-md-3">
-
-<h1>20+</h1>
-
-<p>Tourist Places</p>
-
-</div>
-
-<div class="col-md-3">
-
-<h1>7</h1>
-
-<p>Regions</p>
-
-</div>
-
-<div class="col-md-3">
-
-<h1>5</h1>
-
-<p>Categories</p>
-
-</div>
-
-<div class="col-md-3">
-
-<h1>24/7</h1>
-
-<p>Emergency Support</p>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-<!-- ================= TRAVEL TIPS ================= -->
-
-<section class="travel-tips py-5">
-
-<div class="container">
-
-<div class="text-center mb-5">
-
-<h2>Travel Tips</h2>
-
-<p>Make your journey safe and enjoyable.</p>
-
-</div>
-
-<div class="row">
-
-<div class="col-md-3">
-
-<div class="tip-card">
-
-<i class="fa-solid fa-cloud-sun"></i>
-
-<h5>Check Weather</h5>
-
-<p>Always check the weather forecast before your trip.</p>
-
-</div>
-
-</div>
-
-<div class="col-md-3">
-
-<div class="tip-card">
-
-<i class="fa-solid fa-passport"></i>
-
-<h5>Carry ID</h5>
-
-<p>Keep your citizenship or passport while travelling.</p>
-
-</div>
-
-</div>
-
-<div class="col-md-3">
-
-<div class="tip-card">
-
-<i class="fa-solid fa-money-bill-wave"></i>
-
-<h5>Carry Cash</h5>
-
-<p>Remote areas may not support online payments.</p>
-
-</div>
-
-</div>
-
-<div class="col-md-3">
-
-<div class="tip-card">
-
-<i class="fa-solid fa-heart-pulse"></i>
-
-<h5>Emergency First</h5>
-
-<p>Save nearby hospital and police contacts.</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- ================= FEATURED HOTELS ================= -->
-
-<section class="featured-hotels py-5">
-
-<div class="container">
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-
-<h2>Featured Hotels</h2>
-
-<a href="#" class="btn btn-success">View All Hotels</a>
-
-</div>
-
-<div class="row">
-
-<div class="col-md-4">
-
-<div class="hotel-card">
-
-<img src="{% static 'images/summithotel.jpg' %}" class="img-fluid">
-
-<div class="hotel-content">
-
-<h4>Summit Hotel</h4>
-
-
-
-<p>Ilam</p>
-
-<button class="btn btn-outline-success w-100">
-
-View Hotel
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="col-md-4">
-
-<div class="hotel-card">
-
-<img src="{% static 'images/boudhaboutique.jpg' %}" class="img-fluid">
-
-<div class="hotel-content">
-
-<h4>Boudha Boutique</h4>
-
-<p>Kathmandu</p>
-
-<button class="btn btn-outline-success w-100">
-
-View Hotel
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="col-md-4">
-
-<div class="hotel-card">
-
-<img src="{% static 'images/waterfront_resort.jpg' %}" class="img-fluid">
-
-<div class="hotel-content">
-
-<h4>Water front Resort</h4>
-
-<p></p>
-
-<button class="btn btn-outline-success w-100">
-
-View Hotel
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
-
-
-
-<!-- ================= NEWSLETTER ================= -->
-
-<section class="newsletter">
-
-<div class="container text-center">
-
-<h2>
-
-Stay Updated
-
-</h2>
-
-<p>
-
-Receive travel tips and destination updates.
-
-</p>
-
-<div class="newsletter-box">
-
-<input type="email"
-
-placeholder="Enter your email">
-
-<button class="btn btn-success">
-
-Subscribe
-
-</button>
-
-</div>
-
-</div>
-
+  <div class="container text-center">
+
+    <h2>Explore By Category</h2>
+
+    <div class="row g-4 mt-4">
+
+      <div class="col-md-2 col-6">
+        <div class="category-card">
+          <i class="fa-solid fa-tree"></i>
+          <h5>Nature</h5>
+        </div>
+      </div>
+
+      <div class="col-md-2 col-6">
+        <div class="category-card">
+          <i class="fa-solid fa-landmark"></i>
+          <h5>Cultural</h5>
+        </div>
+      </div>
+
+      <div class="col-md-2 col-6">
+        <div class="category-card">
+          <i class="fa-solid fa-person-hiking"></i>
+          <h5>Trekking</h5>
+        </div>
+      </div>
+
+      <div class="col-md-2 col-6">
+        <div class="category-card">
+          <i class="fa-solid fa-paw"></i>
+          <h5>Wildlife</h5>
+        </div>
+      </div>
+
+      <div class="col-md-2 col-6">
+        <div class="category-card">
+          <i class="fa-solid fa-parachute-box"></i>
+          <h5>Adventure</h5>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
 </section>
 
 <!-- ================= FOOTER ================= -->
-
-<footer>
-
-<div class="container">
-
-<div class="row">
-
-<div class="col-md-4">
-
-<h3>
-
-Nepal Tourist Guide
-
-</h3>
-
-<p>
-
-Explore Nepal with personalized recommendations, hotels, maps and travel guidance.
-
-</p>
-
-</div>
-
-<div class="col-md-2">
-
-<h5>
-
-Quick Links
-
-</h5>
-
-<ul>
-
-<li>Home</li>
-
-<li>Explore</li>
-
-<li>Recommendation</li>
-
-<li>Hotels</li>
-
-</ul>
-
-</div>
-
-<div class="col-md-3">
-
-<h5>
-
-Support
-
-</h5>
-
-<ul>
-
-<li>Emergency</li>
-
-<li>FAQ</li>
-
-<li>Privacy Policy</li>
-
-<li>Terms & Conditions</li>
-
-</ul>
-
-</div>
-
-<div class="col-md-3">
-
-<h5>
-
-Follow Us
-
-</h5>
-
-<div class="social">
-
-<i class="fa-brands fa-facebook"></i>
-
-<i class="fa-brands fa-instagram"></i>
-
-<i class="fa-brands fa-youtube"></i>
-
-<i class="fa-brands fa-twitter"></i>
-
-</div>
-
-</div>
-
-</div>
-
-<hr>
-
-<div class="text-center">
-
-<p>
-
-© 2026 Nepal Tourist Guide Recommendation System
-
-</p>
-
-</div>
-
-</div>
-
+<footer class="py-5">
+  <div class="container text-center">
+    <h4>Nepal Tourist Guide</h4>
+    <p>Explore Nepal with smart recommendations and travel guidance.</p>
+    <p>© 2026 Nepal Tourist Guide</p>
+  </div>
 </footer>
-
-<script src="{% static 'js/script.js' %}"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
-
 </html>
