@@ -10,6 +10,7 @@ class PlaceAdmin(admin.ModelAdmin):
         "place_id",
         "place_name",
         "category",
+        "activities",      # Added
         "province",
         "budget_level",
         "tourist_type",
@@ -20,6 +21,7 @@ class PlaceAdmin(admin.ModelAdmin):
         "place_name",
         "category",
         "province",
+        "activities",      # Added
     )
 
     list_filter = (
