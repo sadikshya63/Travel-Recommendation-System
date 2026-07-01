@@ -31,6 +31,7 @@ def explore(request):
     activities = request.GET.getlist("activity")
 
     suggestion = None
+    filter_notice = False
 
     # Default featured places
     featured_places = Place.objects.filter(
@@ -189,33 +190,35 @@ def explore(request):
                         "-category_boost",
                         "-relevance"
                     )
+                   
+                                   # ----------------------------------------
+                # FILTER NOTICE
+                # ----------------------------------------
 
-        # ====================================================
-        # FILTER MODE
-        # ====================================================
-        else:
+                top_place = featured_places.first()
 
-            featured_places = Place.objects.all()
+                if top_place:
 
-            if categories:
+                    category_mismatch = False
+                    activity_mismatch = False
 
-                featured_places = featured_places.filter(
-                    category__in=categories
-                )
+                    if categories:
+                        category_mismatch = top_place.category not in categories
 
-            if activities:
+                    if activities:
 
-                activity_query = Q()
+                        place_activities = [
+                            activity.strip()
+                            for activity in top_place.activities.split(",")
+                        ]
 
-                for activity in activities:
+                        activity_mismatch = any(
+                            activity not in place_activities
+                            for activity in activities
+                        )
 
-                    activity_query |= Q(
-                        activities__icontains=activity
-                    )
-
-                featured_places = featured_places.filter(
-                    activity_query
-                )
+                    if category_mismatch or activity_mismatch:
+                        filter_notice = True
 
     return render(
         request,
@@ -226,6 +229,7 @@ def explore(request):
             "selected_categories": categories,
             "selected_activities": activities,
             "suggestion": suggestion,
+            "filter_notice": filter_notice,
         },
     )
 # =========================

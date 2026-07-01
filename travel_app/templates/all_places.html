@@ -76,7 +76,7 @@
     </div>
 
     <!-- RESULTS COUNT -->
-    <p class="text-white fw-semibold mb-4">
+    <p id="resultsCount" class="text-white fw-semibold mb-4">
         Showing {{ places|length }} destination{{ places|length|pluralize }}
     </p>
 
@@ -138,6 +138,7 @@
 const searchInput = document.getElementById("liveSearch");
 const places = document.querySelectorAll(".place-item");
 const noResults = document.getElementById("noResults");
+const resultsCount = document.getElementById("resultsCount");
 
 searchInput.addEventListener("keyup", function () {
 
@@ -163,6 +164,9 @@ searchInput.addEventListener("keyup", function () {
         }
 
     });
+
+    resultsCount.textContent =
+    `Showing ${visibleCount} destination${visibleCount === 1 ? "" : "s"}`;
 
     // show/hide no results message
     if (visibleCount === 0) {

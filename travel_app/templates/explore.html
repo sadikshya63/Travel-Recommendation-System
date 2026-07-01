@@ -211,6 +211,13 @@ Search
 </div>
 {% endif %}
 
+{% if filter_notice %}
+<div class="alert alert-info text-center mt-3">
+    <i class="fa-solid fa-circle-info"></i>
+    Showing the closest destination match. Some of your selected filters may not apply to this destination.
+</div>
+{% endif %}
+
 <div class="d-flex justify-content-between align-items-center mt-5 mb-4">
 
 <h2 class="fw-bold">
