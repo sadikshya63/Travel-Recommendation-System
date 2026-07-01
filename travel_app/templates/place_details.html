@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>{{ place.name }} | Nepal Tourist Guide</title>
@@ -33,7 +34,7 @@
             background: white;
             padding: 25px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         .section-title {
@@ -49,102 +50,132 @@
 
 <body>
 
-<!-- ================= NAVBAR ================= -->
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-        <a href="/" class="navbar-brand">
-            <i class="fa-solid fa-mountain-sun"></i> Nepal Tourist Guide
-        </a>
-    </div>
-</nav>
-
-<!-- ================= MAIN ================= -->
-<div class="container py-5">
-
-    <!-- IMAGE -->
-    <img src="{{ place.image.url }}" class="hero-img mb-4">
-
-    <!-- TITLE -->
-    <div class="mb-4">
-        <h1>{{ place.place_name }}</h1>
-
-        <p class="text-muted">
-            <i class="fa-solid fa-location-dot"></i> {{ place.region }}
-        </p>
-
-        <!-- BADGES -->
-        <span class="badge bg-success badge-custom">
-            {{ place.category }}
-        </span>
-
-        <span class="badge bg-warning text-dark badge-custom">
-            {{ place.budget_level }}
-        </span>
-    </div>
-
-    <!-- DESCRIPTION -->
-    <div class="card-box mb-4">
-        <h4 class="section-title">About this place</h4>
-        <p>{{ place.description }}</p>
-    </div>
-
-    <!-- MAP -->
-    <div class="card-box mb-4">
-        <h4 class="section-title">Location Map</h4>
-
-        <iframe
-            width="100%"
-            height="400"
-            loading="lazy"
-            src="https://www.google.com/maps?q={{ place.location }}&output=embed">
-        </iframe>
-
-        <div class="mt-3">
-            <a href="https://www.google.com/maps?q={{ place.location }}" target="_blank" class="btn btn-success">
-                <i class="fa-solid fa-route"></i> Get Directions
+    <!-- ================= NAVBAR ================= -->
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
+            <a href="/" class="navbar-brand">
+                <i class="fa-solid fa-mountain-sun"></i> Nepal Tourist Guide
             </a>
         </div>
-    </div>
+    </nav>
 
-    <!-- OPTIONAL: HOTELS (STATIC FOR NOW) -->
-    <div class="card-box mb-4">
-        <h4 class="section-title">Nearby Hotels</h4>
+    <!-- ================= MAIN ================= -->
+    <div class="container py-5">
 
-        <div class="row">
+        <!-- IMAGE -->
+        <img src="{% static place.image%}" class="hero-img mb-4">
 
-            <div class="col-md-4">
-                <div class="card">
-                    <img src="{% static 'images/summithotel.jpg' %}" class="card-img-top">
-                    <div class="card-body">
-                        <h5>Summit Hotel</h5>
-                        <p>Ilam</p>
-                        <button class="btn btn-outline-success w-100">View Hotel</button>
+        <!-- TITLE -->
+
+        <!-- DESCRIPTION -->
+        <div class="card-box mb-4">
+            <h4 class="section-title">About this place</h4>
+            <p>{{ place.description }}</p>
+        </div>
+
+        <!-- DETAILS -->
+        <!-- DETAILS (ALL TOGETHER) -->
+        <div class="card-box mb-4">
+            <h4 class="section-title">Travel Details</h4>
+
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <div class="p-3 border rounded bg-light h-100">
+                        <strong>📍 Province</strong>
+                        <p class="mb-0">{{ place.province }}</p>
                     </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="p-3 border rounded bg-light h-100">
+                        <strong>⏳ Duration</strong>
+                        <p class="mb-0">{{ place.duration }}</p>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="p-3 border rounded bg-light h-100">
+                        <strong>🎯 Activities</strong>
+                        <p class="mb-0">{{ place.activities }}</p>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="p-3 border rounded bg-light h-100">
+                        <strong>👤 Tourist Type</strong>
+                        <p class="mb-0">{{ place.tourist_type }}</p>
+                    </div>
+                </div>
+
+                <!-- ADD CATEGORY HERE -->
+                <div class="col-md-3">
+                    <div class="p-3 border rounded bg-light h-100">
+                        <strong>🌿 Category</strong>
+                        <p class="mb-0">{{ place.category }}</p>
+                    </div>
+                </div>
+
+                <!-- ADD BUDGET HERE -->
+                <div class="col-md-3">
+                    <div class="p-3 border rounded bg-light h-100">
+                        <strong>💰 Budget Level</strong>
+                        <p class="mb-0">{{ place.budget_level }}</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- MAP -->
+        <div class="card-box mb-4">
+            <h4 class="section-title">Location Map</h4>
+
+            <iframe width="100%" height="400" loading="lazy"
+                src="https://www.google.com/maps?q={{ place.latitude }},{{ place.longitude }}&output=embed">
+            </iframe>
+
+            <div class="mt-3">
+                <a href="https://www.google.com/maps?q={{ place.latitude }},{{ place.longitude }}" target="_blank"
+                    class="btn btn-success">
+                    <i class="fa-solid fa-route"></i> Get Directions
+                </a>
+            </div>
+        </div>
+
+        <!-- OPTIONAL: HOTELS (STATIC FOR NOW) -->
+        <div class="card-box mb-4">
+            <h4 class="section-title">Nearby Hotels</h4>
+
+            <div class="row">
+
+                <div class="col-md-4">
+                    {% for hotel in hotels %}
+                    <div class="col-md-4 d-flex">
+                        <div class="card h-100 w-100">
+                            <img src="{{ hotel.image.url }}" class="card-img-top">
+                            <div class="card-body d-flex flex-column">
+                                <h5>{{ hotel.name }}</h5>
+                                <p>{{ hotel.location }}</p>
+                                <button class="btn btn-outline-success mt-auto w-100">
+                                    View Hotel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="card">
-                    <img src="{% static 'images/boudhaboutique.jpg' %}" class="card-img-top">
-                    <div class="card-body">
-                        <h5>Boudha Boutique</h5>
-                        <p>Kathmandu</p>
-                        <button class="btn btn-outline-success w-100">View Hotel</button>
-                    </div>
-                </div>
+            <!-- BACK BUTTON -->
+            <div class="text-center">
+                <a href="/" class="btn btn-secondary">
+                    ← Back to Home
+                </a>
             </div>
 
         </div>
-    </div>
-
-    <!-- BACK BUTTON -->
-    <div class="text-center">
-        <a href="/" class="btn btn-secondary">
-            ← Back to Home
-        </a>
-    </div>
-
-</div>
 
 </body>
+
 </html>
