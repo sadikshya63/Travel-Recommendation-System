@@ -395,7 +395,11 @@ section p{
 footer{
     background:#222;
     color:#ddd;
-    padding:60px 0 20px;
+    padding:12px 0;
+}
+
+footer p{
+    margin:0;
 }
 
 footer h3,
@@ -946,3 +950,24 @@ color:white;
     background:#00b85d;
 }
 
+/* Equal height cards for All Places */
+.all-places-bg{
+    background:
+        linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+        url('https://cdn.britannica.com/05/58605-050-86F58113/Annapurna-massif-village-Nepal.jpg')
+        center center/cover no-repeat;
+    min-height:100vh;
+}
+
+.place-card{
+    height:100%;
+}
+
+.place-card .card-body{
+    display:flex;
+    flex-direction:column;
+}
+
+.place-card p{
+    flex-grow:1;
+}

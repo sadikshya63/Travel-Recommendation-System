@@ -19,19 +19,21 @@ from django.urls import path
 
 from travel_app import views
 
-# ✅ ADD THESE TWO IMPORTS
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
     path('', views.home, name='home'),
     path('recommendation/', views.recommendation, name='recommendation'),
     path('explore/', views.explore, name='explore'),
     path('contact/', views.contact, name='contact'),
-    path("places/", views.all_places, name="all_places"),
+    path('places/', views.all_places, name='all_places'),
+
+    # ✅ ADD THIS LINE (LIVE SEARCH API)
+    path('search-suggestions/', views.search_suggestions, name='search_suggestions'),
 ]
 
-# ✅ ADD THIS (VERY IMPORTANT)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

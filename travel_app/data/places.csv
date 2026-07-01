@@ -1,21 +1,21 @@
 place_id,place_name,category,activities,province,duration,budget_level,tourist_type,description,latitude,longitude,image
-1,Ilam & Kanyam Tea Region,Nature,"Tea Garden Visit,Photography,Walking",Koshi Province,"2-3 Days",Low,Both,"Famous tea gardens and lush green tea estates with scenic hill landscapes.",26.9289,87.9378,ilam_kanyam.jpg
-2,Pathibhara Temple,Cultural,"Pilgrimage,Hiking",Koshi Province,"3-4 Days",Medium,Both,"Sacred hilltop temple offering panoramic Himalayan views.",27.4338,87.7812,pathibhara.jpg
-3,Kanchenjunga Base Camp,Trekking,"Hiking,Camping",Koshi Province,"18-24 Days",High,Both,"Remote trekking destination with spectacular views of Mt. Kanchenjunga.",27.7025,88.1475,kanchenjunga.jpg
-4,Pashupatinath Temple,Cultural,"Temple Visit,Aarti,Sightseeing",Bagmati Province,"1 Day",Low,Both,"UNESCO World Heritage Hindu temple on the Bagmati River.",27.7104,85.3488,pashupatinath.jpg
-5,Boudhanath Stupa,Cultural,"Meditation,Sightseeing",Bagmati Province,"1 Day",Low,Both,"One of the world's largest Buddhist stupas and a major pilgrimage site.",27.7215,85.3620,boudhanath.jpg
+1,Ilam & Kanyam Tea Region,Nature,"Tea Garden Visit,Photography,Nature Walk,Sightseeing",Koshi Province,"2-3 Days",Low,Both,"Famous tea gardens and lush green tea estates with scenic hill landscapes.",26.9289,87.9378,ilam_kanyam.jpg
+2,Pathibhara Temple,Cultural,"Pilgrimage,Hiking,Sightseeing,Photography",Koshi Province,"3-4 Days",Medium,Both,"Sacred hilltop temple offering panoramic Himalayan views.",27.4338,87.7812,pathibhara.jpg
+3,Kanchenjunga Base Camp,Trekking,"Hiking,Camping,Photography",Koshi Province,"18-24 Days",High,Both,"Remote trekking destination with spectacular views of Mt. Kanchenjunga.",27.7025,88.1475,kanchenjunga.jpg
+4,Pashupatinath Temple,Cultural,"Temple Visit,Aarti,Sightseeing,Photography",Bagmati Province,"1 Day",Low,Both,"UNESCO World Heritage Hindu temple on the Bagmati River.",27.7104,85.3488,pashupatinath.jpg
+5,Boudhanath Stupa,Cultural,"Meditation,Sightseeing,Temple Visit",Bagmati Province,"1 Day",Low,Both,"One of the world's largest Buddhist stupas and a major pilgrimage site.",27.7215,85.3620,boudhanath.jpg
 6,Nagarkot,Nature,"Sunrise Viewing,Hiking,Mountain Biking",Bagmati Province,"1-2 Days",Low,Both,"Popular hill station famous for sunrise and Himalayan mountain views.",27.7172,85.5245,nagarkot.jpg
-7,Langtang Valley,Trekking,"Hiking,Nature Viewing",Bagmati Province,"7-10 Days",Medium,Both,"Beautiful Himalayan valley known for glaciers, villages, and mountain scenery.",28.2116,85.5560,langtang.jpg
-8,Phewa Lake,Nature,"Boating,Photography",Gandaki Province,"2-3 Days",Low,Both,"Scenic freshwater lake reflecting the Annapurna mountain range.",28.2096,83.9596,phewa_lake.jpg
+7,Langtang Valley,Trekking,"Hiking,Nature Walk,Camping",Bagmati Province,"7-10 Days",Medium,Both,"Beautiful Himalayan valley known for glaciers, villages, and mountain scenery.",28.2116,85.5560,langtang.jpg
+8,Phewa Lake,Nature,"Boating,Photography,Sightseeing",Gandaki Province,"2-3 Days",Low,Both,"Scenic freshwater lake reflecting the Annapurna mountain range.",28.2096,83.9596,phewa_lake.jpg
 9,Sarangkot,Adventure,"Sunrise Viewing,Paragliding,Hiking,Mountain Biking",Gandaki Province,"1-2 Days",Low,Both,"Popular viewpoint for sunrise, paragliding, and Himalayan panoramas.",28.2429,83.9482,sarangkot.jpg
 10,Annapurna Base Camp,Trekking,"Hiking,Camping",Gandaki Province,"7-12 Days",High,Both,"One of Nepal's most famous trekking destinations surrounded by Himalayan peaks.",28.5305,83.8770,abc.jpg
-11,Ghandruk,Cultural,"Homestay,Trekking,Culture,Mountain Biking",Gandaki Province,"2-3 Days",Medium,Both,"Traditional Gurung village with excellent Annapurna mountain views.",28.3736,83.8079,ghandruk.jpg
+11,Ghandruk,Cultural,"Hiking,Cultural Tour,Mountain Biking",Gandaki Province,"2-3 Days",Medium,Both,"Traditional Gurung village with excellent Annapurna mountain views.",28.3736,83.8079,ghandruk.jpg
 12,Mardi Himal,Trekking,"Hiking,Camping",Gandaki Province,"5-7 Days",Medium,Both,"Short and scenic trek offering close-up views of Machhapuchhre and Annapurna.",28.4620,83.9360,mardi_himal.jpg
-13,Upper Mustang,Trekking,"Hiking,Jeep Tour,Sightseeing",Gandaki Province,"10-14 Days",High,Both,"Ancient Himalayan kingdom known for desert landscapes and Tibetan culture.",29.1837,83.9647,mustang.jpg
-14,Muktinath Temple,Cultural,"Pilgrimage,Sightseeing",Gandaki Province,"3-5 Days",Medium,Both,"Sacred Hindu and Buddhist pilgrimage site in the Himalayas.",28.8169,83.8718,muktinath.jpg
-15,Chitwan National Park,Wildlife,"Safari,Canoeing,Bird Watching",Bagmati Province,"2-3 Days",Medium,Both,"UNESCO World Heritage Site famous for rhinos, tigers, and jungle safaris.",27.5291,84.3542,chitwan.jpg
+13,Upper Mustang,Trekking,"Hiking,Jeep Tour,Sightseeing,Photography",Gandaki Province,"10-14 Days",High,Both,"Ancient Himalayan kingdom known for desert landscapes and Tibetan culture.",29.1837,83.9647,mustang.jpg
+14,Muktinath Temple,Cultural,"Pilgrimage,Sightseeing,Temple Visit",Gandaki Province,"3-5 Days",Medium,Both,"Sacred Hindu and Buddhist pilgrimage site in the Himalayas.",28.8169,83.8718,muktinath.jpg
+15,Chitwan National Park,Wildlife,"Safari,Canoeing,Bird Watching,Photography",Bagmati Province,"2-3 Days",Medium,Both,"UNESCO World Heritage Site famous for rhinos, tigers, and jungle safaris.",27.5291,84.3542,chitwan.jpg
 16,Lumbini,Cultural,"Temple Visit,Meditation,Cultural Tour",Lumbini Province,"1-2 Days",Low,Both,"Birthplace of Lord Buddha and UNESCO World Heritage Site.",27.4838,83.2760,lumbini.jpg
-17,Rara Lake,Nature,"Trekking,Camping,Photography",Karnali Province,"5-7 Days",High,Both,"Nepal's largest lake surrounded by pristine forests and mountains.",29.5285,82.0783,rara.jpeg
-18,Khaptad National Park,Nature,"Hiking,Meditation,Nature Walk",Sudurpashchim Province,"4-6 Days",Medium,Both,"Peaceful national park known for grasslands, forests, and spiritual retreats.",29.3774,81.1400,khaptad.jpg
+17,Rara Lake,Nature,"Hiking,Camping,Photography",Karnali Province,"5-7 Days",High,Both,"Nepal's largest lake surrounded by pristine forests and mountains.",29.5285,82.0783,rara.jpeg
+18,Khaptad National Park,Nature,"Hiking,Meditation,Nature Walk,Camping",Sudurpashchim Province,"4-6 Days",Medium,Both,"Peaceful national park known for grasslands, forests, and spiritual retreats.",29.3774,81.1400,khaptad.jpg
 19,Shuklaphanta National Park,Wildlife,"Safari,Bird Watching",Sudurpashchim Province,"2-3 Days",Medium,Both,"Protected wildlife reserve famous for swamp deer and bird species.",28.8392,80.2156,shuklaphanta.jpg
-20,Everest Base Camp,Trekking,"Hiking,Adventure,Helicopter Tour",Koshi Province,"12-14 Days",High,Both,"World-famous trekking destination at the base of Mount Everest.",28.0043,86.8571,everest_base_camp.jpg
+20,Everest Base Camp,Trekking,"Hiking,Camping,Helicopter Tour",Koshi Province,"12-14 Days",High,Both,"World-famous trekking destination at the base of Mount Everest.",28.0043,86.8571,everest_base_camp.jpg
