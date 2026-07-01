@@ -21,7 +21,7 @@ class PlaceAdmin(admin.ModelAdmin):
         "place_name",
         "category",
         "province",
-        "activities"
+        "activities",
     )
 
     list_filter = (
