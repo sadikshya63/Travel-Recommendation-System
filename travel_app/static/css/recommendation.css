@@ -2,258 +2,438 @@
    GLOBAL RESET
 ===================================== */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f4f6f9;
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f4f6f9;
+    overflow-x:hidden;
 }
 
 /* =====================================
    NAVBAR
 ===================================== */
 
-.navbar {
-    position: fixed;
-    width: 100%;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    padding: 15px 0;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(6px);
+.navbar{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    z-index:1000;
+    padding:15px 0;
+    background:rgba(0,0,0,.70);
+    backdrop-filter:blur(8px);
 }
 
-.navbar-brand {
-    font-size: 24px;
-    font-weight: bold;
-    color: white !important;
+.navbar-brand{
+    font-size:24px;
+    font-weight:bold;
+    color:#fff!important;
 }
 
-.navbar-brand i {
-    color: #00d26a;
-    margin-right: 6px;
+.navbar-brand i{
+    color:#00d26a;
+    margin-right:6px;
 }
 
-.nav-link {
-    color: white !important;
-    margin-left: 18px;
-    font-weight: 500;
-    transition: 0.3s;
+.nav-link{
+    color:#fff!important;
+    margin-left:18px;
+    transition:.3s;
 }
 
 .nav-link:hover,
-.nav-link.active {
-    color: #00d26a !important;
+.nav-link.active{
+    color:#00d26a!important;
 }
 
 /* =====================================
-   MAIN BANNER SECTION
+   BACKGROUND
 ===================================== */
 
-.recommendation-banner {
-    min-height: 100vh;
-    padding: 120px 20px 40px;
+.recommendation-banner{
+    min-height:100vh;
+    padding:120px 0 60px;
     background:
-        linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
-        url("https://cdn.britannica.com/05/58605-050-86F58113/Annapurna-massif-village-Nepal.jpg");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),
+    url("https://cdn.britannica.com/05/58605-050-86F58113/Annapurna-massif-village-Nepal.jpg");
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
 }
 
 /* =====================================
-   LEFT FORM CARD
+   LEFT FORM
 ===================================== */
 
-.recommendation-card {
-    background: #fff;
-    padding: 30px;
-    border-radius: 18px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    position: sticky;
-    top: 100px;
+.recommendation-card{
+    background:#fff;
+    padding:30px;
+    border-radius:18px;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+    position:sticky;
+    top:100px;
 }
 
-.recommendation-card h2 {
-    text-align: center;
-    font-size: 28px;
-    font-weight: bold;
-    color: #198754;
-    margin-bottom: 25px;
+.recommendation-card h2{
+    color:#198754;
+    text-align:center;
+    margin-bottom:25px;
+    font-size:28px;
+    font-weight:bold;
+}
+
+.form-label{
+    font-weight:600;
+    color:#333;
+}
+
+.form-select{
+    height:48px;
+    border-radius:10px;
+    margin-bottom:18px;
+}
+
+.form-select:focus{
+    border-color:#198754;
+    box-shadow:0 0 10px rgba(25,135,84,.25);
+}
+
+.activity-box{
+    max-height:250px;
+    overflow-y:auto;
+}
+
+.activity-box::-webkit-scrollbar{
+    width:6px;
+}
+
+.activity-box::-webkit-scrollbar-thumb{
+    background:#198754;
+    border-radius:10px;
+}
+
+input[type="radio"]{
+    transform:scale(1.15);
+    margin-right:5px;
 }
 
 /* =====================================
-   FORM ELEMENTS
+   BUTTONS
 ===================================== */
 
-.form-label {
-    font-weight: 600;
-    font-size: 15px;
-    margin-bottom: 6px;
-    color: #333;
+.btn-success{
+    background:#198754;
+    border:none;
+    border-radius:30px;
+    font-weight:bold;
+    padding:12px;
+    transition:.3s;
 }
 
-.form-select {
-    height: 48px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    margin-bottom: 18px;
-    transition: 0.3s;
-}
-
-.form-select:focus {
-    border-color: #198754;
-    box-shadow: 0 0 10px rgba(25, 135, 84, 0.25);
-}
-
-input[type="radio"] {
-    transform: scale(1.2);
-    margin-right: 6px;
+.btn-success:hover{
+    background:#146c43;
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
 }
 
 /* =====================================
-   BUTTON
+   RIGHT SIDE
 ===================================== */
 
-.btn-success {
-    background: #198754;
-    border: none;
-    padding: 12px;
-    font-size: 18px;
-    font-weight: bold;
-    border-radius: 30px;
-    transition: 0.3s;
+.col-lg-7{
+    max-height:85vh;
+    overflow-y:auto;
+    padding-right:8px;
 }
 
-.btn-success:hover {
-    background: #146c43;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+.col-lg-7::-webkit-scrollbar{
+    width:6px;
+}
+
+.col-lg-7::-webkit-scrollbar-thumb{
+    background:#198754;
+    border-radius:20px;
 }
 
 /* =====================================
-   RIGHT SIDE RESULTS
+   CARD
 ===================================== */
 
-.col-lg-7 {
-    max-height: 85vh;
-    overflow-y: auto;
-    padding-right: 10px;
+.custom-card{
+    border:none;
+    border-radius:18px;
+    overflow:hidden;
+    background:#fff;
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    transition:.3s;
 }
 
-/* Scrollbar styling */
-.col-lg-7::-webkit-scrollbar {
-    width: 6px;
+.custom-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 15px 35px rgba(0,0,0,.25);
 }
 
-.col-lg-7::-webkit-scrollbar-thumb {
-    background: #198754;
-    border-radius: 10px;
+.custom-card img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+    transition:.4s;
+}
+
+.custom-card:hover img{
+    transform:scale(1.04);
+}
+
+.custom-card .card-body{
+    display:flex;
+    flex-direction:column;
+    flex:1;
+    padding:20px;
+}
+
+.card-title{
+    font-size:22px;
+    font-weight:bold;
+    color:#198754;
+    margin-bottom:10px;
+}
+
+.badge{
+    width:fit-content;
+    margin-bottom:15px;
+}
+
+.card-body p{
+    color:#555;
+    font-size:14px;
+    line-height:1.6;
+    margin-bottom:8px;
+}
+
+.place-details{
+    margin-top:10px;
+}
+
+.place-details p{
+    margin-bottom:6px;
+}
+
+.card-body .btn{
+    margin-top:auto;
+    border-radius:25px;
+}
+/* =====================================
+   RECOMMENDATION PAGE
+===================================== */
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f4f6f9;
 }
 
 /* =====================================
-   CARDS
+   Banner
 ===================================== */
 
-.card {
-    border: none;
-    border-radius: 16px;
-    overflow: hidden;
-    transition: 0.3s;
-    background: #fff;
-}
-
-.card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.25);
-}
-
-.card-img-top {
-    height: 220px;
-    object-fit: cover;
-}
-
-.card-body {
-    padding: 18px;
-}
-
-.card-title {
-    font-size: 20px;
-    font-weight: bold;
-}
-
-/* Card text */
-.card-body p {
-    margin-bottom: 8px;
-    color: #555;
-    font-size: 14px;
+.recommendation-banner{
+    min-height:100vh;
+    padding:120px 20px 50px;
+    background:
+    linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),
+    url("https://cdn.britannica.com/05/58605-050-86F58113/Annapurna-massif-village-Nepal.jpg");
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
 }
 
 /* =====================================
-   ALERTS
+   Left Form
 ===================================== */
 
-.alert {
-    border-radius: 12px;
-    font-weight: 600;
+.recommendation-card{
+    background:#fff;
+    border-radius:20px;
+    padding:30px;
+    box-shadow:0 10px 30px rgba(0,0,0,.18);
+    position:sticky;
+    top:100px;
+}
+
+.recommendation-card h2{
+    color:#198754;
+    font-size:28px;
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:25px;
+}
+
+.form-label{
+    font-weight:600;
+}
+
+.form-select{
+    border-radius:10px;
+    height:48px;
+}
+
+.activity-box{
+    max-height:220px;
+    overflow-y:auto;
 }
 
 /* =====================================
-   HEADINGS
+   Right Section
 ===================================== */
 
-h3 {
-    font-size: 26px;
-    font-weight: bold;
-    color: white;
+.result-title{
+    color:#fff;
+    text-align:center;
+    margin-bottom:25px;
+    font-weight:bold;
 }
 
 /* =====================================
-   FOOTER
+   Recommendation Cards
 ===================================== */
 
-footer {
-    background: #111;
-    color: white;
-    text-align: center;
-    padding: 18px;
-    font-size: 14px;
+.place-link{
+    text-decoration:none;
+    color:inherit;
+    display:block;
+    width:100%;
+    height:100%;
+}
+
+.custom-card{
+    width:100%;
+    height:100%;
+    border:none;
+    border-radius:18px;
+    overflow:hidden;
+    background:#fff;
+    transition:.3s;
+    display:flex;
+    flex-direction:column;
+}
+
+.place-link:hover .custom-card{
+    transform:translateY(-8px);
+    box-shadow:0 15px 35px rgba(0,0,0,.25);
+}
+
+.card-img-top{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+}
+
+.card-body{
+    display:flex;
+    flex-direction:column;
+    padding:20px;
+    flex:1;
+}
+
+.card-title{
+    font-size:22px;
+    color:#198754;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.badge{
+    width:fit-content;
+    margin-bottom:15px;
+}
+
+.card-body p{
+    color:#555;
+    font-size:14px;
+    margin-bottom:10px;
+    line-height:1.6;
+}
+
+.card-body hr{
+    margin:15px 0;
+}
+
+.view-btn{
+    margin-top:auto;
+    width:100%;
+    border-radius:30px;
+    font-weight:bold;
+    pointer-events:none;
 }
 
 /* =====================================
-   RESPONSIVE DESIGN
+   Buttons
 ===================================== */
 
-@media (max-width: 992px) {
-
-    .recommendation-card {
-        position: relative;
-        top: 0;
-        margin-bottom: 30px;
-    }
-
-    h3 {
-        color: #fff;
-        font-size: 22px;
-    }
+.btn-success{
+    border-radius:30px;
+    font-weight:bold;
 }
 
-@media (max-width: 768px) {
+.btn-success:hover{
+    transform:translateY(-2px);
+}
 
-    .recommendation-banner {
-        padding: 100px 15px;
-    }
+/* =====================================
+   Alerts
+===================================== */
 
-    .card-img-top {
-        height: 180px;
-    }
+.alert{
+    border-radius:12px;
+}
 
-    .btn-success {
-        font-size: 16px;
-    }
+/* =====================================
+   Footer
+===================================== */
+
+footer{
+    background:#111;
+    color:#fff;
+    text-align:center;
+    padding:18px;
+}
+
+/* =====================================
+   Responsive
+===================================== */
+
+@media(max-width:992px){
+
+.recommendation-card{
+    position:relative;
+    top:0;
+    margin-bottom:30px;
+}
+
+.card-img-top{
+    height:200px;
+}
+
+}
+
+@media(max-width:768px){
+
+.recommendation-banner{
+    padding:100px 15px 40px;
+}
+
+.card-img-top{
+    height:180px;
+}
+
+.card-title{
+    font-size:20px;
+}
+
 }
