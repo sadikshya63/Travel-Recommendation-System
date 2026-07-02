@@ -123,11 +123,11 @@ Travel Preference Form
 
 <option disabled selected>Select Category</option>
 
-<option>Nature</option>
-<option>Cultural</option>
-<option>Trekking</option>
-<option>Adventure</option>
-<option>Wildlife</option>
+{% for category in categories %}
+<option value="{{ category }}">
+    {{ category }}
+</option>
+{% endfor %}
 
 </select>
 
@@ -153,107 +153,23 @@ Select Activities
 
 <div class="activity-box border rounded p-3" style="max-height:250px;overflow-y:auto;">
 
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Hiking">
-<label class="form-check-label">Hiking</label>
-</div>
+{% for activity in activities_list %}
 
 <div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Photography">
-<label class="form-check-label">Photography</label>
-</div>
 
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Sightseeing">
-<label class="form-check-label">Sightseeing</label>
-</div>
+    <input
+        class="form-check-input"
+        type="checkbox"
+        name="activities"
+        value="{{ activity }}">
 
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Camping">
-<label class="form-check-label">Camping</label>
-</div>
-
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Pilgrimage">
-<label class="form-check-label">Pilgrimage</label>
-</div>
-
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Temple Visit">
-<label class="form-check-label">Temple Visit</label>
-</div>
-
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Meditation">
-<label class="form-check-label">Meditation</label>
-</div>
-
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Boating">
-<label class="form-check-label">Boating</label>
-</div>
-
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Safari">
-<label class="form-check-label">Safari</label>
-</div>
-
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Bird Watching">
-<label class="form-check-label">Bird Watching</label>
-</div>
-
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Paragliding">
-<label class="form-check-label">Paragliding</label>
-</div>
-
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Mountain Biking">
-<label class="form-check-label">Mountain Biking</label>
-</div>
-
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Sunrise Viewing">
-<label class="form-check-label">Sunrise Viewing</label>
-</div>
-
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Aarti">
-<label class="form-check-label">Aarti</label>
-</div>
-
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Tea Garden Visit">
-<label class="form-check-label">Tea Garden Visit</label>
-</div>
-
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Jeep Tour">
-<label class="form-check-label">Jeep Tour</label>
-</div>
-
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Nature Walk">
-<label class="form-check-label">Nature Walk</label>
-</div>
-
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Canoeing">
-<label class="form-check-label">Canoeing</label>
-</div>
-
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Helicopter Tour">
-<label class="form-check-label">Helicopter Tour</label>
-</div>
-
-<div class="form-check">
-<input class="form-check-input" type="checkbox" name="activities" value="Cultural Tour">
-<label class="form-check-label">Cultural Tour</label>
-</div>
+    <label class="form-check-label">
+        {{ activity }}
+    </label>
 
 </div>
+
+{% endfor %}
 
 </div>
 
@@ -267,16 +183,15 @@ Select Activities
 
 <select class="form-select" name="province">
 
-<option>Any Province</option>
-<option>Koshi Province</option>
-<option>Bagmati Province</option>
-<option>Gandaki Province</option>
-<option>Lumbini Province</option>
-<option>Karnali Province</option>
-<option>Sudurpashchim Province</option>
+<option value="Any Province">Any Province</option>
 
+{% for province in provinces %}
+<option value="{{ province }}">
+    {{ province }}
+</option>
+{% endfor %}
 </select>
-
+</div>
 </div>
 
 <!-- Budget -->

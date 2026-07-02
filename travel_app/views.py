@@ -1,5 +1,3 @@
-import os
-import csv
 import pandas as pd
 import requests
 
@@ -12,12 +10,16 @@ from rapidfuzz import process, fuzz
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from .models import Place, EmergencyContact, FAQ, Hotel
+from .models import Place, EmergencyContact, FAQ, Hotel, RecommendationHistory,VisitorCounter
 
 # =========================
 # HOME
 # =========================
 def home(request):
+    counter, created = VisitorCounter.objects.get_or_create(pk=1)
+    counter.total_visits += 1
+    counter.save()
+
     places = Place.objects.filter(is_active=True)[:6]
 
     return render(request, "home.html", {
@@ -56,6 +58,28 @@ def recommendation(request):
     recommendations = []
     message = ""
 
+    # Dynamic dropdown data
+    categories = Place.objects.values_list(
+        "category",
+        flat=True
+    ).distinct()
+
+    provinces = Place.objects.values_list(
+        "province",
+        flat=True
+    ).distinct()
+
+    activity_set = set()
+
+    for item in Place.objects.values_list("activities", flat=True):
+
+        if item:
+
+            for activity in item.split(","):
+                activity_set.add(activity.strip())
+
+    activities_list = sorted(activity_set)
+
     if request.method == "POST":
 
         category = request.POST.get("category")
@@ -64,17 +88,35 @@ def recommendation(request):
         budget = request.POST.get("budget_level")
         duration = request.POST.get("duration")
         tourist = request.POST.get("tourist_type")
+        places = Place.objects.all()
+        RecommendationHistory.objects.create(
+         category=category,
+         activities=", ".join(activities),
+         province=province,
+         budget_level=budget,
+         duration=duration,
+         tourist_type=tourist,
+)
 
-        csv_path = os.path.join(
-            settings.BASE_DIR,
-            "travel_app",
-            "data",
-            "places.csv"
-        )
+        data = []
 
-        df = pd.read_csv(csv_path)
-        df.columns = df.columns.str.strip()
+        for p in places:
+         data.append({
+        "place_id": p.place_id,
+        "place_name": p.place_name,
+        "category": p.category,
+        "activities": p.activities,
+        "province": p.province,
+        "budget_level": p.budget_level,
+        "duration": p.duration,
+        "tourist_type": p.tourist_type,
+        "description": p.description,
+        "image": p.image,
+    })
+
+        df = pd.DataFrame(data)
         df = df.fillna("")
+        
 
         result = df.copy()
 
@@ -162,10 +204,17 @@ def recommendation(request):
 
             recommendations = result.head(5).to_dict("records")
 
-    return render(request, "recommendation.html", {
+    return render(
+    request,
+    "recommendation.html",
+    {
         "recommendations": recommendations,
         "message": message,
-    })
+        "categories": categories,
+        "provinces": provinces,
+        "activities_list": activities_list,
+    }
+)
 
 
 # =========================
