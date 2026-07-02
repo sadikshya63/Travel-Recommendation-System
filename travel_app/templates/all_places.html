@@ -41,7 +41,7 @@
 
         <a class="navbar-brand" href="{% url 'home' %}">
             <i class="fa-solid fa-mountain-sun"></i>
-            Nepal Tourist Guide
+            MeroYatra
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
@@ -105,9 +105,10 @@
                         {{ place.province }}
                     </p>
 
-                    <a href="#" class="btn btn-success mt-auto w-100">
-                        View Details
-                    </a>
+                    <a href="{% url 'place_detail' place.place_id %}"
+   class="btn btn-success">
+    View Details
+</a>
 
                 </div>
 

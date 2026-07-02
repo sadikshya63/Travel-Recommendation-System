@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ | MeroYatra</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        body{
+            background:#f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .page-banner{
+            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+                        url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80') center center/cover no-repeat;
+            color:white;
+            padding:100px 0 70px;
+            text-align:center;
+        }
+
+        .page-banner h1{
+            font-size:52px;
+            font-weight:700;
+        }
+
+        .page-section{
+            padding:70px 0;
+        }
+
+        .faq-box{
+            background:white;
+            border-radius:16px;
+            box-shadow:0 8px 25px rgba(0,0,0,0.08);
+            padding:25px;
+            margin-bottom:20px;
+        }
+
+        .faq-box h4{
+            color:#00b95e;
+            font-size:24px;
+            font-weight:700;
+            margin-bottom:12px;
+        }
+
+        .back-btn{
+            border-radius:30px;
+            padding:10px 24px;
+        }
+    </style>
+</head>
+<body>
+
+<section class="page-banner">
+    <div class="container">
+        <h1>Frequently Asked Questions</h1>
+        <p class="mt-3">Find quick answers about using MeroYatra.</p>
+    </div>
+</section>
+
+<section class="page-section">
+    <div class="container">
+        <div class="mb-4">
+            <a href="{% url 'home' %}" class="btn btn-success back-btn">← Back to Home</a>
+        </div>
+        {% if faqs %}
+    {% for faq in faqs %}
+        <div class="faq-box">
+            <h4>{{ faq.question }}</h4>
+            <p>{{ faq.answer }}</p>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="faq-box">
+        <h4>No FAQs available</h4>
+        <p>Please add FAQ entries from the admin panel.</p>
+    </div>
+{% endif %}
+    </div>
+</section>
+
+</body>
+</html>

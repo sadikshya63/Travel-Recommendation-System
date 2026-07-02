@@ -11,7 +11,7 @@ from rapidfuzz import process, fuzz
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from .models import Place
+from .models import Place, EmergencyContact, FAQ, Hotel
 
 
 # =========================
@@ -321,3 +321,25 @@ def search_suggestions(request):
         }
         for place in places
     ], safe=False)
+
+
+
+
+# Support Pages
+def emergency(request):
+    contacts = EmergencyContact.objects.all()
+    return render(request, 'emergency.html', {
+        'contacts': contacts
+    })
+
+def faq(request):
+    faqs = FAQ.objects.all()
+    return render(request, 'faq.html', {
+        'faqs': faqs
+    })
+
+def privacy_policy(request):
+    return render(request, 'privacy_policy.html')
+
+def terms_conditions(request):
+    return render(request, 'terms_conditions.html')

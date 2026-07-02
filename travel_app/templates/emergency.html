@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency | Nepal Tourist Guide</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        body{
+            background:#f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .page-banner{
+            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+                        url('https://images.unsplash.com/photo-1518002054494-3a6f94352e9d?auto=format&fit=crop&w=1600&q=80') center center/cover no-repeat;
+            color:white;
+            padding:100px 0 70px;
+            text-align:center;
+        }
+
+        .page-banner h1{
+            font-size:52px;
+            font-weight:700;
+        }
+
+        .page-section{
+            padding:70px 0;
+        }
+
+        .info-card{
+            background:white;
+            border-radius:16px;
+            box-shadow:0 8px 25px rgba(0,0,0,0.08);
+            padding:30px;
+            height:100%;
+        }
+
+        .info-card h4{
+            color:#00b95e;
+            font-weight:700;
+            margin-bottom:20px;
+        }
+
+        .info-card ul{
+            padding-left:20px;
+        }
+
+        .info-card ul li{
+            margin-bottom:12px;
+        }
+
+        .back-btn{
+            border-radius:30px;
+            padding:10px 24px;
+        }
+    </style>
+</head>
+<body>
+
+<section class="page-banner">
+    <div class="container">
+        <h1>Emergency Information</h1>
+        <p class="mt-3">Important emergency contacts and travel safety information for visitors in Nepal.</p>
+    </div>
+</section>
+
+<section class="page-section">
+    <div class="container">
+        <div class="mb-4">
+            <a href="{% url 'home' %}" class="btn btn-success back-btn">← Back to Home</a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="info-card">
+                   <h4>Emergency Contacts</h4>
+
+{% if contacts %}
+<ul>
+    {% for contact in contacts %}
+        <li>
+            <strong>{{ contact.title }}:</strong> {{ contact.phone_number }}
+            {% if contact.description %}
+                <br><small class="text-muted">{{ contact.description }}</small>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No emergency contacts available right now.</p>
+{% endif %}
+
+<p class="mt-3">
+    Save these numbers before traveling and contact the nearest authorities in case of emergencies.
+</p>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="info-card">
+                    <h4>Travel Safety Tips</h4>
+                    <ul>
+                        <li>Carry a copy of your identification and important travel documents.</li>
+                        <li>Keep emergency contact numbers saved on your phone.</li>
+                        <li>Stay updated on weather conditions before trekking or traveling to remote areas.</li>
+                        <li>Use trusted transportation and hotel services whenever possible.</li>
+                        <li>Inform family or friends about your travel route when going on long trips.</li>
+                    </ul>
+                    <p class="mt-3">
+                        MeroYatra provides travel information, but for urgent help always contact local authorities or emergency services directly.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>
