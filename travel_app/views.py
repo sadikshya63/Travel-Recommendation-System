@@ -18,12 +18,14 @@ from .models import Place, EmergencyContact, FAQ, Hotel
 # HOME
 # =========================
 def home(request):
-    places = Place.objects.filter(is_active=True)[:6]
+    places = Place.objects.filter(
+        featured=True,
+        is_active=True
+    )
 
     return render(request, "home.html", {
         "places": places
     })
-
 
 # =========================
 # PLACE DETAIL
@@ -180,8 +182,11 @@ def explore(request):
     suggestion = None
 
     featured_places = Place.objects.filter(
-        place_id__in=[1, 4, 8, 13, 15, 16]
-    )
+    featured=True,
+    is_active=True
+)
+
+    
 
     if search or categories or activities:
 
@@ -265,7 +270,7 @@ def all_places(request):
 
     search = request.GET.get("search", "").strip()
 
-    places = Place.objects.all()
+    places = Place.objects.filter(is_active=True)
 
     if search:
         places = places.filter(
@@ -320,18 +325,10 @@ def search_suggestions(request):
 # =========================
 def category_places(request, category):
 
-    csv_path = os.path.join(
-        settings.BASE_DIR,
-        "travel_app",
-        "data",
-        "places.csv",
+    places = Place.objects.filter(
+        category__iexact=category,
+        is_active=True
     )
-
-    df = pd.read_csv(csv_path)
-    df.columns = df.columns.str.strip()
-
-    filtered = df[df["category"].str.lower() == category.lower()]
-    places = filtered.to_dict(orient="records")
 
     return render(request, "category_places.html", {
         "category": category,

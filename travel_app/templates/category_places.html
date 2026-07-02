@@ -28,7 +28,7 @@
 
     <a class="navbar-brand" href="#">
       <i class="fa-solid fa-mountain-sun"></i>
-      Nepal Tourist Guide
+      MeroYatra
     </a>
 
     <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
@@ -39,7 +39,7 @@
       <ul class="navbar-nav ms-auto">
 
         <li class="nav-item">
-          <a class="nav-link active" href="#">Home</a>
+          <a class="nav-link active" href="{% url 'home' %}">Home</a>
         </li>
 
         <li class="nav-item">
@@ -51,7 +51,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="#">Contact</a>
+          <a class="nav-link" href="{% url 'contact' %}">Contact</a>
         </li>
 
       </ul>
@@ -108,10 +108,10 @@
 
 <p><strong>Budget:</strong> {{ place.budget_level }}</p>
 
-<button class="btn btn-success mt-auto" type="button">
+<span class="btn btn-success mt-auto">
     <i class="fa-solid fa-circle-info"></i>
     View Details
-</button>
+</span>
 
 </div>
 
