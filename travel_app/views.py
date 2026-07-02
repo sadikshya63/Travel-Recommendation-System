@@ -32,20 +32,9 @@ def place_detail(request, place_id):
 
     place = get_object_or_404(Place, place_id=place_id)
 
-    hotels = []
+    place = get_object_or_404(Place, place_id=place_id)
 
-    file_path = os.path.join(
-        settings.BASE_DIR,
-        "travel_project",
-        "hotels.csv"
-    )
-
-    with open(file_path, newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-
-        for row in reader:
-            if int(row["place_id"]) == place_id:
-                hotels.append(row)
+    hotels = Hotel.objects.filter(place=place)
 
     return render(request, "place_details.html", {
         "place": place,
