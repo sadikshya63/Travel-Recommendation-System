@@ -126,7 +126,7 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2>Popular Destinations</h2>
-      <a href="{% url 'explore' %}" class="btn btn-success">View All</a>
+      <a href="{% url 'all_places' %}" class="btn btn-success">View All</a>
     </div>
 
     <div class="row g-4">
@@ -173,53 +173,63 @@
 </section>
 
 <!-- ================= CATEGORY ================= -->
+<!-- ================= CATEGORY ================= -->
 <section class="category-section py-5">
-  <div class="container text-center">
+    <div class="container">
 
-    <h2>Explore By Category</h2>
+        <h2 class="text-center mb-5">Explore By Category</h2>
 
-    <div class="row g-4 mt-4">
+        <div class="row justify-content-center g-4">
 
-      <div class="col-md-2 col-6">
-        <div class="category-card">
-          <i class="fa-solid fa-tree"></i>
-          <h5>Nature</h5>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+                <a href="{% url 'category_places' 'Nature' %}" class="category-link text-decoration-none text-dark">
+                    <div class="category-card">
+                        <i class="fa-solid fa-tree"></i>
+                        <h5>Nature</h5>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+                <a href="{% url 'category_places' 'Cultural' %}" class="category-link text-decoration-none text-dark">
+                    <div class="category-card">
+                        <i class="fa-solid fa-landmark"></i>
+                        <h5>Cultural</h5>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+                <a href="{% url 'category_places' 'Trekking' %}" class="category-link text-decoration-none text-dark">
+                    <div class="category-card">
+                        <i class="fa-solid fa-person-hiking"></i>
+                        <h5>Trekking</h5>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+                <a href="{% url 'category_places' 'Wildlife' %}" class="category-link text-decoration-none text-dark">
+                    <div class="category-card">
+                        <i class="fa-solid fa-paw"></i>
+                        <h5>Wildlife</h5>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+                <a href="{% url 'category_places' 'Adventure' %}" class="category-link text-decoration-none text-dark">
+                    <div class="category-card">
+                        <i class="fa-solid fa-parachute-box"></i>
+                        <h5>Adventure</h5>
+                    </div>
+                </a>
+            </div>
+
         </div>
-      </div>
-
-      <div class="col-md-2 col-6">
-        <div class="category-card">
-          <i class="fa-solid fa-landmark"></i>
-          <h5>Cultural</h5>
-        </div>
-      </div>
-
-      <div class="col-md-2 col-6">
-        <div class="category-card">
-          <i class="fa-solid fa-person-hiking"></i>
-          <h5>Trekking</h5>
-        </div>
-      </div>
-
-      <div class="col-md-2 col-6">
-        <div class="category-card">
-          <i class="fa-solid fa-paw"></i>
-          <h5>Wildlife</h5>
-        </div>
-      </div>
-
-      <div class="col-md-2 col-6">
-        <div class="category-card">
-          <i class="fa-solid fa-parachute-box"></i>
-          <h5>Adventure</h5>
-        </div>
-      </div>
 
     </div>
-
-  </div>
 </section>
-
 <!-- ================= FOOTER ================= -->
 <footer class="py-5">
   <div class="container text-center">

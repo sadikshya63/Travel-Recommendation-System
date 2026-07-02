@@ -2,10 +2,11 @@ import os
 import csv
 import pandas as pd
 
+from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
-from django.db.models import Q, Case, When, Value, IntegerField
 from django.http import JsonResponse
+from django.db.models import Q, Case, When, Value, IntegerField
 
 from rapidfuzz import process, fuzz
 
@@ -13,50 +14,53 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from .models import Place
-
-from django.conf import settings
-
-
 # =========================
-# HOME (FIXED)
+# HOME
 # =========================
+
 def home(request):
-    places = Place.objects.all()[:6]
+    places = Place.objects.filter(is_active=True)[:6]
 
     return render(request, "home.html", {
         "places": places
     })
-
-
+    # =========================
+# PLACE DETAIL
 # =========================
-# PLACE DETAIL (ADDED ✔)
-# =========================
+
 def place_detail(request, place_id):
+
     place = get_object_or_404(Place, place_id=place_id)
+
     hotels = []
 
-    import os
-    from django.conf import settings
-    import csv
+    file_path = os.path.join(
+        settings.BASE_DIR,
+        "travel_project",
+        "hotels.csv"
+    )
 
-    file_path = os.path.join(settings.BASE_DIR, 'travel_project', 'hotels.csv')
+    with open(file_path, newline="", encoding="utf-8") as f:
 
-    with open(file_path, newline='', encoding='utf-8') as f:
         reader = csv.DictReader(f)
 
         for row in reader:
-            if int(row['place_id']) == place_id:
+
+            if int(row["place_id"]) == place_id:
                 hotels.append(row)
 
-    # ✅ OUTSIDE loop
-    return render(request, 'place_details.html', {
-        'place': place,
-        'hotels': hotels
-    })
-
-# =========================
+    return render(
+        request,
+        "place_details.html",
+        {
+            "place": place,
+            "hotels": hotels,
+        }
+    )
+    # =========================
 # RECOMMENDATION
 # =========================
+
 def recommendation(request):
 
     recommendations = []
@@ -71,8 +75,12 @@ def recommendation(request):
         duration = request.POST.get("duration")
         tourist = request.POST.get("tourist_type")
 
-        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        csv_path = os.path.join(BASE_DIR, "travel_app", "data", "places.csv")
+        csv_path = os.path.join(
+            settings.BASE_DIR,
+            "travel_app",
+            "data",
+            "places.csv"
+        )
 
         df = pd.read_csv(csv_path)
 
@@ -113,7 +121,7 @@ def recommendation(request):
             elif duration == "10+ Days":
                 result = result[max_days >= 10]
 
-        # Tourist type
+        # Tourist Type
         if tourist:
             result = result[
                 (result["tourist_type"].str.lower() == tourist.lower()) |
@@ -126,7 +134,12 @@ def recommendation(request):
             pattern = "|".join(activities)
 
             activity_result = result[
-                result["activities"].str.contains(pattern, case=False, na=False, regex=True)
+                result["activities"].str.contains(
+                    pattern,
+                    case=False,
+                    na=False,
+                    regex=True
+                )
             ]
 
             if not activity_result.empty:
@@ -139,9 +152,7 @@ def recommendation(request):
             message = "No exact destination found. Showing similar destinations."
             result = df.copy()
 
-        # =========================
-        # SIMILARITY (FIXED SAFELY)
-        # =========================
+        # Similarity
         if not result.empty:
 
             result["features"] = (
@@ -166,7 +177,7 @@ def recommendation(request):
 
             documents = [user_features] + result["features"].tolist()
 
-            vectorizer = TfidfVectorizer()
+            vectorizer = TfidfVectorizer(stop_words="english")
             tfidf = vectorizer.fit_transform(documents)
 
             similarity = cosine_similarity(tfidf[0:1], tfidf[1:])
@@ -174,20 +185,22 @@ def recommendation(request):
             result["similarity"] = similarity.flatten()
             result["match"] = (result["similarity"] * 100).round().astype(int)
 
-            result = result.sort_values(by="similarity", ascending=False)
+            result = result.sort_values(
+                by="similarity",
+                ascending=False
+            )
 
             recommendations = result.head(5).to_dict("records")
 
-        else:
-            recommendations = []
-
-    return render(request, "recommendation.html", {
-        "recommendations": recommendations,
-        "message": message,
-    })
-
-
-# =========================
+    return render(
+        request,
+        "recommendation.html",
+        {
+            "recommendations": recommendations,
+            "message": message,
+        },
+    )
+    # =========================
 # EXPLORE
 # =========================
 def explore(request):
@@ -199,7 +212,9 @@ def explore(request):
     suggestion = None
     filter_notice = False
 
-    featured_places = Place.objects.filter(place_id__in=[1, 4, 8, 13, 15, 16])
+    featured_places = Place.objects.filter(
+        place_id__in=[1, 4, 8, 13, 15, 16]
+    )
 
     if search or categories or activities:
 
@@ -214,8 +229,18 @@ def explore(request):
 
             if not featured_places.exists():
 
-                place_names = list(Place.objects.values_list("place_name", flat=True))
-                match = process.extractOne(search, place_names, scorer=fuzz.WRatio)
+                place_names = list(
+                    Place.objects.values_list(
+                        "place_name",
+                        flat=True
+                    )
+                )
+
+                match = process.extractOne(
+                    search,
+                    place_names,
+                    scorer=fuzz.WRatio
+                )
 
                 if match and match[1] >= 60:
                     suggestion = match[0]
@@ -234,9 +259,10 @@ def explore(request):
                     )
                 ).order_by("-relevance")
 
-                # Category boost
                 if categories:
+
                     featured_places = featured_places.annotate(
+
                         category_boost=Case(
                             *[
                                 When(category=category, then=Value(1))
@@ -245,46 +271,66 @@ def explore(request):
                             default=Value(0),
                             output_field=IntegerField(),
                         )
+
                     ).order_by("-category_boost", "-relevance")
 
-                # Activity boost
                 if activities:
+
                     activity_cases = [
-                        When(activities__icontains=activity, then=Value(1))
+                        When(
+                            activities__icontains=activity,
+                            then=Value(1)
+                        )
                         for activity in activities
                     ]
 
                     featured_places = featured_places.annotate(
+
                         activity_boost=Case(
                             *activity_cases,
                             default=Value(0),
                             output_field=IntegerField(),
                         )
-                    ).order_by("-activity_boost", "-category_boost", "-relevance")
+
+                    ).order_by(
+                        "-activity_boost",
+                        "-category_boost",
+                        "-relevance"
+                    )
 
         else:
 
             if categories:
-                featured_places = featured_places.filter(category__in=categories)
+                featured_places = featured_places.filter(
+                    category__in=categories
+                )
 
             if activities:
+
                 activity_query = Q()
+
                 for activity in activities:
-                    activity_query |= Q(activities__icontains=activity)
+                    activity_query |= Q(
+                        activities__icontains=activity
+                    )
 
-                featured_places = featured_places.filter(activity_query)
+                featured_places = featured_places.filter(
+                    activity_query
+                )
 
-    return render(request, "explore.html", {
-        "featured_places": featured_places,
-        "search": search,
-        "selected_categories": categories,
-        "selected_activities": activities,
-        "suggestion": suggestion,
-        "filter_notice": filter_notice,
-    })
-
-
-# =========================
+    return render(
+        request,
+        "explore.html",
+        {
+            "featured_places": featured_places,
+            "search": search,
+            "selected_categories": categories,
+            "selected_activities": activities,
+            "suggestion": suggestion,
+            "filter_notice": filter_notice,
+        }
+    )
+    # =========================
 # ALL PLACES
 # =========================
 def all_places(request):
@@ -294,6 +340,7 @@ def all_places(request):
     places = Place.objects.all()
 
     if search:
+
         places = places.filter(
             Q(place_name__icontains=search) |
             Q(category__icontains=search) |
@@ -301,19 +348,19 @@ def all_places(request):
             Q(activities__icontains=search)
         )
 
-    return render(request, "all_places.html", {
-        "places": places,
-        "search": search,
-    })
-
-
-# =========================
+    return render(
+        request,
+        "all_places.html",
+        {
+            "places": places,
+            "search": search,
+        }
+    )
+    # =========================
 # CONTACT
 # =========================
 def contact(request):
     return render(request, "contact.html")
-
-
 # =========================
 # LIVE SEARCH API
 # =========================
@@ -331,11 +378,42 @@ def search_suggestions(request):
         Q(activities__icontains=query)
     )[:8]
 
-    return JsonResponse([
+    return JsonResponse(
+        [
+            {
+                "name": place.place_name,
+                "province": place.province,
+                "category": place.category,
+            }
+            for place in places
+        ],
+        safe=False,
+    )
+    # =========================
+# CATEGORY PLACES
+# =========================
+def category_places(request, category):
+
+    csv_path = os.path.join(
+        settings.BASE_DIR,
+        "travel_app",
+        "data",
+        "places.csv",
+    )
+
+    df = pd.read_csv(csv_path)
+
+    places = df[
+        df["category"].str.lower() == category.lower()
+    ]
+
+    places = places.to_dict(orient="records")
+
+    return render(
+        request,
+        "category_places.html",
         {
-            "name": place.place_name,
-            "province": place.province,
-            "category": place.category,
-        }
-        for place in places
-    ], safe=False)
+            "category": category,
+            "places": places,
+        },
+    )
