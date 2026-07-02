@@ -1,4 +1,5 @@
 import os
+import csv
 import pandas as pd
 
 from django.shortcuts import render, get_object_or_404
@@ -12,6 +13,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from .models import Place
+
+from django.conf import settings
 
 
 # =========================
@@ -30,11 +33,26 @@ def home(request):
 # =========================
 def place_detail(request, place_id):
     place = get_object_or_404(Place, place_id=place_id)
+    hotels = []
 
-    return render(request, "place_details.html", {
-        "place": place
+    import os
+    from django.conf import settings
+    import csv
+
+    file_path = os.path.join(settings.BASE_DIR, 'travel_project', 'hotels.csv')
+
+    with open(file_path, newline='', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+
+        for row in reader:
+            if int(row['place_id']) == place_id:
+                hotels.append(row)
+
+    # ✅ OUTSIDE loop
+    return render(request, 'place_details.html', {
+        'place': place,
+        'hotels': hotels
     })
-
 
 # =========================
 # RECOMMENDATION

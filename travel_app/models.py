@@ -12,7 +12,7 @@ class Place(models.Model):
     description = models.TextField()
     latitude = models.DecimalField(max_digits=10, decimal_places=6)
     longitude = models.DecimalField(max_digits=10, decimal_places=6)
-    image = models.CharField(max_length=2)
+    image = models.CharField(max_length=100)
 
     featured = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -21,3 +21,12 @@ class Place(models.Model):
 
     def __str__(self):
         return self.place_name
+    
+
+class Hotel(models.Model):
+    hotel_id = models.IntegerField(primary_key=True)
+    place_id = models.IntegerField()
+    hotel_name = models.CharField(max_length=100)
+    price_range = models.CharField(max_length=50)
+    contact = models.CharField(max_length=20)
+    image = models.CharField(max_length=100)  # IMPORTANT
