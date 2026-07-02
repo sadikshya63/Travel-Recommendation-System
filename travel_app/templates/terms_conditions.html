@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms & Conditions | MeroYatra</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        body{
+            background:#f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .page-banner{
+            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+                        url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80') center center/cover no-repeat;
+            color:white;
+            padding:100px 0 70px;
+            text-align:center;
+        }
+
+        .page-banner h1{
+            font-size:52px;
+            font-weight:700;
+        }
+
+        .page-section{
+            padding:70px 0;
+        }
+
+        .terms-box{
+            background:white;
+            border-radius:16px;
+            box-shadow:0 8px 25px rgba(0,0,0,0.08);
+            padding:35px;
+        }
+
+        .terms-box h3{
+            color:#00b95e;
+            font-weight:700;
+            margin-top:25px;
+            margin-bottom:12px;
+        }
+
+        .back-btn{
+            border-radius:30px;
+            padding:10px 24px;
+            margin-bottom:25px;
+        }
+    </style>
+</head>
+<body>
+
+<section class="page-banner">
+    <div class="container">
+        <h1>Terms & Conditions</h1>
+        <p class="mt-3">Guidelines and conditions for using MeroYatra.</p>
+    </div>
+</section>
+
+<section class="page-section">
+    <div class="container">
+        <a href="{% url 'home' %}" class="btn btn-success back-btn">← Back to Home</a>
+
+        <div class="terms-box">
+            <p>
+                By using MeroYatra, you agree to the following terms and conditions. Please read them carefully before using the website.
+            </p>
+
+            <h3>Use of Website</h3>
+            <p>
+                MeroYatra is created to provide travel information, destination suggestions, hotel-related guidance, and recommendation features for users interested in exploring Nepal.
+            </p>
+
+            <h3>Accuracy of Information</h3>
+            <p>
+                We aim to provide accurate and useful travel-related information. However, destinations, hotel details, pricing, availability, and travel conditions may change over time. Users are encouraged to verify important information independently.
+            </p>
+
+            <h3>Recommendation System</h3>
+            <p>
+                Recommendations shown on the website are based on available data, categories, and system logic. Suggested places or hotels may not always match every user’s personal expectations or travel needs.
+            </p>
+
+            <h3>Third-Party Services</h3>
+            <p>
+                MeroYatra may reference hotels, locations, maps, or external websites. We are not responsible for the services, availability, pricing, or content of third-party websites and providers.
+            </p>
+
+            <h3>User Responsibility</h3>
+            <p>
+                Users are responsible for their travel decisions, bookings, safety precautions, and verification of travel details before making plans based on the information available on this website.
+            </p>
+
+            <h3>Changes to the Website</h3>
+            <p>
+                MeroYatra may update, modify, or remove website features, content, and recommendations at any time without prior notice.
+            </p>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

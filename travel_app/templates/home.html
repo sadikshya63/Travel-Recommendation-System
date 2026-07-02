@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nepal Tourist Guide</title>
+  <title>MeroYatra</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand" href="#">
       <i class="fa-solid fa-mountain-sun"></i>
-      Nepal Tourist Guide
+      MeroYatra
     </a>
 
     <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
@@ -43,7 +43,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="#">Contact</a>
+          <a class="nav-link" href="{% url 'contact' %}">Contact</a>
         </li>
 
       </ul>
@@ -54,28 +54,24 @@
 
 <!-- ================= HERO ================= -->
 <section class="hero">
-  <div class="overlay">
-    <div class="container">
-      <div class="row align-items-center">
+    <div class="container h-100">
+        <div class="row h-100 justify-content-center align-items-center text-center">
+            <div class="col-lg-10">
+                <h5>WELCOME TO NEPAL</h5>
 
-        <div class="col-lg-7">
-          <h5>WELCOME TO NEPAL</h5>
+                <h1>Explore The Beauty Of Nepal</h1>
 
-          <h1>Explore The Beauty Of Nepal</h1>
+                <p>
+                    Discover beautiful destinations, hotels, and travel recommendations.
+                </p>
 
-          <p>
-            Discover beautiful destinations, hotels, and travel recommendations.
-          </p>
-
-          <div class="hero-buttons">
-            <a href="{% url 'recommendation' %}" class="btn btn-success btn-lg">Get Started</a>
-            <a href="{% url 'explore' %}" class="btn btn-light btn-lg">Explore Places</a>
-          </div>
+                <div class="hero-buttons">
+                    <a href="{% url 'recommendation' %}" class="btn btn-success btn-lg">Get Started</a>
+                    <a href="{% url 'explore' %}" class="btn btn-light btn-lg">Explore Places</a>
+                </div>
+            </div>
         </div>
-
-      </div>
     </div>
-  </div>
 </section>
 
 <!-- ================= WHY CHOOSE US ================= -->
@@ -231,13 +227,178 @@
     </div>
 </section>
 <!-- ================= FOOTER ================= -->
-<footer class="py-5">
-  <div class="container text-center">
-    <h4>Nepal Tourist Guide</h4>
-    <p>Explore Nepal with smart recommendations and travel guidance.</p>
-    <p>© 2026 Nepal Tourist Guide</p>
-  </div>
+
+<footer>
+
+<div class="container">
+
+<div class="row">
+
+<div class="col-md-4">
+
+<h3>
+
+Nepal Tourist Guide
+
+</h3>
+
+<p>
+
+Explore Nepal with personalized recommendations, hotels, maps and travel guidance.
+
+</p>
+
+</div>
+
+<div class="col-md-2">
+
+<h5>
+
+Quick Links
+
+</h5>
+
+<ul style="list-style:none; padding:0; margin:0;">
+    <li style="margin-bottom:10px;">
+        <a href="{% url 'contact' %}"
+           style="color:#ddd; text-decoration:none;"
+           onmouseover="this.style.color='#00d26a'"
+           onmouseout="this.style.color='#ddd'">
+            Contact
+        </a>
+    </li>
+
+    <li style="margin-bottom:10px;">
+        <a href="{% url 'explore' %}"
+           style="color:#ddd; text-decoration:none;"
+           onmouseover="this.style.color='#00d26a'"
+           onmouseout="this.style.color='#ddd'">
+           Explore
+        </a>
+    </li>
+
+    <li style="margin-bottom:10px;">
+        <a href="{% url 'recommendation' %}"
+           style="color:#ddd; text-decoration:none;"
+           onmouseover="this.style.color='#00d26a'"
+           onmouseout="this.style.color='#ddd'">
+           Recommendation
+        </a>
+    </li>
+
+    <li style="margin-bottom:10px; color:#ddd; text-decoration:none;"
+           onmouseover="this.style.color='#00d26a'"
+           onmouseout="this.style.color='#ddd'">
+        Hotels
+    </li>
+</ul>
+
+</div>
+
+<div class="col-md-3">
+    <h5>Support</h5>
+    <ul style="list-style:none; padding:0; margin:0;">
+        <li style="margin-bottom:10px;">
+            <a href="{% url 'emergency' %}"
+               style="color:#ddd; text-decoration:none;"
+               onmouseover="this.style.color='#00d26a'"
+               onmouseout="this.style.color='#ddd'">
+               Emergency
+            </a>
+        </li>
+
+        <li style="margin-bottom:10px;">
+            <a href="{% url 'faq' %}"
+               style="color:#ddd; text-decoration:none;"
+               onmouseover="this.style.color='#00d26a'"
+               onmouseout="this.style.color='#ddd'">
+               FAQ
+            </a>
+        </li>
+
+        <li style="margin-bottom:10px;">
+            <a href="{% url 'privacy_policy' %}"
+               style="color:#ddd; text-decoration:none;"
+               onmouseover="this.style.color='#00d26a'"
+               onmouseout="this.style.color='#ddd'">
+               Privacy Policy
+            </a>
+        </li>
+
+        <li style="margin-bottom:10px;">
+            <a href="{% url 'terms_conditions' %}"
+               style="color:#ddd; text-decoration:none;"
+               onmouseover="this.style.color='#00d26a'"
+               onmouseout="this.style.color='#ddd'">
+               Terms &amp; Conditions
+            </a>
+        </li>
+    </ul>
+</div>
+
+<div class="col-md-3">
+
+<h5>
+
+Follow Us
+
+</h5>
+
+<div class="footer-social">
+    <a href="https://www.facebook.com/profile.php?id=61591564920482"
+       target="_blank"
+       style="color:white; text-decoration:none; font-size:30px; margin-right:15px;"
+       onmouseover="this.style.color='#00d26a'"
+       onmouseout="this.style.color='white'">
+        <i class="fa-brands fa-facebook"></i>
+    </a>
+
+    <a href="https://www.instagram.com/nepaltouristguide06/"
+       target="_blank"
+       style="color:white; text-decoration:none; font-size:30px; margin-right:15px;"
+       onmouseover="this.style.color='#00d26a'"
+       onmouseout="this.style.color='white'">
+        <i class="fa-brands fa-instagram"></i>
+    </a>
+
+    <a href="https://wa.me/9779824029677"
+       target="_blank"
+       style="color:white; text-decoration:none; font-size:30px; margin-right:15px;"
+       onmouseover="this.style.color='#00d26a'"
+       onmouseout="this.style.color='white'">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <a href="https://www.linkedin.com/in/nepaltouristguide-undefined-94b24b41b/"
+       target="_blank"
+       style="color:white; text-decoration:none; font-size:30px;"
+       onmouseover="this.style.color='#00d26a'"
+       onmouseout="this.style.color='white'">
+        <i class="fa-brands fa-linkedin"></i>
+    </a>
+</div>
+
+</div>
+
+</div>
+
+<hr>
+
+<div class="text-center">
+
+<p>
+
+© 2026 Nepal Tourist Guide Recommendation System
+
+</p>
+
+</div>
+
+</div>
+
 </footer>
+
+<script src="{% static 'js/script.js' %}"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 

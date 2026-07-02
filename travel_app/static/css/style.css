@@ -71,48 +71,53 @@ body{
 ================================ */
 
 .hero{
-position: relative;
-background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
-url('https://cdn.britannica.com/05/58605-050-86F58113/Annapurna-massif-village-Nepal.jpg')center center/cover no-repeat;
-height: 100vh;
-display: flex;
-align-items: center;
-color: white;
+    position: relative;
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+    url('https://cdn.britannica.com/05/58605-050-86F58113/Annapurna-massif-village-Nepal.jpg') center center/cover no-repeat;
+    height: 100vh;
+    color: white;
+}
+
+.hero .container,
+.hero .row{
+    height: 100%;
 }
 
 .hero h5{
-
     color:#00d26a;
     letter-spacing:2px;
-    margin-bottom:15px;
-
+    margin-bottom:20px;
+    text-align:center;
+    font-size: 30px;
 }
 
 .hero h1{
-
     color:white;
-    font-size:65px;
+    font-size:80px;
     font-weight:700;
     margin-bottom:20px;
-
+    text-align:center;
 }
 
 .hero p{
-
     color:white;
-    font-size:18px;
+    font-size: 22px;
     line-height:30px;
     margin-bottom:30px;
+    text-align:center;
+}
 
+.hero-buttons{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
 }
 
 .hero-buttons .btn{
-
-    margin-right:15px;
     border-radius:30px;
-    padding:12px 35px;
+    padding:20px 45px;
     font-weight:600;
-
 }
 
 .btn-success{
@@ -452,21 +457,16 @@ footer ul li:hover{
     color:#00d26a;
 }
 
-.social i{
-    font-size:28px;
-    margin-right:15px;
-    cursor:pointer;
-    transition:.3s;
-}
 
-.social i:hover{
-    color:#00d26a;
-}
 
 footer hr{
     margin:40px 0 20px;
     border-color:#555;
 }
+
+
+
+
 
 /* ===============================
    BUTTONS
@@ -1035,3 +1035,67 @@ color:white;
 .custom-card .card-body{
     padding:20px;
 }
+
+
+.contact-section{
+
+    padding:100px 0;
+    background:#f5f7fa;
+
+}
+
+.contact-card{
+
+    background:white;
+    padding:35px;
+    border-radius:15px;
+    text-align:center;
+    height:100%;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+    transition:.4s;
+
+}
+
+.contact-card:hover{
+
+    transform:translateY(-8px);
+    box-shadow:0 15px 30px rgba(0,0,0,.15);
+
+}
+
+.contact-icon{
+
+    font-size:45px;
+    color:#198754;
+    margin-bottom:20px;
+
+}
+
+.contact-card h4{
+
+    font-weight:600;
+    margin-bottom:15px;
+
+}
+
+.contact-card p{
+
+    color:#666;
+    margin-bottom:20px;
+
+}
+
+.contact-card .btn{
+
+    border-radius:30px;
+    padding:10px 24px;
+
+}
+
+
+
+
+
+
+
+

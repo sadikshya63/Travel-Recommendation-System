@@ -20,6 +20,12 @@ urlpatterns = [
 
     # DETAIL PAGE
     path('place/<int:place_id>/', views.place_detail, name='place_detail'),
+
+     # Support pages
+    path('emergency/', views.emergency, name='emergency'),
+    path('faq/', views.faq, name='faq'),
+    path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
+    path('terms-and-conditions/', views.terms_conditions, name='terms_conditions'),
 ]
 
 if settings.DEBUG:

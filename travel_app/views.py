@@ -4,63 +4,47 @@ import pandas as pd
 
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404
-from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Q, Case, When, Value, IntegerField
 
 from rapidfuzz import process, fuzz
-
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from .models import Place
+from .models import Place, EmergencyContact, FAQ, Hotel
+
+
 # =========================
 # HOME
 # =========================
-
 def home(request):
     places = Place.objects.filter(is_active=True)[:6]
 
     return render(request, "home.html", {
         "places": places
     })
-    # =========================
+
+
+# =========================
 # PLACE DETAIL
 # =========================
-
 def place_detail(request, place_id):
 
     place = get_object_or_404(Place, place_id=place_id)
 
-    hotels = []
+    place = get_object_or_404(Place, place_id=place_id)
 
-    file_path = os.path.join(
-        settings.BASE_DIR,
-        "travel_project",
-        "hotels.csv"
-    )
+    hotels = Hotel.objects.filter(place=place)
 
-    with open(file_path, newline="", encoding="utf-8") as f:
+    return render(request, "place_details.html", {
+        "place": place,
+        "hotels": hotels,
+    })
 
-        reader = csv.DictReader(f)
 
-        for row in reader:
-
-            if int(row["place_id"]) == place_id:
-                hotels.append(row)
-
-    return render(
-        request,
-        "place_details.html",
-        {
-            "place": place,
-            "hotels": hotels,
-        }
-    )
-    # =========================
+# =========================
 # RECOMMENDATION
 # =========================
-
 def recommendation(request):
 
     recommendations = []
@@ -83,63 +67,51 @@ def recommendation(request):
         )
 
         df = pd.read_csv(csv_path)
-
         df.columns = df.columns.str.strip()
         df = df.fillna("")
 
         result = df.copy()
 
-        # Category
+        # Category filter
         if category:
             result = result[result["category"].str.lower() == category.lower()]
 
-        # Province
+        # Province filter
         if province and province != "Any Province":
             result = result[result["province"].str.lower() == province.lower()]
 
-        # Budget
+        # Budget filter
         if budget:
             result = result[result["budget_level"].str.lower() == budget.lower()]
 
-        # Duration
+        # Duration filter
         if duration:
-
             numbers = result["duration"].str.extract(r"(\d+)")
-
             min_days = numbers[0].fillna(0).astype(int)
             max_days = min_days
 
             if duration == "1-3 Days":
                 result = result[max_days <= 3]
-
             elif duration == "4-6 Days":
                 result = result[(max_days >= 4) & (min_days <= 6)]
-
             elif duration == "7-9 Days":
                 result = result[(max_days >= 7) & (min_days <= 9)]
-
             elif duration == "10+ Days":
                 result = result[max_days >= 10]
 
-        # Tourist Type
+        # Tourist type filter
         if tourist:
             result = result[
                 (result["tourist_type"].str.lower() == tourist.lower()) |
                 (result["tourist_type"].str.lower() == "both")
             ]
 
-        # Activities
+        # Activities filter
         if activities:
-
             pattern = "|".join(activities)
 
             activity_result = result[
-                result["activities"].str.contains(
-                    pattern,
-                    case=False,
-                    na=False,
-                    regex=True
-                )
+                result["activities"].str.contains(pattern, case=False, na=False, regex=True)
             ]
 
             if not activity_result.empty:
@@ -147,12 +119,12 @@ def recommendation(request):
             else:
                 message = "Exact activities not found. Showing similar destinations."
 
-        # No result
+        # fallback
         if result.empty:
             message = "No exact destination found. Showing similar destinations."
             result = df.copy()
 
-        # Similarity
+        # similarity scoring
         if not result.empty:
 
             result["features"] = (
@@ -167,12 +139,7 @@ def recommendation(request):
             activity_text = " ".join(activities) if activities else ""
 
             user_features = (
-                f"{category} "
-                f"{activity_text} "
-                f"{province} "
-                f"{budget} "
-                f"{duration} "
-                f"{tourist}"
+                f"{category} {activity_text} {province} {budget} {duration} {tourist}"
             )
 
             documents = [user_features] + result["features"].tolist()
@@ -185,22 +152,17 @@ def recommendation(request):
             result["similarity"] = similarity.flatten()
             result["match"] = (result["similarity"] * 100).round().astype(int)
 
-            result = result.sort_values(
-                by="similarity",
-                ascending=False
-            )
+            result = result.sort_values(by="similarity", ascending=False)
 
             recommendations = result.head(5).to_dict("records")
 
-    return render(
-        request,
-        "recommendation.html",
-        {
-            "recommendations": recommendations,
-            "message": message,
-        },
-    )
-    # =========================
+    return render(request, "recommendation.html", {
+        "recommendations": recommendations,
+        "message": message,
+    })
+
+
+# =========================
 # EXPLORE
 # =========================
 def explore(request):
@@ -210,7 +172,6 @@ def explore(request):
     activities = request.GET.getlist("activity")
 
     suggestion = None
-    filter_notice = False
 
     featured_places = Place.objects.filter(
         place_id__in=[1, 4, 8, 13, 15, 16]
@@ -229,12 +190,7 @@ def explore(request):
 
             if not featured_places.exists():
 
-                place_names = list(
-                    Place.objects.values_list(
-                        "place_name",
-                        flat=True
-                    )
-                )
+                place_names = list(Place.objects.values_list("place_name", flat=True))
 
                 match = process.extractOne(
                     search,
@@ -248,7 +204,6 @@ def explore(request):
             else:
 
                 featured_places = featured_places.annotate(
-
                     relevance=Case(
                         When(place_name__icontains=search, then=Value(4)),
                         When(activities__icontains=search, then=Value(3)),
@@ -260,77 +215,44 @@ def explore(request):
                 ).order_by("-relevance")
 
                 if categories:
-
                     featured_places = featured_places.annotate(
-
                         category_boost=Case(
-                            *[
-                                When(category=category, then=Value(1))
-                                for category in categories
-                            ],
+                            *[When(category=c, then=Value(1)) for c in categories],
                             default=Value(0),
                             output_field=IntegerField(),
                         )
-
                     ).order_by("-category_boost", "-relevance")
 
                 if activities:
-
-                    activity_cases = [
-                        When(
-                            activities__icontains=activity,
-                            then=Value(1)
-                        )
-                        for activity in activities
-                    ]
-
                     featured_places = featured_places.annotate(
-
                         activity_boost=Case(
-                            *activity_cases,
+                            *[When(activities__icontains=a, then=Value(1)) for a in activities],
                             default=Value(0),
                             output_field=IntegerField(),
                         )
-
-                    ).order_by(
-                        "-activity_boost",
-                        "-category_boost",
-                        "-relevance"
-                    )
+                    ).order_by("-activity_boost", "-relevance")
 
         else:
 
             if categories:
-                featured_places = featured_places.filter(
-                    category__in=categories
-                )
+                featured_places = featured_places.filter(category__in=categories)
 
             if activities:
+                q = Q()
+                for a in activities:
+                    q |= Q(activities__icontains=a)
+                featured_places = featured_places.filter(q)
 
-                activity_query = Q()
+    return render(request, "explore.html", {
+        "featured_places": featured_places,
+        "search": search,
+        "selected_categories": categories,
+        "selected_activities": activities,
+        "suggestion": suggestion,
+    })
 
-                for activity in activities:
-                    activity_query |= Q(
-                        activities__icontains=activity
-                    )
 
-                featured_places = featured_places.filter(
-                    activity_query
-                )
-
-    return render(
-        request,
-        "explore.html",
-        {
-            "featured_places": featured_places,
-            "search": search,
-            "selected_categories": categories,
-            "selected_activities": activities,
-            "suggestion": suggestion,
-            "filter_notice": filter_notice,
-        }
-    )
-    # =========================
+# =========================
 # ALL PLACES
 # =========================
 def all_places(request):
@@ -340,7 +262,6 @@ def all_places(request):
     places = Place.objects.all()
 
     if search:
-
         places = places.filter(
             Q(place_name__icontains=search) |
             Q(category__icontains=search) |
@@ -348,19 +269,19 @@ def all_places(request):
             Q(activities__icontains=search)
         )
 
-    return render(
-        request,
-        "all_places.html",
-        {
-            "places": places,
-            "search": search,
-        }
-    )
-    # =========================
+    return render(request, "all_places.html", {
+        "places": places,
+        "search": search,
+    })
+
+
+# =========================
 # CONTACT
 # =========================
 def contact(request):
     return render(request, "contact.html")
+
+
 # =========================
 # LIVE SEARCH API
 # =========================
@@ -378,19 +299,18 @@ def search_suggestions(request):
         Q(activities__icontains=query)
     )[:8]
 
-    return JsonResponse(
-        [
-            {
-                "name": place.place_name,
-                "province": place.province,
-                "category": place.category,
-            }
-            for place in places
-        ],
-        safe=False,
-    )
-    # =========================
-# CATEGORY PLACES
+    return JsonResponse([
+        {
+            "name": p.place_name,
+            "province": p.province,
+            "category": p.category,
+        }
+        for p in places
+    ], safe=False)
+
+
+# =========================
+# CATEGORY PLACES (FIXED)
 # =========================
 def category_places(request, category):
 
@@ -402,18 +322,37 @@ def category_places(request, category):
     )
 
     df = pd.read_csv(csv_path)
+    df.columns = df.columns.str.strip()
 
-    places = df[
-        df["category"].str.lower() == category.lower()
-    ]
+    filtered = df[df["category"].str.lower() == category.lower()]
+    places = filtered.to_dict(orient="records")
 
-    places = places.to_dict(orient="records")
+    return render(request, "category_places.html", {
+        "category": category,
+        "places": places,
+    })
 
-    return render(
-        request,
-        "category_places.html",
-        {
-            "category": category,
-            "places": places,
-        },
-    )
+
+# =========================
+# SUPPORT PAGES
+# =========================
+def emergency(request):
+    contacts = EmergencyContact.objects.all()
+    return render(request, "emergency.html", {
+        "contacts": contacts
+    })
+
+
+def faq(request):
+    faqs = FAQ.objects.all()
+    return render(request, "faq.html", {
+        "faqs": faqs
+    })
+
+
+def privacy_policy(request):
+    return render(request, "privacy_policy.html")
+
+
+def terms_conditions(request):
+    return render(request, "terms_conditions.html")

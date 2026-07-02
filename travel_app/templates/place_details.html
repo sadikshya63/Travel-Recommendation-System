@@ -58,7 +58,7 @@
 
         <a class="navbar-brand" href="{% url 'home' %}">
             <i class="fa-solid fa-mountain-sun"></i>
-            Nepal Tourist Guide
+            MeroYatra
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
@@ -69,11 +69,25 @@
 
             <ul class="navbar-nav ms-auto">
 
-                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'recommendation' %}">Recommendation</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'explore' %}">Explore</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'home' %}">Home</a>
+                </li>
 
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'recommendation' %}">
+                        Recommendation
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'explore' %}">
+                        Explore
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+                </li>
             </ul>
 
         </div>
@@ -181,9 +195,9 @@
                          style="height:200px; object-fit:cover;">
 
                     <h5>{{ hotel.hotel_name }}</h5>
-
                     <p><strong>Price:</strong> {{ hotel.price_range }}</p>
-                    <p><strong>Contact:</strong> {{ hotel.contact }}</p>
+                    <p><strong>Rating:</strong> ⭐ {{ hotel.rating }}</p>
+                    <p><strong>Contact:</strong> {{ hotel.contact_number }}</p>
 
                 </div>
             </div>
