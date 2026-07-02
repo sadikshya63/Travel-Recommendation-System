@@ -1,6 +1,7 @@
 import os
 import csv
 import pandas as pd
+import requests
 
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404
@@ -12,7 +13,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from .models import Place, EmergencyContact, FAQ, Hotel
-
 
 # =========================
 # HOME
@@ -47,9 +47,15 @@ def place_detail(request, place_id):
             if int(row["place_id"]) == place_id:
                 hotels.append(row)
 
+    weather_data = get_weather(place.latitude, place.longitude)
+    alert = weather_alert(weather_data)
+    
+
     return render(request, "place_details.html", {
         "place": place,
         "hotels": hotels,
+        "weather": weather_data,
+        "alert": alert,
     })
 
 
@@ -367,3 +373,28 @@ def privacy_policy(request):
 
 def terms_conditions(request):
     return render(request, "terms_conditions.html")
+
+#weather api
+def get_weather(lat, lon):
+    url = (
+        f"https://api.openweathermap.org/data/2.5/weather"
+        f"?lat={lat}&lon={lon}"
+        f"&appid={settings.WEATHER_API_KEY}&units=metric"
+    )
+    response = requests.get(url)
+    return response.json()
+def weather_alert(weather_data):
+    main = weather_data["weather"][0]["main"].lower()
+
+    if "rain" in main:
+        return "🌧 Heavy Rain Warning"
+    elif "thunderstorm" in main:
+        return "⛈ Thunderstorm Alert"
+    elif "fog" in main or "mist" in main:
+        return "🌫 Dense Fog"
+    elif "clear" in main:
+        return "☀ Clear Weather"
+    elif "snow" in main:
+        return "❄ Snowfall Alert"
+    else:
+        return "🌡 Normal Weather Conditions"

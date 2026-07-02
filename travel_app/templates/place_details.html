@@ -102,6 +102,29 @@
 
     <!-- Place Name -->
     <h1 class="mb-3">{{ place.place_name }}</h1>
+    <!-- Weather Alert Section -->
+<div class="card-box mb-4" style="border-left: 6px solid orange;">
+
+    <h4 class="section-title">🌦 Live Weather Status</h4>
+
+    <h5>{{ alert }}</h5>
+
+    <p>
+        🌡 Temperature:
+        <strong>{{ weather.main.temp }} °C</strong>
+    </p>
+
+    <p>
+        🌥 Condition:
+        <strong>{{ weather.weather.0.description }}</strong>
+    </p>
+
+    <p>
+        💨 Wind Speed:
+        <strong>{{ weather.wind.speed }} m/s</strong>
+    </p>
+
+</div>
 
     <!-- Description -->
     <div class="card-box mb-4">
