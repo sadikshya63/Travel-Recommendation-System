@@ -7,6 +7,7 @@ from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.db.models import Q, Case, When, Value, IntegerField
+from dotenv import load_dotenv
 
 from rapidfuzz import process, fuzz
 from sklearn.feature_extraction.text import TfidfVectorizer
