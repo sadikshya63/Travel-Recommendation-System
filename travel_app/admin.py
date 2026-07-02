@@ -1,8 +1,27 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Place, Hotel, EmergencyContact, FAQ
+from .models import Place, Hotel, EmergencyContact, FAQ, RecommendationHistory,VisitorCounter
+from django.contrib.admin import SimpleListFilter
+class ActivityFilter(SimpleListFilter):
+    title = "activities"
+    parameter_name = "activity"
 
+    def lookups(self, request, model_admin):
+        activities = set()
 
+        for place in Place.objects.all():
+            if place.activities:
+                for activity in place.activities.split(","):
+                    activities.add(activity.strip())
+
+        return sorted((a, a) for a in activities)
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(
+                activities__icontains=self.value()
+            )
+        return queryset
 @admin.register(Place)
 class PlaceAdmin(admin.ModelAdmin):
 
@@ -27,14 +46,14 @@ class PlaceAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
-        "category",
-        "activities",
-        "province",
-        "budget_level",
-        "tourist_type",
-        "featured",
-        "is_active",
-    )
+    "category",
+    ActivityFilter,
+    "province",
+    "budget_level",
+    "tourist_type",
+    "featured",
+    "is_active",
+)
 
     ordering = ("place_id",)
 
@@ -104,3 +123,28 @@ class FAQAdmin(admin.ModelAdmin):
         "question",
         "answer",
     )
+@admin.register(RecommendationHistory)
+class RecommendationHistoryAdmin(admin.ModelAdmin):
+    list_display = (
+        "category",
+        "province",
+        "budget_level",
+        "tourist_type",
+        "searched_at",
+    )
+
+    search_fields = (
+        "category",
+        "activities",
+        "province",
+    )
+
+    list_filter = (
+        "category",
+        "province",
+        "budget_level",
+        "tourist_type",
+    )
+@admin.register(VisitorCounter)
+class VisitorCounterAdmin(admin.ModelAdmin):
+    list_display = ("total_visits",)

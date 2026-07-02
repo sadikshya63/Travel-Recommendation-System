@@ -63,3 +63,21 @@ class FAQ(models.Model):
     def __str__(self):
         return self.question
     
+    #history model
+class RecommendationHistory(models.Model):
+    category = models.CharField(max_length=100)
+    activities = models.TextField()
+    province = models.CharField(max_length=100)
+    budget_level = models.CharField(max_length=20)
+    duration = models.CharField(max_length=50)
+    tourist_type = models.CharField(max_length=50)
+    searched_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.category} - {self.searched_at.strftime('%Y-%m-%d %H:%M')}"
+    
+class VisitorCounter(models.Model):
+    total_visits = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"Total Visitors: {self.total_visits}"
