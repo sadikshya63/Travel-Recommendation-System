@@ -19,331 +19,310 @@
 
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
 
-        <a class="navbar-brand" href="{% url 'home' %}">
-            <i class="fa-solid fa-mountain-sun"></i>
-            MeroYatra
-        </a>
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fa-solid fa-mountain-sun"></i>
+                MeroYatra
+            </a>
 
-        <button class="navbar-toggler"
-                data-bs-toggle="collapse"
-                data-bs-target="#menu">
+            <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
 
-            <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
 
-        </button>
+            </button>
 
-        <div class="collapse navbar-collapse" id="menu">
+            <div class="collapse navbar-collapse" id="menu">
 
-            <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto">
 
-                <li class="nav-item">
-    <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
-       href="{% url 'home' %}">
-        Home
-    </a>
-</li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+                            href="{% url 'home' %}">
+                            Home
+                        </a>
+                    </li>
 
-<li class="nav-item">
-    <a class="nav-link {% if request.resolver_match.url_name == 'recommendation' %}active{% endif %}"
-       href="{% url 'recommendation' %}">
-        Recommendation
-    </a>
-</li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'recommendation' %}active{% endif %}"
+                            href="{% url 'recommendation' %}">
+                            Recommendation
+                        </a>
+                    </li>
 
-<li class="nav-item">
-    <a class="nav-link {% if request.resolver_match.url_name == 'explore' %}active{% endif %}"
-       href="{% url 'explore' %}">
-        Explore
-    </a>
-</li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'explore' %}active{% endif %}"
+                            href="{% url 'explore' %}">
+                            Explore
+                        </a>
+                    </li>
 
-<li class="nav-item">
-    <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
-       href="{% url 'contact' %}">
-        Contact
-    </a>
-</li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
+                            href="{% url 'contact' %}">
+                            Contact
+                        </a>
+                    </li>
 
-            </ul>
+                </ul>
+
+            </div>
+
+        </div>
+    </nav>
+
+    <section class="explore-section">
+
+        <div class="container">
+
+            <h1 class="explore-title">
+                Explore Nepal
+            </h1>
+
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <form method="GET" action="{% url 'explore' %}">
+
+                <div class="search-box p-4">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-12">
+
+                            <input type="text" class="form-control" name="search" placeholder="Search destination..."
+                                value="{{ request.GET.search }}">
+
+                        </div>
+
+                        <div class="col-md-5">
+
+                            <label class="fw-bold mb-2">
+                                Category
+                            </label>
+
+                            <select id="category-select" name="category" multiple placeholder="Select Categories...">
+
+                                <option value="Nature">Nature</option>
+
+                                <option value="Cultural">Cultural</option>
+
+                                <option value="Trekking">Trekking</option>
+
+                                <option value="Adventure">Adventure</option>
+
+                                <option value="Wildlife">Wildlife</option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-5">
+
+                            <label class="fw-bold mb-2">
+                                Activities
+                            </label>
+
+                            <select id="activity-select" name="activity" multiple placeholder="Select Activities...">
+
+                                <option value="Hiking">Hiking</option>
+                                <option value="Photography">Photography</option>
+                                <option value="Sightseeing">Sightseeing</option>
+                                <option value="Camping">Camping</option>
+                                <option value="Pilgrimage">Pilgrimage</option>
+                                <option value="Temple Visit">Temple Visit</option>
+                                <option value="Meditation">Meditation</option>
+                                <option value="Boating">Boating</option>
+                                <option value="Safari">Safari</option>
+                                <option value="Bird Watching">Bird Watching</option>
+                                <option value="Paragliding">Paragliding</option>
+                                <option value="Mountain Biking">Mountain Biking</option>
+                                <option value="Sunrise Viewing">Sunrise Viewing</option>
+                                <option value="Aarti">Aarti</option>
+                                <option value="Tea Garden Visit">Tea Garden Visit</option>
+                                <option value="Jeep Tour">Jeep Tour</option>
+                                <option value="Nature Walk">Nature Walk</option>
+                                <option value="Canoeing">Canoeing</option>
+                                <option value="Helicopter Tour">Helicopter Tour</option>
+                                <option value="Cultural Tour">Cultural Tour</option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-2 d-flex align-items-end">
+
+                            <button class="btn btn-success w-100" type="submit" name="search_btn">
+
+                                <i class="fa-solid fa-magnifying-glass"></i>
+
+                                Search
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+            {% if suggestion %}
+            <div class="alert alert-info text-center mt-4">
+
+                No exact destination found.
+
+                <br>
+
+                Did you mean
+
+                <a href="{% url 'explore' %}?search={{ suggestion }}">
+                    <strong>{{ suggestion }}</strong>
+                </a>?
+
+            </div>
+            {% endif %}
+
+            {% if filter_notice %}
+            <div class="alert alert-info text-center mt-3">
+                <i class="fa-solid fa-circle-info"></i>
+                Showing the closest destination match. Some of your selected filters may not apply to this destination.
+            </div>
+            {% endif %}
+
+            <div class="d-flex justify-content-between align-items-center mt-5 mb-4">
+
+                <h2 class="fw-bold">
+                    Featured Destinations
+                </h2>
+
+                <a href="{% url 'all_places' %}" class="text-white text-decoration-none fw-semibold view-all-link">
+
+                    View All
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+            </div>
+
+            <div class="row">
+
+                {% for place in featured_places %}
+
+                <div class="col-md-4 mb-4">
+
+                    <div class="card place-card">
+
+                        <img src="{% static 'images/'|add:place.image %}" class="card-img-top">
+
+                        <div class="card-body">
+
+                            <h5 class="card-title">
+
+                                {{ place.place_name }}
+
+                            </h5>
+
+                            <p class="card-text">
+
+                                {{ place.description|truncatewords:12 }}
+
+                            </p>
+
+                            <p class="small text-muted">
+
+                                {{ place.province }}
+
+                                |
+
+                                {{ place.category }}
+
+                            </p>
+
+                            <a href="{% url 'place_detail' place.place_id %}" class="btn btn-success">
+                                View Details
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <div class="text-center">
+
+                    <h4>No destinations found.</h4>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
 
         </div>
 
-    </div>
-</nav>
+    </section>
 
-<section class="explore-section">
+    <footer>
 
-<div class="container">
+        <div class="text-center">
 
-<h1 class="explore-title">
-Explore Nepal
-</h1>
+            <p>
 
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert"></button>
+                © 2026 Nepal Tourist Guide Recommendation System
+
+            </p>
+
         </div>
-    {% endfor %}
-{% endif %}
 
-<form method="GET" action="{% url 'explore' %}">
 
-<div class="search-box p-4">
+    </footer>
 
-<div class="row g-3">
+    <script src="{% static 'js/script.js' %}"></script>
 
-<div class="col-md-12">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 
-<input
-type="text"
-class="form-control"
-name="search"
-placeholder="Search destination..."
-value="{{ request.GET.search }}">
+    <script>
 
-</div>
+        const categorySelect = new TomSelect("#category-select", {
+            plugins: ["remove_button"],
+            create: false,
+            maxItems: null,
+            placeholder: "Select Categories..."
+        });
 
-<div class="col-md-5">
+        const activitySelect = new TomSelect("#activity-select", {
+            plugins: ["remove_button"],
+            create: false,
+            maxItems: null,
+            placeholder: "Select Activities..."
+        });
 
-<label class="fw-bold mb-2">
-Category
-</label>
+        // Restore selected categories
+        {% for category in selected_categories %}
+        categorySelect.addItem("{{ category }}");
+        {% endfor %}
 
-<select
-id="category-select"
-name="category"
-multiple
-placeholder="Select Categories...">
+        {% for activity in selected_activities %}
+        activitySelect.addItem("{{ activity }}");
+        {% endfor %}
 
-<option value="Nature">Nature</option>
+    </script>
 
-<option value="Cultural">Cultural</option>
-
-<option value="Trekking">Trekking</option>
-
-<option value="Adventure">Adventure</option>
-
-<option value="Wildlife">Wildlife</option>
-
-</select>
-
-</div>
-
-<div class="col-md-5">
-
-<label class="fw-bold mb-2">
-Activities
-</label>
-
-<select
-id="activity-select"
-name="activity"
-multiple
-placeholder="Select Activities...">
-
-<option value="Hiking">Hiking</option>
-<option value="Photography">Photography</option>
-<option value="Sightseeing">Sightseeing</option>
-<option value="Camping">Camping</option>
-<option value="Pilgrimage">Pilgrimage</option>
-<option value="Temple Visit">Temple Visit</option>
-<option value="Meditation">Meditation</option>
-<option value="Boating">Boating</option>
-<option value="Safari">Safari</option>
-<option value="Bird Watching">Bird Watching</option>
-<option value="Paragliding">Paragliding</option>
-<option value="Mountain Biking">Mountain Biking</option>
-<option value="Sunrise Viewing">Sunrise Viewing</option>
-<option value="Aarti">Aarti</option>
-<option value="Tea Garden Visit">Tea Garden Visit</option>
-<option value="Jeep Tour">Jeep Tour</option>
-<option value="Nature Walk">Nature Walk</option>
-<option value="Canoeing">Canoeing</option>
-<option value="Helicopter Tour">Helicopter Tour</option>
-<option value="Cultural Tour">Cultural Tour</option>
-
-</select>
-
-</div>
-
-<div class="col-md-2 d-flex align-items-end">
-
-<button
-class="btn btn-success w-100"
-type="submit"
-name="search_btn">
-
-<i class="fa-solid fa-magnifying-glass"></i>
-
-Search
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-</form>
-
-{% if suggestion %}
-<div class="alert alert-info text-center mt-4">
-
-    No exact destination found.
-
-    <br>
-
-    Did you mean
-
-    <a href="{% url 'explore' %}?search={{ suggestion }}">
-        <strong>{{ suggestion }}</strong>
-    </a>?
-
-</div>
-{% endif %}
-
-{% if filter_notice %}
-<div class="alert alert-info text-center mt-3">
-    <i class="fa-solid fa-circle-info"></i>
-    Showing the closest destination match. Some of your selected filters may not apply to this destination.
-</div>
-{% endif %}
-
-<div class="d-flex justify-content-between align-items-center mt-5 mb-4">
-
-<h2 class="fw-bold">
-Featured Destinations
-</h2>
-
-<a href="{% url 'all_places' %}"
-class="text-white text-decoration-none fw-semibold view-all-link">
-
-View All
-
-<i class="fa-solid fa-arrow-right"></i>
-
-</a>
-
-</div>
-
-<div class="row">
-
-{% for place in featured_places %}
-
-<div class="col-md-4 mb-4">
-
-<div class="card place-card">
-
-<img src="{% static 'images/'|add:place.image %}"
-class="card-img-top">
-
-<div class="card-body">
-
-<h5 class="card-title">
-
-{{ place.place_name }}
-
-</h5>
-
-<p class="card-text">
-
-{{ place.description|truncatewords:12 }}
-
-</p>
-
-<p class="small text-muted">
-
-{{ place.province }}
-
-|
-
-{{ place.category }}
-
-</p>
-
-<a href="{% url 'place_detail' place.place_id %}"
-   class="btn btn-success">
-    View Details
-</a>
-
-</div>
-
-</div>
-
-</div>
-
-{% empty %}
-
-<div class="text-center">
-
-<h4>No destinations found.</h4>
-
-</div>
-
-{% endfor %}
-
-</div>
-
-</div>
-
-</section>
-
-<footer>
-
-<div class="text-center">
-
-<p>
-
-© 2026 Nepal Tourist Guide Recommendation System
-
-</p>
-
-</div>
-
-
-</footer>
-
-<script src="{% static 'js/script.js' %}"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-
-<script>
-
-const categorySelect = new TomSelect("#category-select", {
-    plugins: ["remove_button"],
-    create: false,
-    maxItems: null,
-    placeholder: "Select Categories..."
-});
-
-const activitySelect = new TomSelect("#activity-select", {
-    plugins: ["remove_button"],
-    create: false,
-    maxItems: null,
-    placeholder: "Select Activities..."
-});
-
-// Restore selected categories
-{% for category in selected_categories %}
-categorySelect.addItem("{{ category }}");
-{% endfor %}
-
-{% for activity in selected_activities %}
-activitySelect.addItem("{{ activity }}");
-{% endfor %}
-
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
+
 </html>
