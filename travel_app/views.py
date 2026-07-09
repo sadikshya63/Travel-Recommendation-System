@@ -11,7 +11,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from .utils import haversine
-from .models import Place, EmergencyContact, FAQ, Hotel, RecommendationHistory,VisitorCounter
+from .models import Place, EmergencyContact, FAQ, Hotel, RecommendationHistory,VisitorCounter, Hotspot
 
 # =========================
 # HOME
@@ -43,22 +43,26 @@ def place_detail(request, place_id):
     weather_data = get_weather(place.latitude, place.longitude)
     alert = weather_alert(weather_data)
 
-    hotspots = get_nearby_hotspots(
-        place.latitude,
-        place.longitude
-    )
+    # Get hotspots from database
+    hotspots = list(Hotspot.objects.filter(place=place))
 
+    # Calculate distance using Haversine
     for hotspot in hotspots:
 
-        hotspot["distance"] = haversine(
+        hotspot.distance = haversine(
             place.latitude,
             place.longitude,
-            hotspot["lat"],
-            hotspot["lon"]
+            hotspot.latitude,
+            hotspot.longitude
         )
 
-    hotspots.sort(key=lambda x: x["distance"])
+    # Sort by nearest hotspot
+    hotspots = sorted(
+        hotspots,
+        key=lambda x: x.distance
+    )
 
+    # Show only first 8
     hotspots = hotspots[:8]
 
     return render(request, "place_details.html", {
@@ -453,51 +457,5 @@ def weather_alert(weather_data):
         return "🌡 Normal Weather Conditions"
     
 
-import requests
 
-def get_nearby_hotspots(lat, lon, radius=6000):
 
-    url = "https://api.geoapify.com/v2/places"
-
-    params = {
-        "categories": ",".join([
-            "tourism.attraction",
-            "tourism.sights",
-            "entertainment.museum",
-            "leisure.park",
-            "religion"
-        ]),
-        "filter": f"circle:{lon},{lat},{radius}",
-        "limit": 10,
-        "apiKey": settings.GEOAPIFY_API_KEY
-    }
-
-    try:
-        response = requests.get(url, params=params, timeout=20)
-        response.raise_for_status()
-
-        data = response.json()
-
-        hotspots = []
-
-        for feature in data.get("features", []):
-
-            prop = feature.get("properties", {})
-
-            name = prop.get("name")
-
-            if not name:
-                continue
-
-            hotspots.append({
-                "name": name,
-                "lat": prop.get("lat"),
-                "lon": prop.get("lon"),
-                "type": ", ".join(prop.get("categories", []))
-            })
-
-        return hotspots
-
-    except Exception as e:
-        print("Geoapify Error:", e)
-        return []
