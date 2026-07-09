@@ -2,20 +2,23 @@ place_id,hotspot_name,category,latitude,longitude,description,image,google_map
 4,Guhyeshwari Temple,Temple,27.712391,85.348925,Sacred Hindu temple located beside Pashupatinath.,guhyeshwari.jpg,https://maps.google.com/?q=27.712391,85.348925
 4,Boudhanath Stupa,Stupa,27.721507,85.361556,UNESCO World Heritage Buddhist stupa.,boudhanath.jpg,https://maps.google.com/?q=27.721507,85.361556
 4,The Taragaon Museum,Museum,27.722070,85.362145,Museum showcasing Himalayan art and architecture.,taragaon.jpg,https://maps.google.com/?q=27.722070,85.362145
-4,Bankali Forest Park,Park,27.706800,85.343700,Peaceful forest area near Pashupatinath.,bankali.jpg,https://maps.google.com/?q=27.706800,85.343700
+4,Bankali Mandir,Temple,27.706800,85.343700,Famous Hindu temple located near Pashupatinath Temple in Kathmandu.,bankali.jpg,https://maps.google.com/?q=27.706800,85.343700
 4,Kirateshwor Mahadev Temple,Temple,27.714950,85.349880,Ancient Shiva temple near Bagmati River.,kirateshwor.jpg,https://maps.google.com/?q=27.714950,85.349880
+
 8,Maya Devi Temple,Temple,27.483689,83.276711,The birthplace temple of Lord Buddha.,mayadevi.jpg,https://maps.google.com/?q=27.483689,83.276711
 8,Ashoka Pillar,Historical Site,27.483760,83.276820,Historic pillar erected by Emperor Ashoka.,ashoka_pillar.jpg,https://maps.google.com/?q=27.483760,83.276820
 8,Lumbini Museum,Museum,27.485600,83.278900,Museum preserving Buddhist history and artifacts.,lumbini_museum.jpg,https://maps.google.com/?q=27.485600,83.278900
 8,World Peace Pagoda Lumbini,Monument,27.491200,83.279900,Beautiful pagoda promoting world peace.,peace_pagoda.jpg,https://maps.google.com/?q=27.491200,83.279900
 8,Eternal Peace Flame,Memorial,27.484900,83.278100,Symbolic eternal flame inside Lumbini Garden.,peace_flame.jpg,https://maps.google.com/?q=27.484900,83.278100
+
 11,Tal Barahi Temple,Temple,28.209600,83.958200,Island temple located in Phewa Lake.,talbarahi.jpg,https://maps.google.com/?q=28.209600,83.958200
 11,Davis Falls,Waterfall,28.192900,83.958100,Famous underground waterfall in Pokhara.,davisfalls.jpg,https://maps.google.com/?q=28.192900,83.958100
 11,Gupteshwor Mahadev Cave,Cave,28.193100,83.959500,Sacred cave opposite Davis Falls.,gupteshwor.jpg,https://maps.google.com/?q=28.193100,83.959500
 11,World Peace Pagoda Pokhara,Monument,28.200900,83.944700,Hilltop Buddhist monument overlooking Phewa Lake.,pokhara_peace_pagoda.jpg,https://maps.google.com/?q=28.200900,83.944700
 11,International Mountain Museum,Museum,28.188000,83.985700,Museum dedicated to the Himalayas and mountaineering.,mountain_museum.jpg,https://maps.google.com/?q=28.188000,83.985700
+
 15,Elephant Breeding Center,Wildlife,27.576500,84.495300,Government elephant conservation center.,elephant_center.jpg,https://maps.google.com/?q=27.576500,84.495300
 15,Rapti River,River,27.582300,84.490800,Popular destination for canoe rides and sunset views.,rapti_river.jpg,https://maps.google.com/?q=27.582300,84.490800
 15,Bis Hazari Lake,Lake,27.617700,84.452300,Ramsar-listed wetland rich in birdlife.,bishazari.jpg,https://maps.google.com/?q=27.617700,84.452300
 15,Tharu Cultural Museum,Museum,27.580100,84.497600,Museum showcasing Tharu culture and traditions.,tharu_museum.jpg,https://maps.google.com/?q=27.580100,84.497600
-15,Crocodile Breeding Center,Landmark,27.533200,84.348600,Crocodile Breeding Center near Kasara.,crocodile_breeding_center.jpg,https://maps.google.com/?q=27.533200,84.348600
+15,Sauraha Bus Park,Landmark,27.579700,84.496400,Main tourist entry point for Sauraha.,sauraha.jpg,https://maps.google.com/?q=27.579700,84.496400
