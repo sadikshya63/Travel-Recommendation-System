@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Place, Hotel, EmergencyContact, FAQ, RecommendationHistory,VisitorCounter
+from .models import Place, Hotel, EmergencyContact, FAQ, RecommendationHistory,VisitorCounter, Hotspot
 from django.contrib.admin import SimpleListFilter
 class ActivityFilter(SimpleListFilter):
     title = "activities"
@@ -148,3 +148,34 @@ class RecommendationHistoryAdmin(admin.ModelAdmin):
 @admin.register(VisitorCounter)
 class VisitorCounterAdmin(admin.ModelAdmin):
     list_display = ("total_visits",)
+
+@admin.register(Hotspot)
+class HotspotAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "hotspot_name",
+        "place",
+        "category",
+        "image_tag",
+    )
+
+    search_fields = (
+        "hotspot_name",
+        "category",
+        "place__place_name",
+    )
+
+    list_filter = (
+        "place",
+        "category",
+    )
+
+    def image_tag(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="/static/images/{}" width="80" height="50" style="border-radius:5px;" />',
+                obj.image
+            )
+        return "No Image"
+
+    image_tag.short_description = "Image"
