@@ -1,25 +1,26 @@
 import pandas as pd
 import requests
-import os
 
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.db.models import Q, Case, When, Value, IntegerField
-from dotenv import load_dotenv
-from .util import haversine
-
 
 from rapidfuzz import process, fuzz
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from .utils import haversine
 from .models import Place, EmergencyContact, FAQ, Hotel, RecommendationHistory,VisitorCounter
 
 # =========================
 # HOME
 # =========================
 def home(request):
+    places = Place.objects.filter(
+        featured=True,
+        is_active=True
+    )
     counter, created = VisitorCounter.objects.get_or_create(pk=1)
     counter.total_visits += 1
     counter.save()
@@ -30,11 +31,11 @@ def home(request):
         "places": places
     })
 
-
 # =========================
 # PLACE DETAIL
 # =========================
 def place_detail(request, place_id):
+
     place = get_object_or_404(Place, place_id=place_id)
 
     hotels = Hotel.objects.filter(place=place)
@@ -42,18 +43,23 @@ def place_detail(request, place_id):
     weather_data = get_weather(place.latitude, place.longitude)
     alert = weather_alert(weather_data)
 
-    hotspots = get_nearby_hotspots(place.latitude, place.longitude)
-    print("Hotspots:", hotspots)
+    hotspots = get_nearby_hotspots(
+        place.latitude,
+        place.longitude
+    )
 
     for hotspot in hotspots:
+
         hotspot["distance"] = haversine(
             place.latitude,
             place.longitude,
             hotspot["lat"],
-            hotspot["lon"],
+            hotspot["lon"]
         )
 
-    hotspots = sorted(hotspots, key=lambda x: x["distance"])
+    hotspots.sort(key=lambda x: x["distance"])
+
+    hotspots = hotspots[:8]
 
     return render(request, "place_details.html", {
         "place": place,
@@ -243,8 +249,11 @@ def explore(request):
     suggestion = None
 
     featured_places = Place.objects.filter(
-        place_id__in=[1, 4, 8, 13, 15, 16]
-    )
+    featured=True,
+    is_active=True
+)
+
+    
 
     if search or categories or activities:
 
@@ -327,134 +336,6 @@ def explore(request):
 def all_places(request):
 
     search = request.GET.get("search", "").strip()
-
-    places = Place.objects.all()
-
-    if search:
-        places = places.filter(
-            Q(place_name__icontains=search) |
-            Q(category__icontains=search) |
-            Q(province__icontains=search) |
-            Q(activities__icontains=search)
-        )
-
-    return render(request, "all_places.html", {
-        "places": places,
-        "search": search,
-    })
-
-
-# =========================
-# CONTACT
-# =========================
-def contact(request):
-    return render(request, "contact.html")
-
-
-# =========================
-# LIVE SEARCH API
-# =========================
-def search_suggestions(request):
-
-    query = request.GET.get("q", "").strip()
-
-    if not query:
-        return JsonResponse([], safe=False)
-
-    places = Place.objects.filter(
-        Q(place_name__icontains=query) |
-        Q(category__icontains=query) |
-        Q(province__icontains=query) |
-        Q(activities__icontains=query)
-    )[:8]
-
-    return JsonResponse([
-        {
-            "name": p.place_name,
-            "province": p.province,
-            "category": p.category,
-        }
-        for p in places
-    ], safe=False)
-
-
-# =========================
-# CATEGORY PLACES (FIXED)
-# =========================
-def category_places(request, category):
-
-    csv_path = os.path.join(
-        settings.BASE_DIR,
-        "travel_app",
-        "data",
-        "places.csv",
-    )
-
-    df = pd.read_csv(csv_path)
-    df.columns = df.columns.str.strip()
-
-    filtered = df[df["category"].str.lower() == category.lower()]
-    places = filtered.to_dict(orient="records")
-
-    return render(request, "category_places.html", {
-        "category": category,
-        "places": places,
-    })
-
-
-# =========================
-# SUPPORT PAGES
-# =========================
-def emergency(request):
-    contacts = EmergencyContact.objects.all()
-    return render(request, "emergency.html", {
-        "contacts": contacts
-    })
-
-
-def faq(request):
-    faqs = FAQ.objects.all()
-    return render(request, "faq.html", {
-        "faqs": faqs
-    })
-
-
-def privacy_policy(request):
-    return render(request, "privacy_policy.html")
-
-
-def terms_conditions(request):
-    return render(request, "terms_conditions.html")
-
-#weather api
-def get_weather(lat, lon):
-    url = (
-        f"https://api.openweathermap.org/data/2.5/weather"
-        f"?lat={lat}&lon={lon}"
-        f"&appid={settings.WEATHER_API_KEY}&units=metric"
-    )
-    response = requests.get(url)
-    return response.json()
-def weather_alert(weather_data):
-    main = weather_data["weather"][0]["main"].lower()
-
-    if "rain" in main:
-        return "🌧 Heavy Rain Warning"
-    elif "thunderstorm" in main:
-        return "⛈ Thunderstorm Alert"
-    elif "fog" in main or "mist" in main:
-        return "🌫 Dense Fog"
-    elif "clear" in main:
-        return "☀ Clear Weather"
-    elif "snow" in main:
-        return "❄ Snowfall Alert"
-    else:
-        return "🌡 Normal Weather Conditions"
-    
-
-    def all_places(request):
-
-        search = request.GET.get("search", "").strip()
 
     places = Place.objects.filter(is_active=True)
 
@@ -572,64 +453,51 @@ def weather_alert(weather_data):
         return "🌡 Normal Weather Conditions"
     
 
-def get_nearby_hotspots(lat, lon, radius=5000):
+import requests
 
-    overpass_query = f"""
-    [out:json];
+def get_nearby_hotspots(lat, lon, radius=6000):
 
-    (
-      node(around:{radius},{lat},{lon})["tourism"];
-      node(around:{radius},{lat},{lon})["historic"];
-      node(around:{radius},{lat},{lon})["leisure"="park"];
-      node(around:{radius},{lat},{lon})["amenity"="place_of_worship"];
-      node(around:{radius},{lat},{lon})["tourism"="museum"];
-      node(around:{radius},{lat},{lon})["tourism"="attraction"];
-      node(around:{radius},{lat},{lon})["tourism"="viewpoint"];
-    );
+    url = "https://api.geoapify.com/v2/places"
 
-    out body;
-    """
+    params = {
+        "categories": ",".join([
+            "tourism.attraction",
+            "tourism.sights",
+            "entertainment.museum",
+            "leisure.park",
+            "religion"
+        ]),
+        "filter": f"circle:{lon},{lat},{radius}",
+        "limit": 10,
+        "apiKey": settings.GEOAPIFY_API_KEY
+    }
 
-    url = "https://overpass-api.de/api/interpreter"
-
-    response = requests.post(url, data={"data": overpass_query}, timeout=15)
-    print("Status:", response.status_code)
-    print("Response:", response.text) 
-    
-    if response.status_code != 200:
-        print(response.text)
-        return []
-    
     try:
+        response = requests.get(url, params=params, timeout=20)
+        response.raise_for_status()
+
         data = response.json()
-        print("Hotspots found:", len(data.get("elements", [])))
-    except Exception:
-        print(response.text)
+
+        hotspots = []
+
+        for feature in data.get("features", []):
+
+            prop = feature.get("properties", {})
+
+            name = prop.get("name")
+
+            if not name:
+                continue
+
+            hotspots.append({
+                "name": name,
+                "lat": prop.get("lat"),
+                "lon": prop.get("lon"),
+                "type": ", ".join(prop.get("categories", []))
+            })
+
+        return hotspots
+
+    except Exception as e:
+        print("Geoapify Error:", e)
         return []
-
-    hotspots = []
-
-    for item in data.get("elements", []):
-
-        tags = item.get("tags", {})
-
-        name = tags.get("name")
-
-        if not name:
-            continue
-
-        hotspot = {
-            "name": name,
-            "lat": item.get("lat"),
-            "lon": item.get("lon"),
-            "type":
-                tags.get("tourism")
-                or tags.get("historic")
-                or tags.get("leisure")
-                or tags.get("amenity")
-                or "Attraction"
-        }
-
-        hotspots.append(hotspot)
-
-    return hotspots

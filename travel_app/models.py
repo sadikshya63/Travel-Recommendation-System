@@ -82,5 +82,24 @@ class VisitorCounter(models.Model):
     def __str__(self):
         return f"Total Visitors: {self.total_visits}"
     
+class Hotspot(models.Model):
+    place = models.ForeignKey(
+        Place,
+        on_delete=models.CASCADE,
+        related_name="hotspots"
+    )
 
+    hotspot_name = models.CharField(max_length=200)
+    category = models.CharField(max_length=100)
 
+    latitude = models.DecimalField(max_digits=10, decimal_places=6)
+    longitude = models.DecimalField(max_digits=10, decimal_places=6)
+
+    description = models.TextField(blank=True)
+
+    image = models.CharField(max_length=255, blank=True)
+
+    google_map = models.URLField(blank=True)
+
+    def __str__(self):
+        return self.hotspot_name

@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <style>
+     <style>
         .navbar {
             position: static !important;
             background: #222 !important;
@@ -25,198 +25,200 @@
 
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
 
-            <a class="navbar-brand" href="{% url 'home' %}">
-                <i class="fa-solid fa-mountain-sun"></i>
-                MeroYatra
-            </a>
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <i class="fa-solid fa-mountain-sun"></i>
+            MeroYatra
+        </a>
 
-            <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <div class="collapse navbar-collapse" id="menu">
+        <div class="collapse navbar-collapse" id="menu">
 
-                <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto">
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">Home</a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'home' %}">Home</a>
+                </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'recommendation' %}">Recommendation</a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'recommendation' %}">Recommendation</a>
+                </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'explore' %}">Explore</a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'explore' %}">Explore</a>
+                </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'contact' %}">Contact</a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'contact' %}">Contact</a>
+                </li>
 
-                </ul>
-
-            </div>
+            </ul>
 
         </div>
-    </nav>
 
-    <section class="contact-section">
+    </div>
+</nav>
 
-        <div class="container">
+<section class="contact-section">
 
-            <div class="text-center mb-5">
+<div class="container">
 
-                <h2>Contact Us</h2>
+    <div class="text-center mb-5">
 
-                <p>
-                    Have questions about your trip? We'd love to help you plan your journey.
-                </p>
+        <h2>Contact Us</h2>
 
-            </div>
+        <p>
+            Have questions about your trip? We'd love to help you plan your journey.
+        </p>
 
-            <div class="row g-4">
+    </div>
 
-                <!-- Phone -->
+    <div class="row g-4">
 
-                <div class="col-lg-4 col-md-6">
+        <!-- Phone -->
 
-                    <div class="contact-card">
+        <div class="col-lg-4 col-md-6">
 
-                        <i class="fa-solid fa-phone contact-icon"></i>
+            <div class="contact-card">
 
-                        <h4>Phone Support</h4>
+                <i class="fa-solid fa-phone contact-icon"></i>
 
-                        <p>+977 9824029677</p>
+                <h4>Phone Support</h4>
 
-                        <a href="tel:+9779824029677" class="btn btn-success">
-                            Call Now
-                        </a>
+                <p>+977 9824029677</p>
 
-                    </div>
-
-                </div>
-
-
-                <!-- Email -->
-
-                <div class="col-lg-4 col-md-6">
-
-                    <div class="contact-card">
-
-                        <i class="fa-regular fa-envelope contact-icon"></i>
-
-                        <h4>Email Support</h4>
-
-                        <p>nepaltouristguide06@gmail.com</p>
-
-                        <a href="mailto:sadikshyaniroula06@gmail.com" class="btn btn-success">
-                            Send Email
-                        </a>
-
-                    </div>
-
-                </div>
-
-                <!-- WhatsApp -->
-
-                <div class="col-lg-4 col-md-6">
-
-                    <div class="contact-card">
-
-                        <i class="fa-brands fa-whatsapp contact-icon"></i>
-
-                        <h4>WhatsApp</h4>
-
-                        <p>+977 9824029677</p>
-
-                        <a href="https://wa.me/9779824029677" target="_blank" class="btn btn-success">
-                            Chat Now
-                        </a>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Facebook -->
-
-                <div class="col-lg-4 col-md-6">
-
-                    <div class="contact-card">
-
-                        <i class="fa-brands fa-facebook contact-icon"></i>
-
-                        <h4>Facebook</h4>
-
-                        <p>Follow us for travel updates.</p>
-
-                        <a href="https://www.facebook.com/profile.php?id=61591564920482" target="_blank"
-                            class="btn btn-success">
-                            Visit Page
-                        </a>
-
-                    </div>
-
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-
-                    <div class="contact-card">
-
-                        <i class="fa-brands fa-instagram contact-icon"></i>
-
-                        <h4>Instagram</h4>
-
-                        <p>Follow us for travel photos and destination highlights.</p>
-
-                        <a href="https://www.instagram.com/nepaltouristguide06/" target="_blank"
-                            class="btn btn-success">
-                            Visit Profile
-                        </a>
-
-                    </div>
-
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-
-                    <div class="contact-card">
-
-                        <i class="fa-brands fa-linkedin contact-icon"></i>
-
-                        <h4>LinkedIn</h4>
-
-                        <p>Connect with us for professional updates and collaborations.</p>
-
-                        <a href="https://www.linkedin.com/in/nepaltouristguide-undefined-94b24b41b/" target="_blank"
-                            class="btn btn-success">
-                            Connect
-                        </a>
-
-                    </div>
-
-                </div>
+                <a href="tel:+9779824029677" class="btn btn-success">
+                    Call Now
+                </a>
 
             </div>
 
         </div>
 
-    </section>
+
+        <!-- Email -->
+
+        <div class="col-lg-4 col-md-6">
+
+            <div class="contact-card">
+
+                <i class="fa-regular fa-envelope contact-icon"></i>
+
+                <h4>Email Support</h4>
+
+                <p>nepaltouristguide06@gmail.com</p>
+
+                <a href="mailto:sadikshyaniroula06@gmail.com" class="btn btn-success">
+                    Send Email
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- WhatsApp -->
+
+        <div class="col-lg-4 col-md-6">
+
+            <div class="contact-card">
+
+                <i class="fa-brands fa-whatsapp contact-icon"></i>
+
+                <h4>WhatsApp</h4>
+
+                <p>+977 9824029677</p>
+
+                <a href="https://wa.me/9779824029677" target="_blank" class="btn btn-success">
+    Chat Now
+</a>
+
+            </div>
+
+        </div>
 
 
-    <footer class="bg-dark text-white text-center py-4">
+        <!-- Facebook -->
 
-        <p>© 2026 Nepal Tourist Guide Recommendation System</p>
+        <div class="col-lg-4 col-md-6">
 
-    </footer>
+            <div class="contact-card">
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+                <i class="fa-brands fa-facebook contact-icon"></i>
+
+                <h4>Facebook</h4>
+
+                <p>Follow us for travel updates.</p>
+
+                <a href="https://www.facebook.com/profile.php?id=61591564920482"
+   target="_blank"
+   class="btn btn-success">
+    Visit Page
+</a>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+
+    <div class="contact-card">
+
+        <i class="fa-brands fa-instagram contact-icon"></i>
+
+        <h4>Instagram</h4>
+
+        <p>Follow us for travel photos and destination highlights.</p>
+
+        <a href="https://www.instagram.com/nepaltouristguide06/"
+   target="_blank"
+   class="btn btn-success">
+    Visit Profile
+</a>
+
+    </div>
+
+</div>
+
+<div class="col-lg-4 col-md-6">
+
+    <div class="contact-card">
+
+        <i class="fa-brands fa-linkedin contact-icon"></i>
+
+        <h4>LinkedIn</h4>
+
+        <p>Connect with us for professional updates and collaborations.</p>
+
+        <a href="https://www.linkedin.com/in/nepaltouristguide-undefined-94b24b41b/"
+   target="_blank"
+   class="btn btn-success">
+    Connect
+</a>
+
+    </div>
+
+</div>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<footer class="bg-dark text-white text-center py-4">
+
+    <p>© 2026 Nepal Tourist Guide Recommendation System</p>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
-
 </html>
