@@ -434,3 +434,124 @@ def weather_alert(weather_data):
         return "❄ Snowfall Alert"
     else:
         return "🌡 Normal Weather Conditions"
+    
+    
+def all_places(request):
+
+    search = request.GET.get("search", "").strip()
+
+    places = Place.objects.filter(is_active=True)
+
+    if search:
+        places = places.filter(
+            Q(place_name__icontains=search) |
+            Q(category__icontains=search) |
+            Q(province__icontains=search) |
+            Q(activities__icontains=search)
+        )
+
+    return render(request, "all_places.html", {
+        "places": places,
+        "search": search,
+    })
+
+
+# =========================
+# CONTACT
+# =========================
+def contact(request):
+    return render(request, "contact.html")
+
+
+# =========================
+# LIVE SEARCH API
+# =========================
+def search_suggestions(request):
+
+    query = request.GET.get("q", "").strip()
+
+    if not query:
+        return JsonResponse([], safe=False)
+
+    places = Place.objects.filter(
+        Q(place_name__icontains=query) |
+        Q(category__icontains=query) |
+        Q(province__icontains=query) |
+        Q(activities__icontains=query)
+    )[:8]
+
+    return JsonResponse([
+        {
+            "name": p.place_name,
+            "province": p.province,
+            "category": p.category,
+        }
+        for p in places
+    ], safe=False)
+
+
+# =========================
+# CATEGORY PLACES (FIXED)
+# =========================
+def category_places(request, category):
+
+    places = Place.objects.filter(
+        category__iexact=category,
+        is_active=True
+    )
+
+    return render(request, "category_places.html", {
+        "category": category,
+        "places": places,
+    })
+
+
+# =========================
+# SUPPORT PAGES
+# =========================
+def emergency(request):
+    contacts = EmergencyContact.objects.all()
+    return render(request, "emergency.html", {
+        "contacts": contacts
+    })
+
+
+def faq(request):
+    faqs = FAQ.objects.all()
+    return render(request, "faq.html", {
+        "faqs": faqs
+    })
+
+
+def privacy_policy(request):
+    return render(request, "privacy_policy.html")
+
+
+def terms_conditions(request):
+    return render(request, "terms_conditions.html")
+
+#weather api
+def get_weather(lat, lon):
+    url = (
+        f"https://api.openweathermap.org/data/2.5/weather"
+        f"?lat={lat}&lon={lon}"
+        f"&appid={settings.WEATHER_API_KEY}&units=metric"
+    )
+    response = requests.get(url)
+    return response.json()
+def weather_alert(weather_data):
+    main = weather_data["weather"][0]["main"].lower()
+
+    if "rain" in main:
+        return "🌧 Heavy Rain Warning"
+    elif "thunderstorm" in main:
+        return "⛈ Thunderstorm Alert"
+    elif "fog" in main or "mist" in main:
+        return "🌫 Dense Fog"
+    elif "clear" in main:
+        return "☀ Clear Weather"
+    elif "snow" in main:
+        return "❄ Snowfall Alert"
+    else:
+        return "🌡 Normal Weather Conditions"
+    
