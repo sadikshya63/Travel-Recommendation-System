@@ -234,6 +234,58 @@
 
 </div>
 
+<div class="card-box mt-5">
+
+    <h4 class="section-title">
+        🔥 Nearby Hotspots
+    </h4>
+
+    <div class="row">
+
+        {% if hotspots %}
+
+            {% for hotspot in hotspots %}
+
+            <div class="col-md-6 mb-3">
+
+                <div class="border rounded p-3 h-100">
+
+                    <h5>
+                        📍 {{ hotspot.name }}
+                    </h5>
+
+                    <p class="mb-1">
+
+                        <strong>Type:</strong>
+
+                        {{ hotspot.type }}
+
+                    </p>
+
+                    <p class="mb-0">
+
+                        <strong>Distance:</strong>
+
+                        {{ hotspot.distance }} km
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>No nearby hotspots found.</p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
 <!-- Back Button -->
 <div class="text-center mb-5">
     <a href="/" class="btn btn-secondary">← Back to Home</a>
@@ -291,7 +343,11 @@
 </div>
 
 <footer class="bg-dark text-white text-center py-4">
+<<<<<<< HEAD
     <p class="mb-0">© 2026 MeroYatra</p>
+=======
+    <p class="mb-0">© 2026 MeroYatra Recommendation System</p>
+>>>>>>> 3e0b27fc762abb5c283231d62e84f4c896bc821d
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
