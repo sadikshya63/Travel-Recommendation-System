@@ -1,24 +1,29 @@
-import os
-import csv
 import pandas as pd
 import requests
+import os
 
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.db.models import Q, Case, When, Value, IntegerField
 from dotenv import load_dotenv
+from .util import haversine
+
 
 from rapidfuzz import process, fuzz
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from .models import Place, EmergencyContact, FAQ, Hotel
+from .models import Place, EmergencyContact, FAQ, Hotel, RecommendationHistory,VisitorCounter
 
 # =========================
 # HOME
 # =========================
 def home(request):
+    counter, created = VisitorCounter.objects.get_or_create(pk=1)
+    counter.total_visits += 1
+    counter.save()
+
     places = Place.objects.filter(is_active=True)[:6]
 
     return render(request, "home.html", {
@@ -30,22 +35,32 @@ def home(request):
 # PLACE DETAIL
 # =========================
 def place_detail(request, place_id):
-
-    place = get_object_or_404(Place, place_id=place_id)
-
     place = get_object_or_404(Place, place_id=place_id)
 
     hotels = Hotel.objects.filter(place=place)
 
     weather_data = get_weather(place.latitude, place.longitude)
     alert = weather_alert(weather_data)
-    
+
+    hotspots = get_nearby_hotspots(place.latitude, place.longitude)
+    print("Hotspots:", hotspots)
+
+    for hotspot in hotspots:
+        hotspot["distance"] = haversine(
+            place.latitude,
+            place.longitude,
+            hotspot["lat"],
+            hotspot["lon"],
+        )
+
+    hotspots = sorted(hotspots, key=lambda x: x["distance"])
 
     return render(request, "place_details.html", {
         "place": place,
         "hotels": hotels,
         "weather": weather_data,
         "alert": alert,
+        "hotspots": hotspots,
     })
 
 
@@ -57,6 +72,28 @@ def recommendation(request):
     recommendations = []
     message = ""
 
+    # Dynamic dropdown data
+    categories = Place.objects.values_list(
+        "category",
+        flat=True
+    ).distinct()
+
+    provinces = Place.objects.values_list(
+        "province",
+        flat=True
+    ).distinct()
+
+    activity_set = set()
+
+    for item in Place.objects.values_list("activities", flat=True):
+
+        if item:
+
+            for activity in item.split(","):
+                activity_set.add(activity.strip())
+
+    activities_list = sorted(activity_set)
+
     if request.method == "POST":
 
         category = request.POST.get("category")
@@ -65,17 +102,35 @@ def recommendation(request):
         budget = request.POST.get("budget_level")
         duration = request.POST.get("duration")
         tourist = request.POST.get("tourist_type")
+        places = Place.objects.all()
+        RecommendationHistory.objects.create(
+         category=category,
+         activities=", ".join(activities),
+         province=province,
+         budget_level=budget,
+         duration=duration,
+         tourist_type=tourist,
+)
 
-        csv_path = os.path.join(
-            settings.BASE_DIR,
-            "travel_app",
-            "data",
-            "places.csv"
-        )
+        data = []
 
-        df = pd.read_csv(csv_path)
-        df.columns = df.columns.str.strip()
+        for p in places:
+         data.append({
+        "place_id": p.place_id,
+        "place_name": p.place_name,
+        "category": p.category,
+        "activities": p.activities,
+        "province": p.province,
+        "budget_level": p.budget_level,
+        "duration": p.duration,
+        "tourist_type": p.tourist_type,
+        "description": p.description,
+        "image": p.image,
+    })
+
+        df = pd.DataFrame(data)
         df = df.fillna("")
+        
 
         result = df.copy()
 
@@ -163,10 +218,17 @@ def recommendation(request):
 
             recommendations = result.head(5).to_dict("records")
 
-    return render(request, "recommendation.html", {
+    return render(
+    request,
+    "recommendation.html",
+    {
         "recommendations": recommendations,
         "message": message,
-    })
+        "categories": categories,
+        "provinces": provinces,
+        "activities_list": activities_list,
+    }
+)
 
 
 # =========================
@@ -388,3 +450,186 @@ def weather_alert(weather_data):
         return "❄ Snowfall Alert"
     else:
         return "🌡 Normal Weather Conditions"
+    
+
+    def all_places(request):
+
+        search = request.GET.get("search", "").strip()
+
+    places = Place.objects.filter(is_active=True)
+
+    if search:
+        places = places.filter(
+            Q(place_name__icontains=search) |
+            Q(category__icontains=search) |
+            Q(province__icontains=search) |
+            Q(activities__icontains=search)
+        )
+
+    return render(request, "all_places.html", {
+        "places": places,
+        "search": search,
+    })
+
+
+# =========================
+# CONTACT
+# =========================
+def contact(request):
+    return render(request, "contact.html")
+
+
+# =========================
+# LIVE SEARCH API
+# =========================
+def search_suggestions(request):
+
+    query = request.GET.get("q", "").strip()
+
+    if not query:
+        return JsonResponse([], safe=False)
+
+    places = Place.objects.filter(
+        Q(place_name__icontains=query) |
+        Q(category__icontains=query) |
+        Q(province__icontains=query) |
+        Q(activities__icontains=query)
+    )[:8]
+
+    return JsonResponse([
+        {
+            "name": p.place_name,
+            "province": p.province,
+            "category": p.category,
+        }
+        for p in places
+    ], safe=False)
+
+
+# =========================
+# CATEGORY PLACES (FIXED)
+# =========================
+def category_places(request, category):
+
+    places = Place.objects.filter(
+        category__iexact=category,
+        is_active=True
+    )
+
+    return render(request, "category_places.html", {
+        "category": category,
+        "places": places,
+    })
+
+
+# =========================
+# SUPPORT PAGES
+# =========================
+def emergency(request):
+    contacts = EmergencyContact.objects.all()
+    return render(request, "emergency.html", {
+        "contacts": contacts
+    })
+
+
+def faq(request):
+    faqs = FAQ.objects.all()
+    return render(request, "faq.html", {
+        "faqs": faqs
+    })
+
+
+def privacy_policy(request):
+    return render(request, "privacy_policy.html")
+
+
+def terms_conditions(request):
+    return render(request, "terms_conditions.html")
+
+#weather api
+def get_weather(lat, lon):
+    url = (
+        f"https://api.openweathermap.org/data/2.5/weather"
+        f"?lat={lat}&lon={lon}"
+        f"&appid={settings.WEATHER_API_KEY}&units=metric"
+    )
+    response = requests.get(url)
+    return response.json()
+def weather_alert(weather_data):
+    main = weather_data["weather"][0]["main"].lower()
+
+    if "rain" in main:
+        return "🌧 Heavy Rain Warning"
+    elif "thunderstorm" in main:
+        return "⛈ Thunderstorm Alert"
+    elif "fog" in main or "mist" in main:
+        return "🌫 Dense Fog"
+    elif "clear" in main:
+        return "☀ Clear Weather"
+    elif "snow" in main:
+        return "❄ Snowfall Alert"
+    else:
+        return "🌡 Normal Weather Conditions"
+    
+
+def get_nearby_hotspots(lat, lon, radius=5000):
+
+    overpass_query = f"""
+    [out:json];
+
+    (
+      node(around:{radius},{lat},{lon})["tourism"];
+      node(around:{radius},{lat},{lon})["historic"];
+      node(around:{radius},{lat},{lon})["leisure"="park"];
+      node(around:{radius},{lat},{lon})["amenity"="place_of_worship"];
+      node(around:{radius},{lat},{lon})["tourism"="museum"];
+      node(around:{radius},{lat},{lon})["tourism"="attraction"];
+      node(around:{radius},{lat},{lon})["tourism"="viewpoint"];
+    );
+
+    out body;
+    """
+
+    url = "https://overpass-api.de/api/interpreter"
+
+    response = requests.post(url, data={"data": overpass_query}, timeout=15)
+    print("Status:", response.status_code)
+    print("Response:", response.text) 
+    
+    if response.status_code != 200:
+        print(response.text)
+        return []
+    
+    try:
+        data = response.json()
+        print("Hotspots found:", len(data.get("elements", [])))
+    except Exception:
+        print(response.text)
+        return []
+
+    hotspots = []
+
+    for item in data.get("elements", []):
+
+        tags = item.get("tags", {})
+
+        name = tags.get("name")
+
+        if not name:
+            continue
+
+        hotspot = {
+            "name": name,
+            "lat": item.get("lat"),
+            "lon": item.get("lon"),
+            "type":
+                tags.get("tourism")
+                or tags.get("historic")
+                or tags.get("leisure")
+                or tags.get("amenity")
+                or "Attraction"
+        }
+
+        hotspots.append(hotspot)
+
+    return hotspots
