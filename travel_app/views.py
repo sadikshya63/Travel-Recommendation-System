@@ -80,21 +80,17 @@ def recommendation(request):
 
     # Dynamic dropdown data
     categories = Place.objects.values_list(
-        "category",
-        flat=True
+        "category", flat=True
     ).distinct()
 
     provinces = Place.objects.values_list(
-        "province",
-        flat=True
+        "province", flat=True
     ).distinct()
 
     activity_set = set()
 
     for item in Place.objects.values_list("activities", flat=True):
-
         if item:
-
             for activity in item.split(","):
                 activity_set.add(activity.strip())
 
@@ -108,51 +104,67 @@ def recommendation(request):
         budget = request.POST.get("budget_level")
         duration = request.POST.get("duration")
         tourist = request.POST.get("tourist_type")
-        places = Place.objects.all()
+
+        # Validate category
+        if not category:
+            message = "Please select a category."
+
+            return render(request, "recommendation.html", {
+                "recommendations": [],
+                "message": message,
+                "categories": categories,
+                "activities_list": activities_list,
+                "provinces": provinces,
+            })
+
+        # Save history
         RecommendationHistory.objects.create(
-         category=category,
-         activities=", ".join(activities),
-         province=province,
-         budget_level=budget,
-         duration=duration,
-         tourist_type=tourist,
-)
+            category=category,
+            activities=", ".join(activities),
+            province=province,
+            budget_level=budget,
+            duration=duration,
+            tourist_type=tourist,
+        )
+
+        # Load data from database
+        places = Place.objects.all()
 
         data = []
 
         for p in places:
-         data.append({
-        "place_id": p.place_id,
-        "place_name": p.place_name,
-        "category": p.category,
-        "activities": p.activities,
-        "province": p.province,
-        "budget_level": p.budget_level,
-        "duration": p.duration,
-        "tourist_type": p.tourist_type,
-        "description": p.description,
-        "image": p.image,
-    })
+            data.append({
+                "place_id": p.place_id,
+                "place_name": p.place_name,
+                "category": p.category,
+                "activities": p.activities,
+                "province": p.province,
+                "budget_level": p.budget_level,
+                "duration": p.duration,
+                "tourist_type": p.tourist_type,
+                "description": p.description,
+                "image": p.image,
+            })
 
-        df = pd.DataFrame(data)
-        df = df.fillna("")
-        
+        df = pd.DataFrame(data).fillna("")
 
         result = df.copy()
 
-        # Category filter
-        if category:
-            result = result[result["category"].str.lower() == category.lower()]
+        # Category
+        result = result[result["category"].str.lower() == category.lower()]
 
-        # Province filter
-        if province and province != "Any Province":
-            result = result[result["province"].str.lower() == province.lower()]
+        # Province
+        if province != "Any Province":
+            result = result[
+                result["province"].str.lower() == province.lower()
+            ]
 
-        # Budget filter
-        if budget:
-            result = result[result["budget_level"].str.lower() == budget.lower()]
+        # Budget
+        result = result[
+            result["budget_level"].str.lower() == budget.lower()
+        ]
 
-        # Duration filter
+        # Duration
         if duration:
             numbers = result["duration"].str.extract(r"(\d+)")
             min_days = numbers[0].fillna(0).astype(int)
@@ -160,26 +172,34 @@ def recommendation(request):
 
             if duration == "1-3 Days":
                 result = result[max_days <= 3]
+
             elif duration == "4-6 Days":
                 result = result[(max_days >= 4) & (min_days <= 6)]
+
             elif duration == "7-9 Days":
                 result = result[(max_days >= 7) & (min_days <= 9)]
+
             elif duration == "10+ Days":
                 result = result[max_days >= 10]
 
-        # Tourist type filter
-        if tourist:
-            result = result[
-                (result["tourist_type"].str.lower() == tourist.lower()) |
-                (result["tourist_type"].str.lower() == "both")
-            ]
+        # Tourist Type
+        result = result[
+            (result["tourist_type"].str.lower() == tourist.lower()) |
+            (result["tourist_type"].str.lower() == "both")
+        ]
 
-        # Activities filter
+        # Activities
         if activities:
+
             pattern = "|".join(activities)
 
             activity_result = result[
-                result["activities"].str.contains(pattern, case=False, na=False, regex=True)
+                result["activities"].str.contains(
+                    pattern,
+                    case=False,
+                    na=False,
+                    regex=True
+                )
             ]
 
             if not activity_result.empty:
@@ -187,55 +207,51 @@ def recommendation(request):
             else:
                 message = "Exact activities not found. Showing similar destinations."
 
-        # fallback
+        # Fallback
         if result.empty:
             message = "No exact destination found. Showing similar destinations."
             result = df.copy()
 
-        # similarity scoring
-        if not result.empty:
+        # Similarity
+        result["features"] = (
+            result["category"] + " " +
+            result["activities"] + " " +
+            result["province"] + " " +
+            result["budget_level"] + " " +
+            result["duration"] + " " +
+            result["tourist_type"]
+        )
 
-            result["features"] = (
-                result["category"] + " " +
-                result["activities"] + " " +
-                result["province"] + " " +
-                result["budget_level"] + " " +
-                result["duration"] + " " +
-                result["tourist_type"]
-            )
+        activity_text = " ".join(activities)
 
-            activity_text = " ".join(activities) if activities else ""
+        user_features = (
+            f"{category} {activity_text} {province} {budget} {duration} {tourist}"
+        )
 
-            user_features = (
-                f"{category} {activity_text} {province} {budget} {duration} {tourist}"
-            )
+        documents = [user_features] + result["features"].tolist()
 
-            documents = [user_features] + result["features"].tolist()
+        vectorizer = TfidfVectorizer(stop_words="english")
+        tfidf = vectorizer.fit_transform(documents)
 
-            vectorizer = TfidfVectorizer(stop_words="english")
-            tfidf = vectorizer.fit_transform(documents)
+        similarity = cosine_similarity(tfidf[0:1], tfidf[1:])
 
-            similarity = cosine_similarity(tfidf[0:1], tfidf[1:])
+        result["similarity"] = similarity.flatten()
+        result["match"] = (result["similarity"] * 100).round().astype(int)
 
-            result["similarity"] = similarity.flatten()
-            result["match"] = (result["similarity"] * 100).round().astype(int)
+        result = result.sort_values(
+            by="similarity",
+            ascending=False
+        )
 
-            result = result.sort_values(by="similarity", ascending=False)
+        recommendations = result.head(5).to_dict("records")
 
-            recommendations = result.head(5).to_dict("records")
-
-    return render(
-    request,
-    "recommendation.html",
-    {
+    return render(request, "recommendation.html", {
         "recommendations": recommendations,
         "message": message,
         "categories": categories,
-        "provinces": provinces,
         "activities_list": activities_list,
-    }
-)
-
+        "provinces": provinces,
+    })
 
 # =========================
 # EXPLORE
