@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{{ place.place_name }} | Nepal Tourist Guide</title>
+    <title>{{ place.place_name }} | MeroYatra</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -234,6 +234,7 @@
 
 </div>
 
+<!-- Nearby Hotspots -->
 <div class="card-box mt-5">
 
     <h4 class="section-title">
@@ -246,29 +247,83 @@
 
             {% for hotspot in hotspots %}
 
-            <div class="col-md-6 mb-3">
+            <div class="col-md-6 col-lg-4 mb-4">
 
-                <div class="border rounded p-3 h-100">
+                <div class="card shadow-sm h-100">
 
-                    <h5>
-                        📍 {{ hotspot.name }}
-                    </h5>
+                    <img src="{% static 'images/' %}{{ hotspot.image }}"
+                         class="card-img-top"
+                         style="height:220px; object-fit:cover;"
+                         alt="{{ hotspot.hotspot_name }}">
 
-                    <p class="mb-1">
+                    <div class="card-body">
 
-                        <strong>Type:</strong>
+                        <h5 class="card-title">
+                            📍 {{ hotspot.hotspot_name }}
+                        </h5>
 
-                        {{ hotspot.type }}
+                        <p class="text-muted">
 
-                    </p>
+                            {% if hotspot.category == "Temple" %}
+                                🛕 Temple
 
-                    <p class="mb-0">
+                            {% elif hotspot.category == "Stupa" %}
+                                ☸️ Stupa
 
-                        <strong>Distance:</strong>
+                            {% elif hotspot.category == "Museum" %}
+                                🏛 Museum
 
-                        {{ hotspot.distance }} km
+                            {% elif hotspot.category == "Historical Site" %}
+                                🏰 Historical Site
 
-                    </p>
+                            {% elif hotspot.category == "Park" %}
+                                🌳 Park
+
+                            {% elif hotspot.category == "Lake" %}
+                                🌊 Lake
+
+                            {% elif hotspot.category == "Waterfall" %}
+                                💦 Waterfall
+
+                            {% elif hotspot.category == "Cave" %}
+                                🕳 Cave
+
+                            {% elif hotspot.category == "Wildlife" %}
+                                🐘 Wildlife
+
+                            {% elif hotspot.category == "Viewpoint" %}
+                                🌄 Viewpoint
+
+                            {% elif hotspot.category == "River" %}
+                                🏞 River
+
+                            {% else %}
+                                📍 {{ hotspot.category }}
+
+                            {% endif %}
+
+                        </p>
+
+                        {% if hotspot.description %}
+                        <p class="small text-secondary">
+                            {{ hotspot.description }}
+                        </p>
+                        {% endif %}
+
+                        <p>
+                            📏 <strong>{{ hotspot.distance }} km</strong> away
+                        </p>
+
+                        <a href="{{ hotspot.google_map }}"
+                           target="_blank"
+                           class="btn btn-success w-100">
+
+                            <i class="fa-solid fa-location-dot"></i>
+                            View on Google Maps
+
+                        </a>
+
+                    </div>
 
                 </div>
 
@@ -278,7 +333,11 @@
 
         {% else %}
 
-            <p>No nearby hotspots found.</p>
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No nearby hotspots available for this destination.
+                </div>
+            </div>
 
         {% endif %}
 
@@ -290,64 +349,15 @@
 <div class="text-center mb-5">
     <a href="/" class="btn btn-secondary">← Back to Home</a>
 </div>
-<div class="card-box mt-5">
-
-    <h4 class="section-title">
-        🔥 Nearby Hotspots
-    </h4>
-
-    <div class="row">
-
-        {% if hotspots %}
-
-            {% for hotspot in hotspots %}
-
-            <div class="col-md-6 mb-3">
-
-                <div class="border rounded p-3 h-100">
-
-                    <h5>
-                        📍 {{ hotspot.name }}
-                    </h5>
-
-                    <p class="mb-1">
-
-                        <strong>Type:</strong>
-
-                        {{ hotspot.type }}
-
-                    </p>
-
-                    <p class="mb-0">
-
-                        <strong>Distance:</strong>
-
-                        {{ hotspot.distance }} km
-
-                    </p>
-
-                </div>
 
             </div>
-
-            {% endfor %}
-
-        {% else %}
-
-            <p>No nearby hotspots found.</p>
-
-        {% endif %}
 
     </div>
 
 </div>
 
 <footer class="bg-dark text-white text-center py-4">
-<<<<<<< HEAD
     <p class="mb-0">© 2026 MeroYatra</p>
-=======
-    <p class="mb-0">© 2026 MeroYatra Recommendation System</p>
->>>>>>> 3e0b27fc762abb5c283231d62e84f4c896bc821d
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
