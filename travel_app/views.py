@@ -11,7 +11,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from .utils import haversine
-from .models import Place, EmergencyContact, FAQ, Hotel, RecommendationHistory,VisitorCounter
+from .models import Place, EmergencyContact, FAQ, Hotel, RecommendationHistory,VisitorCounter, Hotspot
 
 # =========================
 # HOME
@@ -43,22 +43,26 @@ def place_detail(request, place_id):
     weather_data = get_weather(place.latitude, place.longitude)
     alert = weather_alert(weather_data)
 
-    hotspots = get_nearby_hotspots(
-        place.latitude,
-        place.longitude
-    )
+    # Get hotspots from database
+    hotspots = list(Hotspot.objects.filter(place=place))
 
+    # Calculate distance using Haversine
     for hotspot in hotspots:
 
-        hotspot["distance"] = haversine(
+        hotspot.distance = haversine(
             place.latitude,
             place.longitude,
-            hotspot["lat"],
-            hotspot["lon"]
+            hotspot.latitude,
+            hotspot.longitude
         )
 
-    hotspots.sort(key=lambda x: x["distance"])
+    # Sort by nearest hotspot
+    hotspots = sorted(
+        hotspots,
+        key=lambda x: x.distance
+    )
 
+    # Show only first 8
     hotspots = hotspots[:8]
 
     return render(request, "place_details.html", {
@@ -77,14 +81,23 @@ def recommendation(request):
 
     recommendations = []
     message = ""
+    # Store selected values
+    category = ""
+    activities = []
+    province = "Any Province"
+    budget = ""
+    duration = ""
+    tourist = ""
 
     # Dynamic dropdown data
     categories = Place.objects.values_list(
-        "category", flat=True
+        "category",
+        flat=True
     ).distinct()
 
     provinces = Place.objects.values_list(
-        "province", flat=True
+        "province",
+        flat=True
     ).distinct()
 
     activity_set = set()
@@ -105,19 +118,30 @@ def recommendation(request):
         duration = request.POST.get("duration")
         tourist = request.POST.get("tourist_type")
 
-        # Validate category
+        # Validate required category
         if not category:
             message = "Please select a category."
 
-            return render(request, "recommendation.html", {
-                "recommendations": [],
-                "message": message,
-                "categories": categories,
-                "activities_list": activities_list,
-                "provinces": provinces,
-            })
-
-        # Save history
+            
+            return render(
+            request,
+           "recommendation.html",
+        {
+            "recommendations": [],
+            "message": message,
+            "categories": categories,
+            "activities_list": activities_list,
+            "provinces": provinces,
+            "selected_category": category,
+            "selected_activities": activities,
+            "selected_province": province,
+            "selected_budget": budget,
+            "selected_duration": duration,
+            "selected_tourist": tourist,
+        }
+        )
+ 
+        # Save recommendation history
         RecommendationHistory.objects.create(
             category=category,
             activities=", ".join(activities),
@@ -127,12 +151,10 @@ def recommendation(request):
             tourist_type=tourist,
         )
 
-        # Load data from database
-        places = Place.objects.all()
-
+        # Load database into dataframe
         data = []
 
-        for p in places:
+        for p in Place.objects.all():
             data.append({
                 "place_id": p.place_id,
                 "place_name": p.place_name,
@@ -150,45 +172,83 @@ def recommendation(request):
 
         result = df.copy()
 
+        # -------------------------
+        # Rule-Based Filtering
+        # -------------------------
+
         # Category
-        result = result[result["category"].str.lower() == category.lower()]
+        result = result[
+            result["category"].str.lower() == category.lower()
+        ]
+        category_result = result.copy()
 
         # Province
-        if province != "Any Province":
+        if province and province != "Any Province":
             result = result[
                 result["province"].str.lower() == province.lower()
             ]
-
+        if result.empty:
+         message = "No place found in this province. Showing all places from selected category."
+         result = category_result.copy()
+        province_result = result.copy()
         # Budget
-        result = result[
-            result["budget_level"].str.lower() == budget.lower()
-        ]
-
+        if budget:
+            result = result[
+                result["budget_level"].str.lower() == budget.lower()
+            ]
+        if result.empty:
+         message = " No place matched your selected budget. Showing the closest destinations."
+         result = province_result.copy()
+         
+        budget_result = result.copy()
         # Duration
         if duration:
-            numbers = result["duration"].str.extract(r"(\d+)")
-            min_days = numbers[0].fillna(0).astype(int)
-            max_days = min_days
 
-            if duration == "1-3 Days":
-                result = result[max_days <= 3]
+    # Extract minimum and maximum days
+          numbers = result["duration"].str.extract(r"(\d+)(?:-(\d+))?")
 
-            elif duration == "4-6 Days":
-                result = result[(max_days >= 4) & (min_days <= 6)]
+          min_days = numbers[0].astype(int)
 
-            elif duration == "7-9 Days":
-                result = result[(max_days >= 7) & (min_days <= 9)]
+    
+          max_days = numbers[1].fillna(numbers[0]).astype(int)
 
-            elif duration == "10+ Days":
-                result = result[max_days >= 10]
+          if duration == "1-3 Days":
+           result = result[(min_days <= 3)]
 
+          elif duration == "4-6 Days":
+           result = result[(max_days >= 4) & (min_days <= 6)]
+
+          elif duration == "7-9 Days":
+           result = result[(max_days >= 7) & (min_days <= 9)]
+
+          elif duration == "10+ Days":
+           result = result[(max_days >= 10)]
+ 
+          if result.empty:
+           message = "No place matched your selected duration. Showing similar destinations."
+           result = budget_result.copy()
+
+        duration_result = result.copy()
+        
+        
+            
         # Tourist Type
-        result = result[
-            (result["tourist_type"].str.lower() == tourist.lower()) |
-            (result["tourist_type"].str.lower() == "both")
-        ]
+        if tourist:
+            result = result[
+                (result["tourist_type"].str.lower() == tourist.lower()) |
+                (result["tourist_type"].str.lower() == "both")
+            ]
+            if result.empty:
+             message = "Tourist type relaxed."
+             result = duration_result.copy()
 
-        # Activities
+        # Save filtered result before activity filtering
+        filtered_places = result.copy()
+
+        # -------------------------
+        # Activity Filter
+        # -------------------------
+
         if activities:
 
             pattern = "|".join(activities)
@@ -204,54 +264,106 @@ def recommendation(request):
 
             if not activity_result.empty:
                 result = activity_result
+
             else:
-                message = "Exact activities not found. Showing similar destinations."
+                message = (
+                    "No destination has the selected activity. "
+                    "Showing similar destinations based on your other preferences."
+                )
+                result = filtered_places
+                        # -------------------------
+        # No place after rule-based filtering
+        # -------------------------
 
-        # Fallback
         if result.empty:
-            message = "No exact destination found. Showing similar destinations."
-            result = df.copy()
 
-        # Similarity
-        result["features"] = (
-            result["category"] + " " +
-            result["activities"] + " " +
-            result["province"] + " " +
-            result["budget_level"] + " " +
-            result["duration"] + " " +
-            result["tourist_type"]
-        )
+            message = "No destination matches your selected preferences."
 
-        activity_text = " ".join(activities)
+        else:
 
-        user_features = (
-            f"{category} {activity_text} {province} {budget} {duration} {tourist}"
-        )
+            # -------------------------
+            # TF-IDF Feature Construction
+            # -------------------------
 
-        documents = [user_features] + result["features"].tolist()
+            result["features"] = (
+                result["category"] + " " +
+                result["activities"] + " " +
+                result["province"] + " " +
+                result["budget_level"] + " " +
+                result["duration"] + " " +
+                result["tourist_type"]
+            )
 
-        vectorizer = TfidfVectorizer(stop_words="english")
-        tfidf = vectorizer.fit_transform(documents)
+            activity_text = " ".join(activities) if activities else ""
 
-        similarity = cosine_similarity(tfidf[0:1], tfidf[1:])
+            user_features = (
+                f"{category} "
+                f"{activity_text} "
+                f"{province} "
+                f"{budget} "
+                f"{duration} "
+                f"{tourist}"
+            )
 
-        result["similarity"] = similarity.flatten()
-        result["match"] = (result["similarity"] * 100).round().astype(int)
+            documents = [user_features] + result["features"].tolist()
 
-        result = result.sort_values(
-            by="similarity",
-            ascending=False
-        )
+            vectorizer = TfidfVectorizer(stop_words="english")
+            tfidf_matrix = vectorizer.fit_transform(documents)
 
-        recommendations = result.head(5).to_dict("records")
+            similarity = cosine_similarity(
+                tfidf_matrix[0:1],
+                tfidf_matrix[1:]
+            )
 
-    return render(request, "recommendation.html", {
-        "recommendations": recommendations,
-        "message": message,
-        "categories": categories,
-        "activities_list": activities_list,
-        "provinces": provinces,
-    })
+            result["similarity"] = similarity.flatten()
+
+            result["match"] = (
+                result["similarity"] * 100
+            ).round().astype(int)
+
+            result = result.sort_values(
+                by="similarity",
+                ascending=False
+            )
+
+            recommendations = result.head(5).to_dict("records")
+
+    return render(
+        request,
+        "recommendation.html",
+        {
+            "recommendations": recommendations,
+            "message": message,
+            "categories": categories,
+            "activities_list": activities_list,
+            "provinces": provinces,
+            "selected_category": category,
+           "selected_activities": activities,
+            "selected_province": province,
+           "selected_budget": budget,
+           "selected_duration": duration,
+           "selected_tourist": tourist,
+        }
+    )
+                
+from django.http import JsonResponse
+
+def get_activities(request):
+
+    category = request.GET.get("category")
+
+    activities = set()
+
+    places = Place.objects.filter(category__iexact=category)
+
+    for place in places:
+
+        if place.activities:
+
+            for activity in place.activities.split(","):
+                activities.add(activity.strip())
+
+    return JsonResponse(sorted(list(activities)), safe=False)
 
 # =========================
 # EXPLORE
@@ -468,172 +580,8 @@ def weather_alert(weather_data):
     else:
         return "🌡 Normal Weather Conditions"
     
+
+
+
+
     
-def all_places(request):
-
-    search = request.GET.get("search", "").strip()
-
-    places = Place.objects.filter(is_active=True)
-
-    if search:
-        places = places.filter(
-            Q(place_name__icontains=search) |
-            Q(category__icontains=search) |
-            Q(province__icontains=search) |
-            Q(activities__icontains=search)
-        )
-
-    return render(request, "all_places.html", {
-        "places": places,
-        "search": search,
-    })
-
-
-# =========================
-# CONTACT
-# =========================
-def contact(request):
-    return render(request, "contact.html")
-
-
-# =========================
-# LIVE SEARCH API
-# =========================
-def search_suggestions(request):
-
-    query = request.GET.get("q", "").strip()
-
-    if not query:
-        return JsonResponse([], safe=False)
-
-    places = Place.objects.filter(
-        Q(place_name__icontains=query) |
-        Q(category__icontains=query) |
-        Q(province__icontains=query) |
-        Q(activities__icontains=query)
-    )[:8]
-
-    return JsonResponse([
-        {
-            "name": p.place_name,
-            "province": p.province,
-            "category": p.category,
-        }
-        for p in places
-    ], safe=False)
-
-
-# =========================
-# CATEGORY PLACES (FIXED)
-# =========================
-def category_places(request, category):
-
-    places = Place.objects.filter(
-        category__iexact=category,
-        is_active=True
-    )
-
-    return render(request, "category_places.html", {
-        "category": category,
-        "places": places,
-    })
-
-
-# =========================
-# SUPPORT PAGES
-# =========================
-def emergency(request):
-    contacts = EmergencyContact.objects.all()
-    return render(request, "emergency.html", {
-        "contacts": contacts
-    })
-
-
-def faq(request):
-    faqs = FAQ.objects.all()
-    return render(request, "faq.html", {
-        "faqs": faqs
-    })
-
-
-def privacy_policy(request):
-    return render(request, "privacy_policy.html")
-
-
-def terms_conditions(request):
-    return render(request, "terms_conditions.html")
-
-#weather api
-def get_weather(lat, lon):
-    url = (
-        f"https://api.openweathermap.org/data/2.5/weather"
-        f"?lat={lat}&lon={lon}"
-        f"&appid={settings.WEATHER_API_KEY}&units=metric"
-    )
-    response = requests.get(url)
-    return response.json()
-def weather_alert(weather_data):
-    main = weather_data["weather"][0]["main"].lower()
-
-    if "rain" in main:
-        return "🌧 Heavy Rain Warning"
-    elif "thunderstorm" in main:
-        return "⛈ Thunderstorm Alert"
-    elif "fog" in main or "mist" in main:
-        return "🌫 Dense Fog"
-    elif "clear" in main:
-        return "☀ Clear Weather"
-    elif "snow" in main:
-        return "❄ Snowfall Alert"
-    else:
-        return "🌡 Normal Weather Conditions"
-    
-
-import requests
-
-def get_nearby_hotspots(lat, lon, radius=6000):
-
-    url = "https://api.geoapify.com/v2/places"
-
-    params = {
-        "categories": ",".join([
-            "tourism.attraction",
-            "tourism.sights",
-            "entertainment.museum",
-            "leisure.park",
-            "religion"
-        ]),
-        "filter": f"circle:{lon},{lat},{radius}",
-        "limit": 10,
-        "apiKey": settings.GEOAPIFY_API_KEY
-    }
-
-    try:
-        response = requests.get(url, params=params, timeout=20)
-        response.raise_for_status()
-
-        data = response.json()
-
-        hotspots = []
-
-        for feature in data.get("features", []):
-
-            prop = feature.get("properties", {})
-
-            name = prop.get("name")
-
-            if not name:
-                continue
-
-            hotspots.append({
-                "name": name,
-                "lat": prop.get("lat"),
-                "lon": prop.get("lon"),
-                "type": ", ".join(prop.get("categories", []))
-            })
-
-        return hotspots
-
-    except Exception as e:
-        print("Geoapify Error:", e)
-        return []

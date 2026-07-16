@@ -26,6 +26,11 @@ urlpatterns = [
     path('faq/', views.faq, name='faq'),
     path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
     path('terms-and-conditions/', views.terms_conditions, name='terms_conditions'),
+    path(
+    'get-activities/',
+    views.get_activities,
+    name='get_activities'
+),
 ]
 
 if settings.DEBUG:
