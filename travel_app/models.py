@@ -4,6 +4,7 @@ from django.db import models
 class Place(models.Model):
     place_id = models.IntegerField(unique=True)
     place_name = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
     category = models.CharField(max_length=50)
     activities = models.TextField()
     province = models.CharField(max_length=100)

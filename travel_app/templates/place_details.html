@@ -314,14 +314,11 @@
                             📏 <strong>{{ hotspot.distance }} km</strong> away
                         </p>
 
-                        <a href="{{ hotspot.google_map }}"
-                           target="_blank"
-                           class="btn btn-success w-100">
-
-                            <i class="fa-solid fa-location-dot"></i>
-                            View on Google Maps
-
-                        </a>
+                       <a href="https://www.google.com/maps?q={{ place.latitude }},{{ place.longitude }}"
+                         target="_blank"
+                         class="btn btn-primary">
+                              View on Google Maps
+                         </a>
 
                     </div>
 

@@ -252,27 +252,30 @@ def explore(request):
 
     suggestion = None
 
-    featured_places = Place.objects.filter(
-    featured=True,
-    is_active=True
-)
+    # If no search/filter is applied, show only featured places
+    if not (search or categories or activities):
+        places = Place.objects.filter(
+            featured=True,
+            is_active=True
+        )
 
-    
-
-    if search or categories or activities:
+    else:
+        # Search through ALL active places
+        places = Place.objects.filter(is_active=True)
 
         if search:
-
-            featured_places = Place.objects.filter(
+            # Search only destination name and city
+            destination_results = places.filter(
                 Q(place_name__icontains=search) |
-                Q(category__icontains=search) |
-                Q(province__icontains=search) |
-                Q(activities__icontains=search)
+                Q(city__icontains=search)
             )
-
-            if not featured_places.exists():
-
-                place_names = list(Place.objects.values_list("place_name", flat=True))
+            
+            # If destination not found, try fuzzy suggestion
+            if not destination_results.exists():
+                place_names = list(
+                    Place.objects.filter(is_active=True)
+                    .values_list("place_name", flat=True)
+                )
 
                 match = process.extractOne(
                     search,
@@ -280,53 +283,80 @@ def explore(request):
                     scorer=fuzz.WRatio
                 )
 
-                if match and match[1] >= 60:
+                if match and match[1] >= 75:
                     suggestion = match[0]
+                    
+                # No exact destination found
+                places = Place.objects.none()
 
             else:
+                # Destination found
+                places = destination_results
 
-                featured_places = featured_places.annotate(
+                # Apply category filter
+                if categories:
+                    places = places.filter(category__in=categories)
+
+                # Apply activity filter
+                if activities:
+                    q = Q()
+                    for activity in activities:
+                        q |= Q(activities__icontains=activity)
+                        places = places.filter(q)
+
+                # Relevance ranking
+                places = places.annotate(
                     relevance=Case(
-                        When(place_name__icontains=search, then=Value(4)),
-                        When(activities__icontains=search, then=Value(3)),
-                        When(category__icontains=search, then=Value(2)),
-                        When(province__icontains=search, then=Value(1)),
+                        When(place_name__icontains=search, then=Value(2)),
+                        When(city__icontains=search, then=Value(1)),
                         default=Value(0),
                         output_field=IntegerField(),
                     )
-                ).order_by("-relevance")
-
-                if categories:
-                    featured_places = featured_places.annotate(
-                        category_boost=Case(
-                            *[When(category=c, then=Value(1)) for c in categories],
-                            default=Value(0),
-                            output_field=IntegerField(),
-                        )
-                    ).order_by("-category_boost", "-relevance")
-
-                if activities:
-                    featured_places = featured_places.annotate(
-                        activity_boost=Case(
-                            *[When(activities__icontains=a, then=Value(1)) for a in activities],
-                            default=Value(0),
-                            output_field=IntegerField(),
-                        )
-                    ).order_by("-activity_boost", "-relevance")
+                ).order_by("-relevance", "place_name")
 
         else:
-
+            # No destination search, only filters
             if categories:
-                featured_places = featured_places.filter(category__in=categories)
+                places = places.filter(category__in=categories)
 
             if activities:
                 q = Q()
-                for a in activities:
-                    q |= Q(activities__icontains=a)
-                featured_places = featured_places.filter(q)
+                for activity in activities:
+                    q |= Q(activities__icontains=activity)
+                places = places.filter(q)
+       
+
+        # Fuzzy suggestion if nothing matched
+        if search and not places.exists():
+
+            place_names = list(
+                Place.objects.filter(is_active=True)
+                .values_list("place_name", flat=True)
+            )
+
+            match = process.extractOne(
+                search,
+                place_names,
+                scorer=fuzz.WRatio
+            )
+
+            if match and match[1] >= 60:
+                suggestion = match[0]
+
+        # Order results by relevance
+        elif search:
+
+            places = places.annotate(
+                relevance=Case(
+                    When(place_name__icontains=search, then=Value(2)),
+                    When(city__icontains=search, then=Value(1)),
+                    default=Value(0),
+                    output_field=IntegerField(),
+                )
+            ).order_by("-relevance", "place_name")
 
     return render(request, "explore.html", {
-        "featured_places": featured_places,
+        "featured_places": places,
         "search": search,
         "selected_categories": categories,
         "selected_activities": activities,
@@ -346,9 +376,11 @@ def all_places(request):
     if search:
         places = places.filter(
             Q(place_name__icontains=search) |
+            Q(city__icontains=search) |
             Q(category__icontains=search) |
             Q(province__icontains=search) |
-            Q(activities__icontains=search)
+            Q(activities__icontains=search)|
+            Q(description__icontains=search)
         )
 
     return render(request, "all_places.html", {
@@ -376,138 +408,17 @@ def search_suggestions(request):
 
     places = Place.objects.filter(
         Q(place_name__icontains=query) |
+        Q(city__icontains=query) |
         Q(category__icontains=query) |
         Q(province__icontains=query) |
-        Q(activities__icontains=query)
+        Q(activities__icontains=query)|
+        Q(description__icontains=query)
     )[:8]
 
     return JsonResponse([
         {
             "name": p.place_name,
-            "province": p.province,
-            "category": p.category,
-        }
-        for p in places
-    ], safe=False)
-
-
-# =========================
-# CATEGORY PLACES (FIXED)
-# =========================
-def category_places(request, category):
-
-    places = Place.objects.filter(
-        category__iexact=category,
-        is_active=True
-    )
-
-    return render(request, "category_places.html", {
-        "category": category,
-        "places": places,
-    })
-
-
-# =========================
-# SUPPORT PAGES
-# =========================
-def emergency(request):
-    contacts = EmergencyContact.objects.all()
-    return render(request, "emergency.html", {
-        "contacts": contacts
-    })
-
-
-def faq(request):
-    faqs = FAQ.objects.all()
-    return render(request, "faq.html", {
-        "faqs": faqs
-    })
-
-
-def privacy_policy(request):
-    return render(request, "privacy_policy.html")
-
-
-def terms_conditions(request):
-    return render(request, "terms_conditions.html")
-
-#weather api
-def get_weather(lat, lon):
-    url = (
-        f"https://api.openweathermap.org/data/2.5/weather"
-        f"?lat={lat}&lon={lon}"
-        f"&appid={settings.WEATHER_API_KEY}&units=metric"
-    )
-    response = requests.get(url)
-    return response.json()
-def weather_alert(weather_data):
-    main = weather_data["weather"][0]["main"].lower()
-
-    if "rain" in main:
-        return "🌧 Heavy Rain Warning"
-    elif "thunderstorm" in main:
-        return "⛈ Thunderstorm Alert"
-    elif "fog" in main or "mist" in main:
-        return "🌫 Dense Fog"
-    elif "clear" in main:
-        return "☀ Clear Weather"
-    elif "snow" in main:
-        return "❄ Snowfall Alert"
-    else:
-        return "🌡 Normal Weather Conditions"
-    
-
-
-
-
-    
-def all_places(request):
-
-    search = request.GET.get("search", "").strip()
-
-    places = Place.objects.filter(is_active=True)
-
-    if search:
-        places = places.filter(
-            Q(place_name__icontains=search) |
-            Q(category__icontains=search) |
-            Q(province__icontains=search) |
-            Q(activities__icontains=search)
-        )
-
-    return render(request, "all_places.html", {
-        "places": places,
-        "search": search,
-    })
-
-
-# =========================
-# CONTACT
-# =========================
-def contact(request):
-    return render(request, "contact.html")
-
-
-# =========================
-# LIVE SEARCH API
-# =========================
-def search_suggestions(request):
-
-    query = request.GET.get("q", "").strip()
-
-    if not query:
-        return JsonResponse([], safe=False)
-
-    places = Place.objects.filter(
-        Q(place_name__icontains=query) |
-        Q(category__icontains=query) |
-        Q(province__icontains=query) |
-        Q(activities__icontains=query)
-    )[:8]
-
-    return JsonResponse([
-        {
-            "name": p.place_name,
+            "city": p.city,
             "province": p.province,
             "category": p.category,
         }

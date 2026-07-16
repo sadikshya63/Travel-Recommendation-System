@@ -31,6 +31,7 @@ class PlaceAdmin(admin.ModelAdmin):
         "category",
         "activities",
         "province",
+        "duration",
         "budget_level",
         "tourist_type",
         "image_tag",
