@@ -27,43 +27,29 @@ class Command(BaseCommand):
             )
             return
 
-        Place.objects.update_or_create(
-    place_id=int(row["place_id"]),
-    defaults={
-        "place_name": row["place_name"],
-        "category": row["category"],
-        "city": row["city"],
-        "activities": row["activities"],
-        "province": row["province"],
-        "duration": row["duration"],
-        "budget_level": row["budget_level"],
-        "tourist_type": row["tourist_type"],
-        "description": row["description"],
-        "latitude": Decimal(row["latitude"]),
-        "longitude": Decimal(row["longitude"]),
-        "image": row["image"],
-    }
-)
+        count = 0
 
         with open(csv_file, newline="", encoding="utf-8") as file:
             reader = csv.DictReader(file)
 
-            count = 0
-
             for row in reader:
-                Place.objects.create(
+                Place.objects.update_or_create(
                     place_id=int(row["place_id"]),
-                    place_name=row["place_name"],
-                    category=row["category"],
-                    activities=row["activities"],
-                    province=row["province"],
-                    duration=row["duration"],
-                    budget_level=row["budget_level"],
-                    tourist_type=row["tourist_type"],
-                    description=row["description"],
-                    latitude=Decimal(row["latitude"]),
-                    longitude=Decimal(row["longitude"]),
-                    image=row["image"],
+                    defaults={
+                        "place_name": row["place_name"],
+                        "category": row["category"],
+                        "city": row["city"],
+                        "activities": row["activities"],
+                        "province": row["province"],
+                        "duration": row["duration"],
+                        "budget_level": row["budget_level"],
+                        "tourist_type": row["tourist_type"],
+                        "description": row["description"],
+                        "latitude": Decimal(row["latitude"]),
+                        "longitude": Decimal(row["longitude"]),
+                        "image": row["image"],
+                        "featured": int(row["place_id"]) in [5, 18, 26, 28, 35, 43],
+                    }
                 )
 
                 count += 1
