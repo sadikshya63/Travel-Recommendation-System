@@ -27,7 +27,23 @@ class Command(BaseCommand):
             )
             return
 
-        Place.objects.all().delete()
+        Place.objects.update_or_create(
+    place_id=int(row["place_id"]),
+    defaults={
+        "place_name": row["place_name"],
+        "category": row["category"],
+        "city": row["city"],
+        "activities": row["activities"],
+        "province": row["province"],
+        "duration": row["duration"],
+        "budget_level": row["budget_level"],
+        "tourist_type": row["tourist_type"],
+        "description": row["description"],
+        "latitude": Decimal(row["latitude"]),
+        "longitude": Decimal(row["longitude"]),
+        "image": row["image"],
+    }
+)
 
         with open(csv_file, newline="", encoding="utf-8") as file:
             reader = csv.DictReader(file)
