@@ -126,6 +126,7 @@ class FAQAdmin(admin.ModelAdmin):
     )
 @admin.register(RecommendationHistory)
 class RecommendationHistoryAdmin(admin.ModelAdmin):
+    change_list_template = "admin/recommendation_history.html"
     list_display = (
         "category",
         "province",
@@ -146,6 +147,19 @@ class RecommendationHistoryAdmin(admin.ModelAdmin):
         "budget_level",
         "tourist_type",
     )
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+
+        extra_context["domestic_count"] = RecommendationHistory.objects.filter(
+            tourist_type="Domestic"
+        ).count()
+
+        extra_context["international_count"] = RecommendationHistory.objects.filter(
+            tourist_type="International"
+        ).count()
+
+        return super().changelist_view(request, extra_context=extra_context)
+    
 @admin.register(VisitorCounter)
 class VisitorCounterAdmin(admin.ModelAdmin):
     list_display = ("total_visits",)
