@@ -1,4 +1,6 @@
 import csv
+import os
+import django
 from travel_app.models import Place
 
 with open("travel_app/data/places.csv", newline="", encoding="utf-8") as file:
@@ -8,6 +10,7 @@ with open("travel_app/data/places.csv", newline="", encoding="utf-8") as file:
         Place.objects.create(
             place_id=row["place_id"],
             place_name=row["place_name"],
+            city=row["city"],
             category=row["category"],
             activities=row["activities"],
             province=row["province"],
