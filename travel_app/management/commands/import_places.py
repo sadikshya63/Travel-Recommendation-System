@@ -29,8 +29,10 @@ class Command(BaseCommand):
 
         count = 0
 
-        with open(csv_file, newline="", encoding="utf-8") as file:
+        with open(csv_file, newline="", encoding="utf-8-sig") as file:
             reader = csv.DictReader(file)
+            
+            print(reader.fieldnames)
 
             for row in reader:
                 Place.objects.update_or_create(
@@ -48,6 +50,7 @@ class Command(BaseCommand):
                         "latitude": Decimal(row["latitude"]),
                         "longitude": Decimal(row["longitude"]),
                         "image": row["image"],
+                        "featured": int(row["place_id"]) in [5, 18, 26, 28, 35, 43],
                     }
                 )
 
