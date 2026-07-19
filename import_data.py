@@ -1,6 +1,10 @@
 import csv
 import os
 import django
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "travel_project.settings")
+django.setup()
+
 from travel_app.models import Place
 
 with open("travel_app/data/places.csv", newline="", encoding="utf-8") as file:

@@ -1,6 +1,6 @@
 import pandas as pd
 import requests
-
+import re
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
@@ -217,7 +217,7 @@ def recommendation(request):
           
 
           if duration == "1-3 Days":
-           result = result[(min_days <= 3)]
+           result = result[(min_days <= 3) & (max_days >= 1)]
 
           elif duration == "4-6 Days":
            result = result[(max_days >= 4) & (min_days <= 6)]
@@ -255,8 +255,8 @@ def recommendation(request):
 
         if activities:
 
-            pattern = "|".join(activities)
-
+            
+            pattern = "|".join(re.escape(a) for a in activities)
             activity_result = result[
                 result["activities"].str.contains(
                     pattern,
@@ -292,10 +292,10 @@ def recommendation(request):
             result["features"] = (
                 result["category"] + " " +
                 result["activities"] + " " +
+                result["activities"] + " " +
                 result["province"] + " " +
-                result["budget_level"] + " " +
-                result["duration"] + " " +
-                result["tourist_type"]
+                result["budget_level"] 
+                
             )
 
             activity_text = " ".join(activities) if activities else ""
@@ -322,7 +322,7 @@ def recommendation(request):
             result["similarity"] = similarity.flatten()
             result["match"] = (
                 result["similarity"] * 100
-            ).round().astype(int)
+            ).round(1)
 
             result = result.sort_values(
                 by="similarity",

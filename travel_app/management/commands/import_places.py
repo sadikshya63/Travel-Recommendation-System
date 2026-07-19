@@ -35,6 +35,7 @@ class Command(BaseCommand):
             print(reader.fieldnames)
 
             for row in reader:
+                
                 Place.objects.update_or_create(
                     place_id=int(row["place_id"]),
                     defaults={
