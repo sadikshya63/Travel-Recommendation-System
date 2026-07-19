@@ -28,6 +28,7 @@ class PlaceAdmin(admin.ModelAdmin):
     list_display = (
         "place_id",
         "place_name",
+        "city",
         "category",
         "activities",
         "province",
