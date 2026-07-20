@@ -2,40 +2,40 @@ hotel_id,place_id,hotel_name,price_range,contact,image
 1,1,Hotel Hillside Ilam,Low,9801000001,Hotelhillside.jpeg
 2,1,Summit hotel Ilam,Medium,9801000002,summithotel.jpg
 3,1,Brichalaya Accom Hotel,Medium,9801000003,Brichalaya.jpg
-4,2,Taplejung Mountain Hotel,Low,9801000004,taplejungmountain.jpg
-5,3,Kanchanjunga Guest House,Medium,9801000005,Kanchanchungaguest.jpg
-6,3,Kanchenjunga White House,Low,9801000006,Kanchenjunga White House.jpg
-7,4,Hotel Shanker,High,9801000007,Hotelshankar.jpeg
-8,4,Kathmandu Guest House,Medium,9801000008,kathmanduguesthouse.jpg
-9,5,Boudha Boutique Hotel,Medium,9801000009,boudhaboutique.jpg
-10,5,Hotel Tibet International,High,9801000010,hotel_tibet_international.jpg
-11,6,Hotel Country Villa,High,9801000011,hotel country villa.jpg
-12,6,Peaceful Cottage Nagarkot,Medium,9801000012,peaceful-cottage-nagarkot.jpg
-13,7,Langtang Eco Lodge,Medium,9801000013,langtang_eco_lodge.jpeg
-14,7,Mountain View Guest House,Low,9801000014,hotel_mountain_view.jpg
-15,8,Hotel Barahi Pokhara,High,9801000015,hotel_barahi_pokhara.jpg
-16,8,Waterfront Resort,Medium,9801000016,waterfront_resort.jpg
-17,9,Sarangkot Mountain Lodge,Medium,9801000017,sarangkot mountain lodge.jpg
-18,9,Himalayan Front Hotel,High,9801000018,himalayan front hotel.jpg
-19,10,Annapurna Base Camp Lodge,Medium,9801000019,ABC LODGE.jpg
-20,10,Himalaya Guest House ABC,Low,9801000020,himalayan view guest house.png
-21,11,Ghandruk Community Lodge,Medium,9801000021,ghandruk lodge.jpg
-22,11,Gurung Cottage,Low,9801000022,hotel gurung.jpg
-23,12,Mardi Himal Eco Lodge,Medium,9801000023,mardi himal hotel.png
-24,12,Forest Camp Guest House,Low,9801000024,forest camp guest house.jpg
-25,13,Lo Mustang Resort,High,9801000025,lo mustang resort.jpg
-26,13,Mustang Eco Lodge,Medium,9801000026,mustang eco lodge.webp
-27,14,Hotel Town House,High,9801000027,hotel town house.png
-28,14,Hotel Muktinath Palace ,Medium,9801000028,muktinath palace.webp
-29,15,Green Park Chitwan,High,9801000029,green park chitwan.jpg
-30,15,Hotel Parkland Chitwan,Medium,9801000030,hotel parkland.jpeg
-31,16,Lumbini Garden Hotel,Medium,9801000031,lumbini garden hotel.webp
-32,16,Buddha Maya Garden Resort,High,9801000032,buddha maya.jpg
-33,17,Gurans Organic Paradise in ,Medium,9801000033,gurans hotel.png
-34,17,Murma Top Lodge,Low,9801000034,murma hotel.webp
-35,18,Khaptad Eco Resort,Medium,9801000035,khaptad eco resort.jpg
-36,18,hotel sudhur,Low,9801000036,hotel sudhur.png
-37,19,Shuklaphanta Jungle Resort,Medium,9801000037,shuklaphanta jungle resort.jpg
-38,19,Dudhwa Nirwana Retreat,High,9801000038,Dudhwa Nirwana Retreat.jpg
-39,20,Hotel Everest View,High,9801000039,hotel everest view.jpg
-40,20,Zamling Guest House,Medium,9801000040,zamling guest house.jpg
+4,3,Taplejung Mountain Hotel,Low,9801000004,taplejungmountain.jpg
+5,6,Kanchanjunga Guest House,Medium,9801000005,Kanchanchungaguest.jpg
+6,6,Kanchenjunga White House,Low,9801000006,Kanchenjunga White House.jpg
+7,17,Hotel Shanker,High,9801000007,Hotelshankar.jpeg
+8,17,Kathmandu Guest House,Medium,9801000008,kathmanduguesthouse.jpg
+9,18,Boudha Boutique Hotel,Medium,9801000009,boudhaboutique.jpg
+10,18,Hotel Tibet International,High,9801000010,hotel_tibet_international.jpg
+11,19,Hotel Country Villa,High,9801000011,hotel country villa.jpg
+12,19,Peaceful Cottage Nagarkot,Medium,9801000012,peaceful-cottage-nagarkot.jpg
+13,23,Langtang Eco Lodge,Medium,9801000013,langtang_eco_lodge.jpeg
+14,23,Mountain View Guest House,Low,9801000014,hotel_mountain_view.jpg
+15,26,Hotel Barahi Pokhara,High,9801000015,hotel_barahi_pokhara.jpg
+16,26,Waterfront Resort,Medium,9801000016,waterfront_resort.jpg
+17,27,Sarangkot Mountain Lodge,Medium,9801000017,sarangkot mountain lodge.jpg
+18,27,Himalayan Front Hotel,High,9801000018,himalayan front hotel.jpg
+19,28,Annapurna Base Camp Lodge,Medium,9801000019,ABC LODGE.jpg
+20,28,Himalaya Guest House ABC,Low,9801000020,himalayan view guest house.png
+21,29,Ghandruk Community Lodge,Medium,9801000021,ghandruk lodge.jpg
+22,29,Gurung Cottage,Low,9801000022,hotel gurung.jpg
+23,30,Mardi Himal Eco Lodge,Medium,9801000023,mardi himal hotel.png
+24,30,Forest Camp Guest House,Low,9801000024,forest camp guest house.jpg
+25,31,Lo Mustang Resort,High,9801000025,lo mustang resort.jpg
+26,31,Mustang Eco Lodge,Medium,9801000026,mustang eco lodge.webp
+27,32,Hotel Town House,High,9801000027,hotel town house.png
+28,32,Hotel Muktinath Palace ,Medium,9801000028,muktinath palace.webp
+29,25,Green Park Chitwan,High,9801000029,green park chitwan.jpg
+30,25,Hotel Parkland Chitwan,Medium,9801000030,hotel parkland.jpeg
+31,33,Lumbini Garden Hotel,Medium,9801000031,lumbini garden hotel.webp
+32,33,Buddha Maya Garden Resort,High,9801000032,buddha maya.jpg
+33,41,Gurans Organic Paradise in ,Medium,9801000033,gurans hotel.png
+34,41,Murma Top Lodge,Low,9801000034,murma hotel.webp
+35,46,Khaptad Eco Resort,Medium,9801000035,khaptad eco resort.jpg
+36,46,hotel sudhur,Low,9801000036,hotel sudhur.png
+37,47,Shuklaphanta Jungle Resort,Medium,9801000037,shuklaphanta jungle resort.jpg
+38,47,Dudhwa Nirwana Retreat,High,9801000038,Dudhwa Nirwana Retreat.jpg
+39,5,Hotel Everest View,High,9801000039,hotel everest view.jpg
+40,5,Zamling Guest House,Medium,9801000040,zamling guest house.jpg

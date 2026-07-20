@@ -73,11 +73,12 @@ class PlaceAdmin(admin.ModelAdmin):
 @admin.register(Hotel)
 class HotelAdmin(admin.ModelAdmin):
     list_display = (
+        "hotel_id",
         "hotel_name",
         "place",
         "price_range",
-        "rating",
-        "contact_number",
+        
+        "contact",
     )
 
     search_fields = (

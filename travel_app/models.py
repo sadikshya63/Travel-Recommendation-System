@@ -29,14 +29,17 @@ class Place(models.Model):
 # HOTEL MODEL
 # -------------------------
 class Hotel(models.Model):
-    place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='hotels')
-    hotel_name = models.CharField(max_length=150)
-    address = models.CharField(max_length=255, blank=True, null=True)
-    price_range = models.CharField(max_length=100)   
-    rating = models.DecimalField(max_digits=2, decimal_places=1, blank=True, null=True)
-    contact_number = models.CharField(max_length=20, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-    image = models.CharField(max_length=255, blank=True, null=True)
+    hotel_id = models.IntegerField(unique=True)
+    place = models.ForeignKey(
+        Place,
+        on_delete=models.CASCADE,
+        to_field="place_id"
+    )
+    hotel_name = models.CharField(max_length=255)
+    price_range = models.CharField(max_length=50)
+    contact = models.CharField(max_length=20)
+    image = models.CharField(max_length=255)
+    
 
     def __str__(self):
         return self.hotel_name
