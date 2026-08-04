@@ -39,6 +39,7 @@ class Hotel(models.Model):
     price_range = models.CharField(max_length=50)
     contact = models.CharField(max_length=20)
     image = models.CharField(max_length=255)
+    rating = models.DecimalField(max_digits=2, decimal_places=1, default=0.0)
     
 
     def __str__(self):
