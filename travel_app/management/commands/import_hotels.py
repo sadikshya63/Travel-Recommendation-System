@@ -23,6 +23,7 @@ class Command(BaseCommand):
                             "place": place,
                             "hotel_name": row["hotel_name"].strip(),
                             "price_range": row["price_range"].strip(),
+                            "rating": float(row["rating"]),
                             "contact": row["contact"].strip(),
                             "image": row["image"].strip(),
                         },
