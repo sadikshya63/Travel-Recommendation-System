@@ -1,37 +1,42 @@
-import os
 import csv
-import django
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "travel_project.settings")
-django.setup()
-
+from django.core.management.base import BaseCommand
 from travel_app.models import Place, Hotel
 
-csv_file = "travel_app/data/hotels.csv"
 
-with open(csv_file, newline="", encoding="utf-8") as file:
-    reader = csv.DictReader(file)
+class Command(BaseCommand):
+    help = "Import hotels from CSV"
 
-    count = 0
+    def handle(self, *args, **kwargs):
+        csv_file = "travel_app/data/hotels.csv"
+        count = 0
 
-    for row in reader:
-        try:
-            place = Place.objects.get(place_id=int(row["place_id"]))
+        with open(csv_file, newline="", encoding="utf-8") as file:
+            reader = csv.DictReader(file)
 
-            Hotel.objects.update_or_create(
-                hotel_id=int(row["hotel_id"]),
-                defaults={
-                    "place": place,
-                    "hotel_name": row["hotel_name"].strip(),
-                    "price_range": row["price_range"].strip(),
-                    "contact": row["contact"].strip(),
-                    "image": row["image"].strip(),
-                }
-            )
+            for row in reader:
+                try:
+                    place = Place.objects.get(place_id=int(row["place_id"]))
 
-            count += 1
+                    Hotel.objects.update_or_create(
+                        hotel_id=int(row["hotel_id"]),
+                        defaults={
+                            "place": place,
+                            "hotel_name": row["hotel_name"].strip(),
+                            "price_range": row["price_range"].strip(),
+                            "contact": row["contact"].strip(),
+                            "image": row["image"].strip(),
+                        },
+                    )
 
-        except Place.DoesNotExist:
-            print(f"Place ID {row['place_id']} not found.")
+                    count += 1
 
-print(f"Successfully imported {count} hotels.")
+                except Place.DoesNotExist:
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f"Place ID {row['place_id']} not found."
+                        )
+                    )
+
+        self.stdout.write(
+            self.style.SUCCESS(f"Successfully imported {count} hotels.")
+        )

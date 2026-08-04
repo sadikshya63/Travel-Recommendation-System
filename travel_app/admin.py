@@ -77,7 +77,6 @@ class HotelAdmin(admin.ModelAdmin):
         "hotel_name",
         "place",
         "price_range",
-        
         "contact",
     )
 
