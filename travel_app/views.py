@@ -73,7 +73,6 @@ def place_detail(request, place_id):
         "hotspots": hotspots,
     })
 
-
 # =========================
 # RECOMMENDATION
 # =========================
@@ -122,25 +121,24 @@ def recommendation(request):
         if not category:
             message = "Please select a category."
 
-            
             return render(
-            request,
-           "recommendation.html",
-        {
-            "recommendations": [],
-            "message": message,
-            "categories": categories,
-            "activities_list": activities_list,
-            "provinces": provinces,
-            "selected_category": category,
-            "selected_activities": activities,
-            "selected_province": province,
-            "selected_budget": budget,
-            "selected_duration": duration,
-            "selected_tourist": tourist,
-        }
-        )
- 
+                request,
+                "recommendation.html",
+                {
+                    "recommendations": [],
+                    "message": message,
+                    "categories": categories,
+                    "activities_list": activities_list,
+                    "provinces": provinces,
+                    "selected_category": category,
+                    "selected_activities": activities,
+                    "selected_province": province,
+                    "selected_budget": budget,
+                    "selected_duration": duration,
+                    "selected_tourist": tourist,
+                }
+            )
+
         # Save recommendation history
         RecommendationHistory.objects.create(
             category=category,
@@ -188,54 +186,53 @@ def recommendation(request):
                 result["province"].str.lower() == province.lower()
             ]
         if result.empty:
-         message = "No place found in this province. Showing all places from selected category."
-         result = category_result.copy()
+            message = "No place found in this province. Showing all places from selected category."
+            result = category_result.copy()
         province_result = result.copy()
+
         # Budget
+        budget_fallback = False
         if budget:
             result = result[
                 result["budget_level"].str.lower() == budget.lower()
             ]
-        if result.empty:
-         message = " No place matched your selected budget. Showing the closest destinations."
-         result = province_result.copy()
-         
+            if result.empty:
+                message = "No place matched your selected budget. Showing the closest destinations."
+                result = province_result.copy()
+                budget_fallback = True
+
         budget_result = result.copy()
+
         # Duration
         if duration:
 
-    # Extract minimum and maximum days
-          numbers = result["duration"].str.extract(r"(\d+)(?:-(\d+))?")
-          
-          numbers[0] = numbers[0].fillna(0)
-          numbers[1] = numbers[1].fillna(numbers[0])
+            # Extract minimum and maximum days
+            numbers = result["duration"].str.extract(r"(\d+)(?:-(\d+))?")
 
-          min_days = numbers[0].astype(int)
+            numbers[0] = numbers[0].fillna(0)
+            numbers[1] = numbers[1].fillna(numbers[0])
 
-    
-          max_days = numbers[1].astype(int)
-          
+            min_days = numbers[0].astype(int)
+            max_days = numbers[1].astype(int)
 
-          if duration == "1-3 Days":
-           result = result[(min_days <= 3) & (max_days >= 1)]
+            if duration == "1-3 Days":
+                result = result[(min_days <= 3) & (max_days >= 1)]
 
-          elif duration == "4-6 Days":
-           result = result[(max_days >= 4) & (min_days <= 6)]
+            elif duration == "4-6 Days":
+                result = result[(max_days >= 4) & (min_days <= 6)]
 
-          elif duration == "7-9 Days":
-           result = result[(max_days >= 7) & (min_days <= 9)]
+            elif duration == "7-9 Days":
+                result = result[(max_days >= 7) & (min_days <= 9)]
 
-          elif duration == "10+ Days":
-           result = result[(max_days >= 10)]
- 
-          if result.empty:
-           message = "No place matched your selected duration. Showing similar destinations."
-           result = budget_result.copy()
+            elif duration == "10+ Days":
+                result = result[(max_days >= 10)]
+
+            if result.empty:
+                message = "No place matched your selected duration. Showing similar destinations."
+                result = budget_result.copy()
 
         duration_result = result.copy()
-        
-        
-            
+
         # Tourist Type
         if tourist:
             result = result[
@@ -243,8 +240,8 @@ def recommendation(request):
                 (result["tourist_type"].str.lower() == "both")
             ]
             if result.empty:
-             message = "Tourist type relaxed."
-             result = duration_result.copy()
+                message = "Tourist type relaxed."
+                result = duration_result.copy()
 
         # Save filtered result before activity filtering
         filtered_places = result.copy()
@@ -255,7 +252,6 @@ def recommendation(request):
 
         if activities:
 
-            
             pattern = "|".join(re.escape(a) for a in activities)
             activity_result = result[
                 result["activities"].str.contains(
@@ -275,7 +271,8 @@ def recommendation(request):
                     "Showing similar destinations based on your other preferences."
                 )
                 result = filtered_places
-                        # -------------------------
+
+        # -------------------------
         # No place after rule-based filtering
         # -------------------------
 
@@ -294,8 +291,8 @@ def recommendation(request):
                 result["activities"] + " " +
                 result["activities"] + " " +
                 result["province"] + " " +
-                result["budget_level"] 
-                
+                result["budget_level"] + " " +
+                result["budget_level"]
             )
 
             activity_text = " ".join(activities) if activities else ""
@@ -324,10 +321,26 @@ def recommendation(request):
                 result["similarity"] * 100
             ).round(1)
 
-            result = result.sort_values(
-                by="similarity",
-                ascending=False
-            )
+            # -------------------------
+            # Budget-aware ranking
+            # -------------------------
+            BUDGET_ORDER = {"low": 1, "medium": 2, "high": 3}
+
+            if budget_fallback and budget:
+                user_rank = BUDGET_ORDER.get(budget.lower(), 2)
+                result["budget_distance"] = (
+                    result["budget_level"].str.lower().map(BUDGET_ORDER).fillna(2) - user_rank
+                ).abs()
+
+                result = result.sort_values(
+                    by=["budget_distance", "similarity"],
+                    ascending=[True, False]
+                )
+            else:
+                result = result.sort_values(
+                    by="similarity",
+                    ascending=False
+                )
 
             recommendations = result.head(5).to_dict("records")
 
@@ -341,14 +354,15 @@ def recommendation(request):
             "activities_list": activities_list,
             "provinces": provinces,
             "selected_category": category,
-           "selected_activities": activities,
+            "selected_activities": activities,
             "selected_province": province,
-           "selected_budget": budget,
-           "selected_duration": duration,
-           "selected_tourist": tourist,
+            "selected_budget": budget,
+            "selected_duration": duration,
+            "selected_tourist": tourist,
         }
     )
-                
+
+
 from django.http import JsonResponse
 
 def get_activities(request):

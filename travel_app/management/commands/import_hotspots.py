@@ -24,6 +24,7 @@ class Command(BaseCommand):
             return
 
         imported = 0
+        updated = 0
 
         with open(csv_file, newline="", encoding="utf-8") as file:
             reader = csv.DictReader(file)
@@ -32,18 +33,23 @@ class Command(BaseCommand):
                 try:
                     place = Place.objects.get(place_id=row["place_id"])
 
-                    Hotspot.objects.create(
+                    hotspot, created = Hotspot.objects.update_or_create(
                         place=place,
                         hotspot_name=row["hotspot_name"],
-                        category=row["category"],
-                        latitude=row["latitude"],
-                        longitude=row["longitude"],
-                        description=row["description"],
-                        image=row["image"],
-                        google_map=row["google_map"],
+                        defaults={
+                            "category": row["category"],
+                            "latitude": row["latitude"],
+                            "longitude": row["longitude"],
+                            "description": row["description"],
+                            "image": row["image"],
+                            "google_map": row["google_map"],
+                        },
                     )
 
-                    imported += 1
+                    if created:
+                        imported += 1
+                    else:
+                        updated += 1
 
                 except Place.DoesNotExist:
                     self.stdout.write(
@@ -53,5 +59,7 @@ class Command(BaseCommand):
                     )
 
         self.stdout.write(
-            self.style.SUCCESS(f"Successfully imported {imported} hotspots.")
+            self.style.SUCCESS(
+                f"Import complete! Created: {imported}, Updated: {updated}"
+            )
         )
