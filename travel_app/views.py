@@ -80,6 +80,7 @@ def recommendation(request):
 
     recommendations = []
     message = ""
+
     # Store selected values
     category = ""
     activities = []
@@ -88,7 +89,7 @@ def recommendation(request):
     duration = ""
     tourist = ""
 
-    # Dynamic dropdown data
+    # Dropdown data
     categories = Place.objects.values_list(
         "category",
         flat=True
@@ -117,8 +118,9 @@ def recommendation(request):
         duration = request.POST.get("duration")
         tourist = request.POST.get("tourist_type")
 
-        # Validate required category
+        # Category is required
         if not category:
+
             message = "Please select a category."
 
             return render(
@@ -139,7 +141,7 @@ def recommendation(request):
                 }
             )
 
-        # Save recommendation history
+        # Save history
         RecommendationHistory.objects.create(
             category=category,
             activities=", ".join(activities),
@@ -149,10 +151,14 @@ def recommendation(request):
             tourist_type=tourist,
         )
 
-        # Load database into dataframe
+        # ---------------------------------------
+        # Load Place data into DataFrame
+        # ---------------------------------------
+
         data = []
 
         for p in Place.objects.all():
+
             data.append({
                 "place_id": p.place_id,
                 "place_name": p.place_name,
@@ -167,202 +173,273 @@ def recommendation(request):
             })
 
         df = pd.DataFrame(data).fillna("")
-
-        result = df.copy()
-
-        # -------------------------
-        # Rule-Based Filtering
-        # -------------------------
-
-        # Category
-        result = result[
-            result["category"].str.lower() == category.lower()
-        ]
-        category_result = result.copy()
-
-        # Province
-        if province and province != "Any Province":
-            result = result[
-                result["province"].str.lower() == province.lower()
-            ]
-        if result.empty:
-            message = "No place found in this province. Showing all places from selected category."
-            result = category_result.copy()
-        province_result = result.copy()
-
-        # Budget
-        budget_fallback = False
-        if budget:
-            result = result[
-                result["budget_level"].str.lower() == budget.lower()
-            ]
-            if result.empty:
-                message = "No place matched your selected budget. Showing the closest destinations."
-                result = province_result.copy()
-                budget_fallback = True
-
-        budget_result = result.copy()
-
-        # Duration
-        if duration:
-
-            # Extract minimum and maximum days
-            numbers = result["duration"].str.extract(r"(\d+)(?:-(\d+))?")
-
-            numbers[0] = numbers[0].fillna(0)
-            numbers[1] = numbers[1].fillna(numbers[0])
-
-            min_days = numbers[0].astype(int)
-            max_days = numbers[1].astype(int)
-
-            if duration == "1-3 Days":
-                result = result[(min_days <= 3) & (max_days >= 1)]
-
-            elif duration == "4-6 Days":
-                result = result[(max_days >= 4) & (min_days <= 6)]
-
-            elif duration == "7-9 Days":
-                result = result[(max_days >= 7) & (min_days <= 9)]
-
-            elif duration == "10+ Days":
-                result = result[(max_days >= 10)]
-
-            if result.empty:
-                message = "No place matched your selected duration. Showing similar destinations."
-                result = budget_result.copy()
-
-        duration_result = result.copy()
-
-        # Tourist Type
-        if tourist:
-            result = result[
-                (result["tourist_type"].str.lower() == tourist.lower()) |
-                (result["tourist_type"].str.lower() == "both")
-            ]
-            if result.empty:
-                message = "Tourist type relaxed."
-                result = duration_result.copy()
-
-        # Save filtered result before activity filtering
-        filtered_places = result.copy()
-
-        # -------------------------
-        # Activity Filter
-        # -------------------------
-
-        if activities:
-
-            pattern = "|".join(re.escape(a) for a in activities)
-            activity_result = result[
-                result["activities"].str.contains(
-                    pattern,
-                    case=False,
-                    na=False,
-                    regex=True
-                )
-            ]
-
-            if not activity_result.empty:
-                result = activity_result
-
+        
+        def duration_bucket(text):
+        
+            numbers = re.findall(r"\d+", text or "")
+        
+            if not numbers:
+                 return ""
+        
+            max_days = int(numbers[-1])
+          
+            if max_days <= 3:
+                return "1-3 Days"
+            elif max_days <= 6:
+                return "4-6 Days"
+            elif max_days <= 9:
+                 return "7-9 Days"
             else:
-                message = (
-                    "No destination has the selected activity. "
-                    "Showing similar destinations based on your other preferences."
-                )
-                result = filtered_places
+                 return "10+ Days"
+        
+        df["duration_bucket"] = df["duration"].apply(duration_bucket)
+        
+        # ---------------------------------------
+        # Progressive Hard Filtering
+        # ---------------------------------------
 
-        # -------------------------
-        # No place after rule-based filtering
-        # -------------------------
+        def apply_filters(dataframe,
+                          category_value,
+                          budget_value=None,
+                          province_value=None,
+                          duration_value=None):
 
-        if result.empty:
+            filtered = dataframe.copy()
 
-            message = "No destination matches your selected preferences."
+            filtered = filtered[
+                filtered["category"].str.lower()
+                == category_value.lower()
+            ]
+
+            if budget_value:
+
+                filtered = filtered[
+                    filtered["budget_level"].str.lower()
+                    == budget_value.lower()
+                ]
+
+            if province_value and province_value != "Any Province":
+
+                filtered = filtered[
+                    filtered["province"].str.lower()
+                    == province_value.lower()
+                ]
+
+            if duration_value:
+
+                filtered = filtered[
+                    filtered["duration_bucket"].str.lower().str.strip()
+                    ==
+                    duration_value.lower().strip()
+                ]
+
+            return filtered
+
+        # Stage 1
+        result = apply_filters(
+            df,
+            category,
+            budget,
+            province,
+            duration,
+        )
+
+        if not result.empty:
+
+            message = ""
 
         else:
 
-            # -------------------------
-            # TF-IDF Feature Construction
-            # -------------------------
-
-            result["features"] = (
-                result["category"] + " " +
-                result["activities"] + " " +
-                result["activities"] + " " +
-                result["province"] + " " +
-                result["budget_level"] + " " +
-                result["budget_level"]
+            # Stage 2
+            result = apply_filters(
+                df,
+                category,
+                budget,
+                province,
+                None,
             )
 
-            activity_text = " ".join(activities) if activities else ""
+            if not result.empty:
 
-            user_features = (
-                f"{category} "
-                f"{activity_text} "
-                f"{province} "
-                f"{budget} "
-                f"{duration} "
-                f"{tourist}"
-            )
-
-            documents = [user_features] + result["features"].tolist()
-
-            vectorizer = TfidfVectorizer(stop_words="english")
-            tfidf_matrix = vectorizer.fit_transform(documents)
-
-            similarity = cosine_similarity(
-                tfidf_matrix[0:1],
-                tfidf_matrix[1:]
-            )
-
-            result["similarity"] = similarity.flatten()
-            result["match"] = (
-                result["similarity"] * 100
-            ).round(1)
-
-            # -------------------------
-            # Budget-aware ranking
-            # -------------------------
-            BUDGET_ORDER = {"low": 1, "medium": 2, "high": 3}
-
-            if budget_fallback and budget:
-                user_rank = BUDGET_ORDER.get(budget.lower(), 2)
-                result["budget_distance"] = (
-                    result["budget_level"].str.lower().map(BUDGET_ORDER).fillna(2) - user_rank
-                ).abs()
-
-                result = result.sort_values(
-                    by=["budget_distance", "similarity"],
-                    ascending=[True, False]
+                message = (
+                    "No destinations matched the selected duration. "
+                    "Showing destinations that match your other preferences."
                 )
+
             else:
-                result = result.sort_values(
-                    by="similarity",
-                    ascending=False
-                )
 
-            recommendations = result.head(5).to_dict("records")
+                # Stage 3
+                # Stage 3
+             result = apply_filters(
+                  df,
+                  category,
+                  None,
+                  province,
+                  None,)
 
-    return render(
-        request,
-        "recommendation.html",
-        {
-            "recommendations": recommendations,
-            "message": message,
-            "categories": categories,
-            "activities_list": activities_list,
-            "provinces": provinces,
-            "selected_category": category,
-            "selected_activities": activities,
-            "selected_province": province,
-            "selected_budget": budget,
-            "selected_duration": duration,
-            "selected_tourist": tourist,
-        }
-    )
+             if not result.empty:
+
+    # Check which filter caused the mismatch
+                budget_result = apply_filters( df,
+                                              category,
+                                              budget,
+                                              province,
+                                              None,)
+
+                duration_result = apply_filters( df
+                                                ,category
+                                                ,None
+                                                ,province
+                                                ,duration,  )
+
+                if budget_result.empty and duration_result.empty:
+                 message = (
+            "No destinations matched your selected budget and duration. "
+            "Showing destinations that match your category and province."
+        )
+
+                elif budget_result.empty:
+                 message = (  "No destinations matched your selected budget. " "Showing destinations that match your category, province, and duration.")
+
+                elif duration_result.empty:
+                 message = ("No destinations matched your selected duration. " "Showing destinations that match your category, province, and budget."
+        )
+
+                else:
+                 message = ( "Showing destinations that match your category and province."
+        )
+
+             else:
 
 
+                    # Stage 4
+                    result = apply_filters(
+                        df,
+                        category,
+                        None,
+                        None,
+                        None,
+                    )
+
+                    if result.empty:
+
+                        message = (
+                            f"No destinations exist in the "
+                            f"{category} category."
+                        )
+
+                        return render(
+                            request,
+                            "recommendation.html",
+                            {
+                                "recommendations": [],
+                                "message": message,
+                                "categories": categories,
+                                "activities_list": activities_list,
+                                "provinces": provinces,
+                                "selected_category": category,
+                                "selected_activities": activities,
+                                "selected_province": province,
+                                "selected_budget": budget,
+                                "selected_duration": duration,
+                                "selected_tourist": tourist,
+                            },
+                        )
+
+                    message = (
+                        "No destinations matched all your preferences. "
+                        "Showing the closest destinations "
+                        "in the selected category."
+                    )
+                    # Convert database duration into buckets
+        
+                            # Load into dataframe
+        
+        # STAGE 2 : TF-IDF + COSINE SIMILARITY
+        # =========================================================
+
+        result = result.copy()
+
+        result["features"] = (
+            result["category"] + " " +
+            result["activities"] + " " +
+            result["activities"] + " " +     # activities weighted twice
+            result["province"] + " " +
+            result["budget_level"] + " " +
+            result["duration_bucket"] + " " +
+            result["tourist_type"]
+        )
+
+        activity_text = " ".join(activities)
+
+        user_features = (
+            f"{category} "
+            f"{activity_text} "
+            f"{activity_text} "
+            f"{province} "
+            f"{budget} "
+            f"{duration} "
+            f"{tourist}"
+        )
+
+        documents = [user_features] + result["features"].tolist()
+
+        vectorizer = TfidfVectorizer(stop_words="english")
+        tfidf_matrix = vectorizer.fit_transform(documents)
+
+        similarity = cosine_similarity(
+            tfidf_matrix[0:1],
+            tfidf_matrix[1:]
+        )
+
+        result["similarity"] = similarity.flatten()
+
+        # Tourist bonus
+        if tourist:
+            result["tourist_match"] = (
+                (result["tourist_type"].str.lower() == tourist.lower()) |
+                (result["tourist_type"].str.lower() == "both")
+            )
+        else:
+            result["tourist_match"] = False
+
+        TOURIST_BONUS = 0.05
+
+        result["combined_score"] = (
+            result["similarity"] +
+            result["tourist_match"].astype(int) * TOURIST_BONUS
+        )
+
+        result["match"] = (
+            result["combined_score"] * 100
+        ).round(1)
+
+        result = result.sort_values(
+            by="combined_score",
+            ascending=False
+        )
+
+        recommendations = result.head(5).to_dict("records")
+                    
+
+    return render(request, "recommendation.html", {
+        "recommendations": recommendations,
+        "message": message,
+        "categories": categories,
+        "activities_list": activities_list,
+        "provinces": provinces,
+        "selected_category": category,
+        "selected_activities": activities,
+        "selected_province": province,
+        "selected_budget": budget,
+        "selected_duration": duration,
+        "selected_tourist": tourist,
+    })
+    
+    
+    
+    
+                
 from django.http import JsonResponse
 
 def get_activities(request):
@@ -426,50 +503,6 @@ def explore(request):
 
                 if match and match[1] >= 75:
                     suggestion = match[0]
-                    
-                # No exact destination found
-                places = Place.objects.none()
-
-            else:
-                # Destination found
-                places = destination_results
-
-                # Apply category filter
-                if categories:
-                    places = places.filter(category__in=categories)
-
-                # Apply activity filter
-                if activities:
-                    q = Q()
-                    for activity in activities:
-                        q |= Q(activities__icontains=activity)
-                        places = places.filter(q)
-
-                # Relevance ranking
-                places = places.annotate(
-                    relevance=Case(
-                        When(place_name__icontains=search, then=Value(2)),
-                        When(city__icontains=search, then=Value(1)),
-                        default=Value(0),
-                        output_field=IntegerField(),
-                    )
-                ).order_by("-relevance", "place_name")
-
-        else:
-            # No destination search, only filters
-            if categories:
-                places = places.filter(category__in=categories)
-
-            if activities:
-                q = Q()
-                for activity in activities:
-                    q |= Q(activities__icontains=activity)
-                places = places.filter(q)
-       
-
-        # Fuzzy suggestion if nothing matched
-        if search and not places.exists():
-
             place_names = list(
                 Place.objects.filter(is_active=True)
                 .values_list("place_name", flat=True)
@@ -491,7 +524,6 @@ def explore(request):
                 relevance=Case(
                     When(place_name__icontains=search, then=Value(2)),
                     When(city__icontains=search, then=Value(1)),
-                    default=Value(0),
                     output_field=IntegerField(),
                 )
             ).order_by("-relevance", "place_name")

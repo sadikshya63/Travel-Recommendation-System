@@ -19,6 +19,17 @@ place_id,hotspot_name,category,latitude,longitude,description,image,google_map
 
 25,Elephant Breeding Center,Wildlife,27.582582,84.462843,Government elephant conservation center.,elephant_center.jpg,"https://maps.google.com/?q=27.582582,84.462843"
 25,Rapti River,River,27.268518,84.497832,Popular destination for canoe rides and sunset views.,rapti_river.jpg,"https://maps.google.com/?q=27.268518,82.683207"
-2,Bis Hazari Lake,Lake,27.618353,84.437640,Ramsar-listed wetland rich in birdlife.,bishazari.jpg,"https://maps.google.com/?q=27.618353,84.437640"
+25,Bis Hazari Lake,Lake,27.618353,84.437640,Ramsar-listed wetland rich in birdlife.,bishazari.jpg,"https://maps.google.com/?q=27.618353,84.437640"
 25,Tharu Cultural Museum,Museum,27.605611,84.553598,Museum showcasing Tharu culture and traditions.,tharu_museum.jpg,"https://maps.google.com/?q=27.605611,84.553598"
 25,Crocodile Breeding Center,Landmark,27.555947,84.338274,Crocodile Breeding Center near Kasara.,crocodile_breeding_center.jpg,"https://maps.google.com/?q=27.555947,84.338274"
+
+20,Budhanilkantha Temple,Temple,27.780556,85.367222,Famous open-air Hindu temple featuring the reclining statue of Lord Vishnu.,budhanilkantha.jpg,"https://maps.google.com/?q=27.780556,85.367222"
+20,Tokha Urban Farm,Farm,27.754991,85.330860,"Popular urban farm offering fresh produce, scenic views, and recreational activities.",Urbanfarm.jpg,"https://maps.google.com/?q=27.754991,85.330860"
+20,ISKCON Temple,Temple,27.738510,85.330460,Hare Krishna temple known for its peaceful atmosphere and spiritual programs.,Iskcon.jpg,"https://maps.google.com/?q=27.738510,85.330460"
+20,Jamchen Vijaya Stupa,Stupa,27.785222,85.368944,Beautiful Buddhist stupa with panoramic views and a tranquil environment.,Jamchen.jpg,"https://maps.google.com/?q=27.785222,85.368944"
+20,Jhor Waterfall,Waterfall,27.804079,85.307925,Scenic waterfall and picnic destination located north of Kathmandu.,Jhor.jpg,"https://maps.google.com/?q=27.804079,85.307925"
+
+19,Nagarkot View Tower,Viewpoint,27.718540,85.520620,Popular viewpoint offering panoramic sunrise and Himalayan mountain views.,nagarkotviewpoint.jpg,"https://maps.google.com/?q=27.718540,85.520620"
+19,Buddha Peace Park,Park,27.714980,85.517860,Peaceful park with Buddha statue and scenic surroundings near Nagarkot.,buddhapeacepark.jpg,"https://maps.google.com/?q=27.714980,85.517860"
+19,Telkot,Hiking,27.700820,85.500420,Starting point of the popular Nagarkot–Telkot hiking trail.,telkot.jpg,"https://maps.google.com/?q=27.700820,85.500420"
+19,Rohini Bhanjyang Viewpoint,Viewpoint,27.726480,85.531250,Scenic viewpoint offering beautiful landscapes and mountain vistas near Nagarkot.,rohinibhanjyang.jpg,"https://maps.google.com/?q=27.726480,85.531250"
