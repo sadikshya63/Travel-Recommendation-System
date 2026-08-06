@@ -90,10 +90,14 @@ def recommendation(request):
     tourist = ""
 
     # Dropdown data
-    categories = Place.objects.values_list(
-        "category",
-        flat=True
-    ).distinct()
+    category_set = set()
+
+    for item in Place.objects.values_list("category", flat=True):
+        if item:
+           for cat in item.split(","):
+               category_set.add(cat.strip())
+
+    categories = sorted(category_set)
 
     provinces = Place.objects.values_list(
         "province",
@@ -208,7 +212,7 @@ def recommendation(request):
 
             filtered = filtered[
                 filtered["category"].str.lower()
-                == category_value.lower()
+                .str.contains(category_value.lower())
             ]
 
             if budget_value:
@@ -503,6 +507,56 @@ def explore(request):
 
                 if match and match[1] >= 75:
                     suggestion = match[0]
+                    
+                # No exact destination found
+                places = Place.objects.none()
+
+            else:
+                # Destination found
+                places = destination_results
+
+                # Apply category filter
+                if categories:
+                    places = places.filter(category__in=categories)
+
+                # Apply activity filter
+                if activities:
+                    q = Q()
+                    for activity in activities:
+                        q |= Q(activities__icontains=activity)
+                        places = places.filter(q)
+
+                # Relevance ranking
+                places = places.annotate(
+                    relevance=Case(
+                        When(place_name__icontains=search, then=Value(2)),
+                        When(city__icontains=search, then=Value(1)),
+                        default=Value(0),
+                        output_field=IntegerField(),
+                    )
+                ).order_by("-relevance", "place_name")
+
+        else:
+            # No destination search, only filters
+            if categories:
+                   q = Q()
+
+                   for category in categories:
+                     q |= Q(category__icontains=category)
+
+                   places = places.filter(q)
+                
+
+            if activities:
+                q = Q()
+                for activity in activities:
+                    q |= Q(activities__icontains=activity)
+                places = places.filter(q)
+       
+
+        # Fuzzy suggestion if nothing matched
+        if search and not places.exists():
+
             place_names = list(
                 Place.objects.filter(is_active=True)
                 .values_list("place_name", flat=True)
@@ -605,7 +659,7 @@ def search_suggestions(request):
 def category_places(request, category):
 
     places = Place.objects.filter(
-        category__iexact=category,
+        category__icontains=category,
         is_active=True
     )
 
