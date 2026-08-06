@@ -248,6 +248,8 @@ def recommendation(request):
             province,
             duration,
         )
+        
+        
 
         if not result.empty:
 
