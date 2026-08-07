@@ -73,7 +73,6 @@ def place_detail(request, place_id):
         "hotspots": hotspots,
     })
 
-
 # =========================
 # RECOMMENDATION
 # =========================
@@ -581,7 +580,6 @@ def explore(request):
                 relevance=Case(
                     When(place_name__icontains=search, then=Value(2)),
                     When(city__icontains=search, then=Value(1)),
-                    default=Value(0),
                     output_field=IntegerField(),
                 )
             ).order_by("-relevance", "place_name")
