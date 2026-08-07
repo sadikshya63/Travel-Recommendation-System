@@ -1,0 +1,347 @@
+{% extends "admin/index.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<!-- Load Chart.js CDN in head -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<style>
+    /* Hide standard default Jazzmin app list boxes and recent actions column */
+    .col-lg-3,
+    .col-lg-9 > .card:not(.meroyatra-card),
+    .col-lg-12 > .card:not(.meroyatra-card),
+    #content-main > .row > .col-lg-9 > .card:not(.meroyatra-card),
+    #content-main .row:nth-child(2):not(.meroyatra-dashboard-container) {
+        display: none !important;
+    }
+
+    .col-lg-9,
+    .col-lg-12 {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+</style>
+
+<div class="meroyatra-dashboard-container">
+    
+    <!-- Title Section -->
+    <h1 class="meroyatra-page-title">MeroYatra Analytics</h1>
+
+    <!-- Top Grid: 2 Cards -->
+    <div class="meroyatra-top-grid">
+
+        <!-- Card 1: MeroYatra System Overview & Metrics -->
+        <div class="meroyatra-card">
+            <div class="meroyatra-card-header">
+                <h3 class="meroyatra-card-title">System Overview & Activity</h3>
+            </div>
+
+            <div class="reviews-user-profile">
+                <!-- Admin Avatar icon -->
+                <div style="width: 52px; height: 52px; border-radius: 12px; background: #eff6ff; border: 2px solid #3b82f6; display: flex; align-items: center; justify-content: center; color: #2563eb; font-size: 24px; font-weight: 700;">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="reviews-user-info">
+                    <h5>{% if request.user.get_full_name %}{{ request.user.get_full_name }}{% else %}{{ request.user.username|default:"dristi" }}{% endif %}</h5>
+                    <div style="color: #16a34a; font-size: 13px; font-weight: 600; margin-top: 2px;">
+                        <i class="fas fa-circle" style="font-size: 8px; vertical-align: middle;"></i> System Administrator
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Database Metrics -->
+            <div class="reviews-stats-row" style="margin: 15px 0 20px 0;">
+                <div class="stat-unit-box">
+                    <div class="stat-metric-val" style="font-size: 42px;">{{ total_visits|default:"0" }}</div>
+                    <div class="stat-metric-lbl">Total Visitors</div>
+                </div>
+                <div class="stat-unit-box">
+                    <div class="stat-metric-val" style="font-size: 42px; color: #16a34a;">{{ total_searches|default:"0" }}</div>
+                    <div class="stat-metric-lbl">Recommendations</div>
+                </div>
+            </div>
+
+            <div class="reviews-stats-row" style="margin: 0 0 25px 0;">
+                <div class="stat-unit-box">
+                    <div class="stat-metric-val" style="font-size: 34px; color: #d97706;">{{ total_places|default:"0" }}</div>
+                    <div class="stat-metric-lbl">Destinations</div>
+                </div>
+                <div class="stat-unit-box">
+                    <div class="stat-metric-val" style="font-size: 34px; color: #0891b2;">{{ total_hotels|default:"0" }}</div>
+                    <div class="stat-metric-lbl">Hotels Listed</div>
+                </div>
+            </div>
+
+            <a href="{% url 'admin:travel_app_recommendationhistory_changelist' %}" class="btn-check-reviews">
+                VIEW SEARCH LOGS
+            </a>
+        </div>
+
+        <!-- Card 2: Destinations by Category (Donut Chart) -->
+        <div class="meroyatra-card">
+            <div class="meroyatra-card-header">
+                <h3 class="meroyatra-card-title">Destinations by Category</h3>
+                <span class="badge bg-primary" style="padding: 6px 12px; border-radius: 6px; font-size: 12px;">Live Database</span>
+            </div>
+
+            <div class="donut-wrapper">
+                <div class="donut-chart-container">
+                    <canvas id="tripsDonutChart"></canvas>
+                    <div class="donut-center-label">
+                        <div class="donut-center-num">{{ total_places|default:"0" }}</div>
+                        <div class="donut-center-txt">Places</div>
+                    </div>
+                </div>
+
+                <div class="donut-legend-list">
+                    <div class="legend-item">
+                        <span><span class="legend-color-dot" style="background: #2563eb;"></span>Nature</span>
+                        <span>{{ nature_count }}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span><span class="legend-color-dot" style="background: #16a34a;"></span>Trekking</span>
+                        <span>{{ trekking_count }}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span><span class="legend-color-dot" style="background: #d97706;"></span>Cultural</span>
+                        <span>{{ cultural_count }}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span><span class="legend-color-dot" style="background: #dc2626;"></span>Adventure</span>
+                        <span>{{ adventure_count }}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span><span class="legend-color-dot" style="background: #0891b2;"></span>Wildlife</span>
+                        <span>{{ wildlife_count }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Card: Nepal Province Breakdown & Bar Chart -->
+    <div class="meroyatra-card">
+        <div class="meroyatra-card-header">
+            <div>
+                <h3 class="meroyatra-card-title">Destinations Distribution by Nepal Province</h3>
+            </div>
+            <span class="badge bg-success" style="padding: 6px 12px; border-radius: 6px; font-size: 12px;">Regional Breakdown</span>
+        </div>
+
+        <div class="viewers-subtitle">Total {{ total_places|default:"0" }} Nepal Destinations Across 5 Regions</div>
+
+        <div class="profile-viewers-grid">
+            <!-- Left Bar Chart -->
+            <div style="height: 260px; position: relative; width: 100%;">
+                <canvas id="profileViewersChart"></canvas>
+            </div>
+
+            <!-- Right Nepal Province Breakdown Bars -->
+            <div class="country-breakdown-list">
+                <!-- Bagmati Province -->
+                <div class="country-row">
+                    <div class="country-badge" style="background-color: #2563eb;">{{ bagmati_count }}</div>
+                    <div class="country-name-bar">
+                        <span>Bagmati Province</span>
+                        <div class="country-bar-bg">
+                            <div class="country-bar-fill" style="width: {% if total_places > 0 %}{% widthratio bagmati_count total_places 100 %}{% else %}0{% endif %}%; background: #2563eb;"></div>
+                        </div>
+                    </div>
+                    <div class="country-percent percent-up">{% if total_places > 0 %}{% widthratio bagmati_count total_places 100 %}{% else %}0{% endif %}%</div>
+                </div>
+
+                <!-- Gandaki Province -->
+                <div class="country-row">
+                    <div class="country-badge" style="background-color: #16a34a;">{{ gandaki_count }}</div>
+                    <div class="country-name-bar">
+                        <span>Gandaki Province</span>
+                        <div class="country-bar-bg">
+                            <div class="country-bar-fill" style="width: {% if total_places > 0 %}{% widthratio gandaki_count total_places 100 %}{% else %}0{% endif %}%; background: #16a34a;"></div>
+                        </div>
+                    </div>
+                    <div class="country-percent percent-up">{% if total_places > 0 %}{% widthratio gandaki_count total_places 100 %}{% else %}0{% endif %}%</div>
+                </div>
+
+                <!-- Koshi Province -->
+                <div class="country-row">
+                    <div class="country-badge" style="background-color: #d97706;">{{ koshi_count }}</div>
+                    <div class="country-name-bar">
+                        <span>Koshi Province</span>
+                        <div class="country-bar-bg">
+                            <div class="country-bar-fill" style="width: {% if total_places > 0 %}{% widthratio koshi_count total_places 100 %}{% else %}0{% endif %}%; background: #d97706;"></div>
+                        </div>
+                    </div>
+                    <div class="country-percent percent-up">{% if total_places > 0 %}{% widthratio koshi_count total_places 100 %}{% else %}0{% endif %}%</div>
+                </div>
+
+                <!-- Lumbini Province -->
+                <div class="country-row">
+                    <div class="country-badge" style="background-color: #0891b2;">{{ lumbini_count }}</div>
+                    <div class="country-name-bar">
+                        <span>Lumbini Province</span>
+                        <div class="country-bar-bg">
+                            <div class="country-bar-fill" style="width: {% if total_places > 0 %}{% widthratio lumbini_count total_places 100 %}{% else %}0{% endif %}%; background: #0891b2;"></div>
+                        </div>
+                    </div>
+                    <div class="country-percent percent-up">{% if total_places > 0 %}{% widthratio lumbini_count total_places 100 %}{% else %}0{% endif %}%</div>
+                </div>
+
+                <!-- Karnali & Sudurpashchim -->
+                <div class="country-row">
+                    <div class="country-badge" style="background-color: #7c3aed;">{{ karnali_count }}</div>
+                    <div class="country-name-bar">
+                        <span>Karnali & Far-West</span>
+                        <div class="country-bar-bg">
+                            <div class="country-bar-fill" style="width: {% if total_places > 0 %}{% widthratio karnali_count total_places 100 %}{% else %}0{% endif %}%; background: #7c3aed;"></div>
+                        </div>
+                    </div>
+                    <div class="country-percent percent-up">{% if total_places > 0 %}{% widthratio karnali_count total_places 100 %}{% else %}0{% endif %}%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Render Interactive Charts safely -->
+<script>
+function initMeroYatraCharts() {
+    if (typeof Chart === 'undefined') {
+        setTimeout(initMeroYatraCharts, 150);
+        return;
+    }
+
+    // Add CSS flag class to hide default tables
+    document.body.classList.add('dashboard-override-active');
+
+    // 1. Sidebar User Panel Injection
+    const sidebar = document.querySelector('.main-sidebar .sidebar');
+    const brandLink = document.querySelector('.brand-link');
+    
+    if (sidebar && !document.querySelector('.sidebar-user-panel')) {
+        const userPanel = document.createElement('div');
+        userPanel.className = 'sidebar-user-panel';
+        userPanel.innerHTML = `
+            <div style="width: 58px; height: 58px; border-radius: 12px; background: rgba(255,255,255,0.15); margin: 0 auto 8px auto; display: flex; align-items: center; justify-content: center; color: #ffffff; font-size: 24px; border: 2px solid rgba(255,255,255,0.3);">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <h4 class="sidebar-user-name">{% if request.user.get_full_name %}{{ request.user.get_full_name }}{% else %}{{ request.user.username|default:"dristi" }}{% endif %}</h4>
+            <div class="sidebar-user-role">Administrator</div>
+        `;
+        if (brandLink) {
+            brandLink.insertAdjacentElement('afterend', userPanel);
+        } else {
+            sidebar.prepend(userPanel);
+        }
+    }
+
+    // 2. Category Donut Chart
+    const canvasDonut = document.getElementById('tripsDonutChart');
+    if (canvasDonut) {
+        const ctxDonut = canvasDonut.getContext('2d');
+        new Chart(ctxDonut, {
+            type: 'doughnut',
+            data: {
+                labels: ['Nature', 'Trekking', 'Cultural', 'Adventure', 'Wildlife'],
+                datasets: [{
+                    data: [
+                        {{ nature_count|default:0 }},
+                        {{ trekking_count|default:0 }},
+                        {{ cultural_count|default:0 }},
+                        {{ adventure_count|default:0 }},
+                        {{ wildlife_count|default:0 }}
+                    ],
+                    backgroundColor: [
+                        '#2563eb', // Blue
+                        '#16a34a', // Green
+                        '#d97706', // Amber
+                        '#dc2626', // Red
+                        '#0891b2'  # Cyan
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
+                },
+                cutout: '74%'
+            }
+        });
+    }
+
+    // 3. Province Destinations Bar Chart (Fills Left Space Cleanly)
+    const canvasBar = document.getElementById('profileViewersChart');
+    if (canvasBar) {
+        const ctxBar = canvasBar.getContext('2d');
+        new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['Bagmati', 'Gandaki', 'Koshi', 'Lumbini', 'Karnali/West'],
+                datasets: [{
+                    label: 'Destinations',
+                    data: [
+                        {{ bagmati_count|default:69 }},
+                        {{ gandaki_count|default:93 }},
+                        {{ koshi_count|default:11 }},
+                        {{ lumbini_count|default:11 }},
+                        {{ karnali_count|default:16 }}
+                    ],
+                    backgroundColor: [
+                        '#2563eb', // Bagmati (Blue)
+                        '#16a34a', // Gandaki (Green)
+                        '#d97706', // Koshi (Amber)
+                        '#0891b2', // Lumbini (Cyan)
+                        '#7c3aed'  # Karnali (Purple)
+                    ],
+                    borderRadius: 8,
+                    borderSkipped: false,
+                    barThickness: 32
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#64748b',
+                            font: { size: 11, weight: '600' }
+                        },
+                        grid: { color: '#f1f5f9' }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#64748b',
+                            font: { size: 11, weight: '600' }
+                        },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMeroYatraCharts);
+} else {
+    initMeroYatraCharts();
+}
+</script>
+
+{% endblock %}

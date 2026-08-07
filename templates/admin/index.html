@@ -1,0 +1,454 @@
+{% extends "admin/index.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<style>
+    /* Hide standard default Jazzmin app list boxes and recent actions column */
+    .col-lg-3,
+    .col-lg-9 > .card:not(.meroyatra-card),
+    .col-lg-12 > .card:not(.meroyatra-card),
+    #content-main > .row > .col-lg-9 > .card:not(.meroyatra-card),
+    #content-main .row:nth-child(2):not(.meroyatra-dashboard-container) {
+        display: none !important;
+    }
+
+    .col-lg-9,
+    .col-lg-12 {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
+    /* Mini highlights grid */
+    .highlights-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .highlight-pill-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .highlight-pill-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    .highlight-pill-val {
+        font-size: 16px;
+        font-weight: 800;
+        color: #1e293b;
+        line-height: 1.2;
+    }
+
+    .highlight-pill-lbl {
+        font-size: 11px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Recent Searches Mini Table */
+    .recent-searches-box {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .recent-searches-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+    .recent-searches-table th {
+        background: #f1f5f9;
+        color: #475569;
+        font-weight: 700;
+        padding: 10px 12px;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .recent-searches-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #f1f5f9;
+        color: #334155;
+        font-weight: 500;
+    }
+
+    .recent-searches-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .badge-pill-tag {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+</style>
+
+<div class="meroyatra-dashboard-container">
+    
+    <!-- Title Section -->
+    <h1 class="meroyatra-page-title">MeroYatra Analytics</h1>
+
+    <!-- Top Grid: 2 Cards -->
+    <div class="meroyatra-top-grid">
+
+        <!-- Card 1: MeroYatra System Overview & Metrics -->
+        <div class="meroyatra-card">
+            <div class="meroyatra-card-header">
+                <h3 class="meroyatra-card-title">System Overview & Activity</h3>
+            </div>
+
+            <div class="reviews-user-profile" style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <!-- Admin Avatar icon -->
+                    <div style="width: 52px; height: 52px; border-radius: 12px; background: #eff6ff; border: 2px solid #3b82f6; display: flex; align-items: center; justify-content: center; color: #2563eb; font-size: 24px; font-weight: 700;">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="reviews-user-info">
+                        <h5>{% if request.user.get_full_name %}{{ request.user.get_full_name }}{% else %}{{ request.user.username|default:"dristi" }}{% endif %}</h5>
+                        <div style="color: #16a34a; font-size: 13px; font-weight: 600; margin-top: 2px;">
+                            <i class="fas fa-circle" style="font-size: 8px; vertical-align: middle;"></i> System Administrator
+                        </div>
+                    </div>
+                </div>
+                <a href="{% url 'admin:logout' %}" style="padding: 6px 14px; background: #fee2e2; border: 1px solid #fca5a5; color: #dc2626; border-radius: 8px; font-weight: 700; font-size: 12px; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;">
+                    <i class="fas fa-sign-out-alt"></i> Log Out
+                </a>
+            </div>
+
+            <!-- Live Database Metrics -->
+            <div class="reviews-stats-row" style="margin: 15px 0 20px 0;">
+                <div class="stat-unit-box">
+                    <div class="stat-metric-val" style="font-size: 42px;">{{ total_visits|default:"0" }}</div>
+                    <div class="stat-metric-lbl">Total Visitors</div>
+                </div>
+                <div class="stat-unit-box">
+                    <div class="stat-metric-val" style="font-size: 42px; color: #16a34a;">{{ total_searches|default:"0" }}</div>
+                    <div class="stat-metric-lbl">Recommendations</div>
+                </div>
+            </div>
+
+            <div class="reviews-stats-row" style="margin: 0 0 25px 0;">
+                <div class="stat-unit-box">
+                    <div class="stat-metric-val" style="font-size: 34px; color: #d97706;">{{ total_places|default:"0" }}</div>
+                    <div class="stat-metric-lbl">Destinations</div>
+                </div>
+                <div class="stat-unit-box">
+                    <div class="stat-metric-val" style="font-size: 34px; color: #0891b2;">{{ total_hotels|default:"0" }}</div>
+                    <div class="stat-metric-lbl">Hotels Listed</div>
+                </div>
+            </div>
+
+            <a href="{% url 'admin:travel_app_recommendationhistory_changelist' %}" class="btn-check-reviews">
+                VIEW SEARCH LOGS
+            </a>
+        </div>
+
+        <!-- Card 2: Destinations by Category (Donut Chart) -->
+        <div class="meroyatra-card">
+            <div class="meroyatra-card-header">
+                <h3 class="meroyatra-card-title">Destinations by Category</h3>
+                <span class="badge bg-primary" style="padding: 6px 12px; border-radius: 6px; font-size: 12px;">Live Database</span>
+            </div>
+
+            <div class="donut-wrapper">
+                <div class="donut-chart-container">
+                    <canvas id="tripsDonutChart"></canvas>
+                    <div class="donut-center-label">
+                        <div class="donut-center-num">{{ total_places|default:"0" }}</div>
+                        <div class="donut-center-txt">Places</div>
+                    </div>
+                </div>
+
+                <div class="donut-legend-list">
+                    <div class="legend-item">
+                        <span><span class="legend-color-dot" style="background: #2563eb;"></span>Nature</span>
+                        <span>{{ nature_count }}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span><span class="legend-color-dot" style="background: #16a34a;"></span>Trekking</span>
+                        <span>{{ trekking_count }}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span><span class="legend-color-dot" style="background: #d97706;"></span>Cultural</span>
+                        <span>{{ cultural_count }}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span><span class="legend-color-dot" style="background: #dc2626;"></span>Adventure</span>
+                        <span>{{ adventure_count }}</span>
+                    </div>
+                    <div class="legend-item">
+                        <span><span class="legend-color-dot" style="background: #0891b2;"></span>Wildlife</span>
+                        <span>{{ wildlife_count }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Card: Nepal Province Breakdown & Regional Insights -->
+    <div class="meroyatra-card">
+        <div class="meroyatra-card-header">
+            <div>
+                <h3 class="meroyatra-card-title">Destinations Distribution by Nepal Province</h3>
+            </div>
+            <span class="badge bg-success" style="padding: 6px 12px; border-radius: 6px; font-size: 12px;">Regional Breakdown</span>
+        </div>
+
+        <div class="viewers-subtitle">Total {{ total_places|default:"0" }} Nepal Destinations Across 5 Regions</div>
+
+        <div class="profile-viewers-grid">
+            
+            <!-- Left Side: Regional Highlights & Metric Cards -->
+            <div>
+                <!-- Top Highlights Grid -->
+                <div class="highlights-grid">
+                    <div class="highlight-pill-card">
+                        <div class="highlight-pill-icon" style="background: #eff6ff; color: #2563eb;">
+                            <i class="fas fa-map-pin"></i>
+                        </div>
+                        <div>
+                            <div class="highlight-pill-val">{{ total_hotspots|default:"0" }}</div>
+                            <div class="highlight-pill-lbl">Hotspots Listed</div>
+                        </div>
+                    </div>
+
+                    <div class="highlight-pill-card">
+                        <div class="highlight-pill-icon" style="background: #f0fdf4; color: #16a34a;">
+                            <i class="fas fa-search-location"></i>
+                        </div>
+                        <div>
+                            <div class="highlight-pill-val">{{ total_searches|default:"0" }}</div>
+                            <div class="highlight-pill-lbl">Search Queries</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Featured Region Insights Grid -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px;">
+                    <!-- Gandaki Province Card -->
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 14px; padding: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-weight: 700; font-size: 14px; color: #15803d; display: flex; align-items: center; gap: 6px;">
+                                <i class="fas fa-mountain"></i> Gandaki Region
+                            </span>
+                            <span style="background: #16a34a; color: #fff; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">{% if total_places > 0 %}{% widthratio gandaki_count total_places 100 %}{% else %}0{% endif %}% Share</span>
+                        </div>
+                        <div style="font-size: 22px; font-weight: 800; color: #166534;">{{ gandaki_count }} <span style="font-size: 12px; font-weight: 600; color: #15803d;">Destinations</span></div>
+                        <div style="font-size: 11px; color: #166534; margin-top: 6px; font-weight: 600;">
+                            <i class="fas fa-star" style="color: #eab308;"></i> Top Spots: {{ gandaki_top_spots|default:"Pokhara, Annapurna, Mustang" }}
+                        </div>
+                    </div>
+
+                    <!-- Bagmati Province Card -->
+                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 14px; padding: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-weight: 700; font-size: 14px; color: #1d4ed8; display: flex; align-items: center; gap: 6px;">
+                                <i class="fas fa-landmark"></i> Bagmati Region
+                            </span>
+                            <span style="background: #2563eb; color: #fff; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">{% if total_places > 0 %}{% widthratio bagmati_count total_places 100 %}{% else %}0{% endif %}% Share</span>
+                        </div>
+                        <div style="font-size: 22px; font-weight: 800; color: #1e40af;">{{ bagmati_count }} <span style="font-size: 12px; font-weight: 600; color: #1d4ed8;">Destinations</span></div>
+                        <div style="font-size: 11px; color: #1e40af; margin-top: 6px; font-weight: 600;">
+                            <i class="fas fa-star" style="color: #eab308;"></i> Top Spots: {{ bagmati_top_spots|default:"Kathmandu Valley, Nagarkot" }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secondary Regions Banner -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 14px 18px; margin-top: 14px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 36px; height: 36px; border-radius: 10px; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+                            <i class="fas fa-compass"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 700; font-size: 13px; color: #1e293b;">Koshi, Lumbini & Karnali Regions</div>
+                            <div style="font-size: 11px; color: #64748b; font-weight: 500;">Emerging cultural & trekking destinations across Eastern and Western Nepal</div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-weight: 800; font-size: 15px; color: #475569;">Other Regions</div>
+                        <div style="font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Regional Breakdown</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Nepal Province Breakdown Progress Bars -->
+            <div class="country-breakdown-list">
+                <!-- Bagmati Province -->
+                <div class="country-row">
+                    <div class="country-badge" style="background-color: #2563eb;">{{ bagmati_count }}</div>
+                    <div class="country-name-bar">
+                        <span>Bagmati Province</span>
+                        <div class="country-bar-bg">
+                            <div class="country-bar-fill" style="width: {% if total_places > 0 %}{% widthratio bagmati_count total_places 100 %}{% else %}0{% endif %}%; background: #2563eb;"></div>
+                        </div>
+                    </div>
+                    <div class="country-percent percent-up">{% if total_places > 0 %}{% widthratio bagmati_count total_places 100 %}{% else %}0{% endif %}%</div>
+                </div>
+
+                <!-- Gandaki Province -->
+                <div class="country-row">
+                    <div class="country-badge" style="background-color: #16a34a;">{{ gandaki_count }}</div>
+                    <div class="country-name-bar">
+                        <span>Gandaki Province</span>
+                        <div class="country-bar-bg">
+                            <div class="country-bar-fill" style="width: {% if total_places > 0 %}{% widthratio gandaki_count total_places 100 %}{% else %}0{% endif %}%; background: #16a34a;"></div>
+                        </div>
+                    </div>
+                    <div class="country-percent percent-up">{% if total_places > 0 %}{% widthratio gandaki_count total_places 100 %}{% else %}0{% endif %}%</div>
+                </div>
+
+                <!-- Koshi Province -->
+                <div class="country-row">
+                    <div class="country-badge" style="background-color: #d97706;">{{ koshi_count }}</div>
+                    <div class="country-name-bar">
+                        <span>Koshi Province</span>
+                        <div class="country-bar-bg">
+                            <div class="country-bar-fill" style="width: {% if total_places > 0 %}{% widthratio koshi_count total_places 100 %}{% else %}0{% endif %}%; background: #d97706;"></div>
+                        </div>
+                    </div>
+                    <div class="country-percent percent-up">{% if total_places > 0 %}{% widthratio koshi_count total_places 100 %}{% else %}0{% endif %}%</div>
+                </div>
+
+                <!-- Lumbini Province -->
+                <div class="country-row">
+                    <div class="country-badge" style="background-color: #0891b2;">{{ lumbini_count }}</div>
+                    <div class="country-name-bar">
+                        <span>Lumbini Province</span>
+                        <div class="country-bar-bg">
+                            <div class="country-bar-fill" style="width: {% if total_places > 0 %}{% widthratio lumbini_count total_places 100 %}{% else %}0{% endif %}%; background: #0891b2;"></div>
+                        </div>
+                    </div>
+                    <div class="country-percent percent-up">{% if total_places > 0 %}{% widthratio lumbini_count total_places 100 %}{% else %}0{% endif %}%</div>
+                </div>
+
+                <!-- Karnali & Sudurpashchim -->
+                <div class="country-row">
+                    <div class="country-badge" style="background-color: #7c3aed;">{{ karnali_count }}</div>
+                    <div class="country-name-bar">
+                        <span>Karnali & Far-West</span>
+                        <div class="country-bar-bg">
+                            <div class="country-bar-fill" style="width: {% if total_places > 0 %}{% widthratio karnali_count total_places 100 %}{% else %}0{% endif %}%; background: #7c3aed;"></div>
+                        </div>
+                    </div>
+                    <div class="country-percent percent-up">{% if total_places > 0 %}{% widthratio karnali_count total_places 100 %}{% else %}0{% endif %}%</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- Render Donut Chart safely -->
+<script>
+function initMeroYatraCharts() {
+    if (typeof Chart === 'undefined') {
+        setTimeout(initMeroYatraCharts, 150);
+        return;
+    }
+
+    // Add CSS flag class to hide default tables
+    document.body.classList.add('dashboard-override-active');
+
+    // 1. Sidebar User Panel Injection
+    const sidebar = document.querySelector('.main-sidebar .sidebar');
+    const brandLink = document.querySelector('.brand-link');
+    
+    if (sidebar && !document.querySelector('.sidebar-user-panel')) {
+        const userPanel = document.createElement('div');
+        userPanel.className = 'sidebar-user-panel';
+        userPanel.innerHTML = `
+            <div style="width: 58px; height: 58px; border-radius: 12px; background: rgba(255,255,255,0.15); margin: 0 auto 8px auto; display: flex; align-items: center; justify-content: center; color: #ffffff; font-size: 24px; border: 2px solid rgba(255,255,255,0.3);">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <h4 class="sidebar-user-name">{% if request.user.get_full_name %}{{ request.user.get_full_name }}{% else %}{{ request.user.username|default:"dristi" }}{% endif %}</h4>
+            <div class="sidebar-user-role">Administrator</div>
+            <a href="{% url 'admin:logout' %}" style="display: inline-block; margin-top: 8px; padding: 4px 12px; background: rgba(239, 68, 68, 0.25); border: 1px solid rgba(239, 68, 68, 0.4); color: #ffffff; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none; transition: all 0.2s;">
+                <i class="fas fa-sign-out-alt"></i> Log Out
+            </a>
+        `;
+        if (brandLink) {
+            brandLink.insertAdjacentElement('afterend', userPanel);
+        } else {
+            sidebar.prepend(userPanel);
+        }
+    }
+
+    // 2. Category Donut Chart
+    const canvasDonut = document.getElementById('tripsDonutChart');
+    if (canvasDonut) {
+        const ctxDonut = canvasDonut.getContext('2d');
+        new Chart(ctxDonut, {
+            type: 'doughnut',
+            data: {
+                labels: ['Nature', 'Trekking', 'Cultural', 'Adventure', 'Wildlife'],
+                datasets: [{
+                    data: [
+                        {{ nature_count|default:0 }},
+                        {{ trekking_count|default:0 }},
+                        {{ cultural_count|default:0 }},
+                        {{ adventure_count|default:0 }},
+                        {{ wildlife_count|default:0 }}
+                    ],
+                    backgroundColor: [
+                        '#2563eb', // Blue
+                        '#16a34a', // Green
+                        '#d97706', // Amber
+                        '#dc2626', // Red
+                        '#0891b2'  # Cyan
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
+                },
+                cutout: '74%'
+            }
+        });
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMeroYatraCharts);
+} else {
+    initMeroYatraCharts();
+}
+</script>
+
+{% endblock %}

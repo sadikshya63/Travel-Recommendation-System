@@ -2,7 +2,7 @@ import pandas as pd
 import requests
 import re
 from django.conf import settings
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.db.models import Q, Case, When, Value, IntegerField
 
@@ -13,17 +13,17 @@ from sklearn.metrics.pairwise import cosine_similarity
 from .utils import haversine
 from .models import Place, EmergencyContact, FAQ, Hotel, RecommendationHistory, VisitorCounter, Hotspot
 
-# =========================
-# HOME
-# =========================
 def home(request):
-    places = Place.objects.filter(
-        featured=True,
-        is_active=True
-    )
-    counter, created = VisitorCounter.objects.get_or_create(pk=1)
-    counter.total_visits += 1
-    counter.save()
+    places = Place.objects.filter(featured=True, is_active=True)
+
+    # Get or create counter object
+    counter, _ = VisitorCounter.objects.get_or_create(pk=1)
+
+    # Increment counter ONLY ONCE per browser session
+    if not request.session.get('has_visited'):
+        request.session['has_visited'] = True
+        counter.total_visits += 1
+        counter.save()
 
     places = Place.objects.filter(is_active=True)[:6]
 
@@ -62,7 +62,7 @@ def place_detail(request, place_id):
     })
 
 # =========================
-# RECOMMENDATION (BALANCED SCORING)
+# RECOMMENDATION (EXACT BUCKET MATCHING)
 # =========================
 def recommendation(request):
 
@@ -158,25 +158,27 @@ def recommendation(request):
         df = pd.DataFrame(data).fillna("")
 
         # ---------------------------------------
-        # Helper: Duration Normalization
+        # Helper: Exact Form Duration Bucket
         # ---------------------------------------
-        def normalize_duration(text):
+        def get_exact_duration_bucket(text):
             if not text:
                 return ""
             t = str(text).lower().strip()
 
-            if "1-3" in t or "1 to 3" in t:
+            # Handle direct form bucket strings
+            if "1-3" in t:
                 return "1-3 days"
-            elif "4-6" in t or "4 to 6" in t:
+            elif "4-6" in t:
                 return "4-6 days"
-            elif "7-9" in t or "7 to 9" in t:
+            elif "7-9" in t:
                 return "7-9 days"
-            elif "10+" in t or "10 plus" in t or "10 or more" in t:
+            elif "10+" in t:
                 return "10+ days"
 
             numbers = [int(n) for n in re.findall(r"\d+", t)]
             if not numbers:
                 return ""
+
             max_days = max(numbers)
             if max_days <= 3:
                 return "1-3 days"
@@ -187,12 +189,10 @@ def recommendation(request):
             else:
                 return "10+ days"
 
-        df["duration_bucket"] = df["duration"].apply(normalize_duration)
-        user_duration_bucket = normalize_duration(duration)
+        df["duration_bucket"] = df["duration"].apply(get_exact_duration_bucket)
+        user_duration_bucket = get_exact_duration_bucket(duration)
 
-        # ---------------------------------------
         # Helper: Budget Normalization
-        # ---------------------------------------
         def normalize_budget(text):
             if not text:
                 return ""
@@ -213,9 +213,9 @@ def recommendation(request):
         user_budget_clean = normalize_budget(budget)
 
         # ---------------------------------------
-        # Rule-Based Filtering Engine
+        # Rule-Based Filtering Engine (Strict Bucket Match)
         # ---------------------------------------
-        def apply_filters(dataframe, cat, prov, dur_bucket, bdg_clean):
+        def apply_filters(dataframe, cat, prov, dur_bkt, bdg_clean):
             filtered = dataframe.copy()
 
             if cat:
@@ -228,9 +228,9 @@ def recommendation(request):
                     filtered["province"].str.lower().str.strip() == prov.lower().strip()
                 ]
 
-            if dur_bucket:
+            if dur_bkt:
                 filtered = filtered[
-                    filtered["duration_bucket"].str.lower() == dur_bucket.lower()
+                    filtered["duration_bucket"].str.lower() == dur_bkt.lower()
                 ]
 
             if bdg_clean:
@@ -243,11 +243,14 @@ def recommendation(request):
         # ---------------------------------------
         # Progressive Fallback Handling
         # ---------------------------------------
+        # Stage 1: Exact match on Category + Province + Duration Bucket + Budget
         result = apply_filters(df, category, province, user_duration_bucket, user_budget_clean)
 
         if not result.empty:
             message = ""
         else:
+            # Stage 2 (Impractical Combo Fallback, e.g. 10+ days with Low budget):
+            # Keeps Duration Bucket strictly intact, relaxes Budget
             result_relax_budget = apply_filters(df, category, province, user_duration_bucket, None)
             
             if not result_relax_budget.empty:
@@ -257,6 +260,7 @@ def recommendation(request):
                     f"Showing destinations matching your selected duration ({duration}) and province in available budget tiers."
                 )
             else:
+                # Stage 3: Relax duration, keep budget
                 result_relax_duration = apply_filters(df, category, province, None, user_budget_clean)
 
                 if not result_relax_duration.empty:
@@ -266,6 +270,7 @@ def recommendation(request):
                         f"Showing destinations matching your budget ({budget}) and province."
                     )
                 else:
+                    # Stage 4: Relax both budget & duration
                     result_cat_prov = apply_filters(df, category, province, None, None)
 
                     if not result_cat_prov.empty:
@@ -275,6 +280,7 @@ def recommendation(request):
                             "Showing destinations matching your category and province."
                         )
                     else:
+                        # Stage 5: Relax province
                         result_cat = apply_filters(df, category, "Any Province", None, None)
 
                         if not result_cat.empty:
@@ -299,7 +305,7 @@ def recommendation(request):
                             })
 
         # ---------------------------------------
-        # STAGE 2: BALANCED HYBRID MATCH SCORE
+        # STAGE 2: ACCURATE SCORING (ACTIVITY OVERLAP + TF-IDF)
         # ---------------------------------------
         result = result.copy()
 
@@ -314,7 +320,6 @@ def recommendation(request):
 
         result["activity_ratio"] = result["activities"].apply(calc_activity_ratio)
 
-        # TF-IDF Cosine Similarity on Category + Activities + Description
         result["features"] = (
             result["category"] + " " +
             result["activities"] + " " +
@@ -339,7 +344,6 @@ def recommendation(request):
         except Exception:
             result["tfidf_sim"] = 0.5
 
-        # Base filter pass = 0.55 (55%), Activity Overlap = up to 0.35, TF-IDF = up to 0.10
         if user_act_set:
             result["match_score"] = (
                 0.55 + 
@@ -349,10 +353,8 @@ def recommendation(request):
         else:
             result["match_score"] = 0.60 + (result["tfidf_sim"] * 0.40)
 
-        # Convert score to percentage
         result["match"] = (result["match_score"] * 100).round(1)
 
-        # Cap match percentage at 95.0% unless 100% of user activities matched
         if user_act_set:
             result.loc[(result["activity_ratio"] < 1.0) & (result["match"] > 95.0), "match"] = 92.5
 
@@ -388,9 +390,10 @@ def get_activities(request):
     return JsonResponse(sorted(list(activities)), safe=False)
 
 # =========================
-# EXPLORE
+# EXPLORE (EXACT DESTINATION & CITY SEARCH ONLY)
 # =========================
 def explore(request):
+
     search = request.GET.get("search", "").strip()
     categories = request.GET.getlist("category")
     activities = request.GET.getlist("activity")
@@ -402,8 +405,10 @@ def explore(request):
         places = Place.objects.filter(is_active=True)
 
         if search:
+            # Search ONLY destination name and city (ignores description text)
             destination_results = places.filter(
-                Q(place_name__icontains=search) | Q(city__icontains=search)
+                Q(place_name__icontains=search) | 
+                Q(city__icontains=search)
             )
 
             if not destination_results.exists():
@@ -411,50 +416,42 @@ def explore(request):
                     Place.objects.filter(is_active=True).values_list("place_name", flat=True)
                 )
                 match = process.extractOne(search, place_names, scorer=fuzz.WRatio)
-
                 if match and match[1] >= 75:
                     suggestion = match[0]
-
                 places = Place.objects.none()
             else:
                 places = destination_results
 
                 if categories:
-                    places = places.filter(category__in=categories)
+                    cat_q = Q()
+                    for cat in categories:
+                        cat_q |= Q(category__icontains=cat)
+                    places = places.filter(cat_q)
 
                 if activities:
-                    q = Q()
-                    for activity in activities:
-                        q |= Q(activities__icontains=activity)
-                    places = places.filter(q)
+                    act_q = Q()
+                    for act in activities:
+                        act_q |= Q(activities__icontains=act)
+                    places = places.filter(act_q)
 
-                places = places.annotate(
-                    relevance=Case(
-                        When(place_name__icontains=search, then=Value(2)),
-                        When(city__icontains=search, then=Value(1)),
-                        default=Value(0),
-                        output_field=IntegerField(),
-                    )
-                ).order_by("-relevance", "place_name")
         else:
             if categories:
-                q = Q()
-                for category in categories:
-                    q |= Q(category__icontains=category)
-                places = places.filter(q)
+                cat_q = Q()
+                for cat in categories:
+                    cat_q |= Q(category__icontains=cat)
+                places = places.filter(cat_q)
 
             if activities:
-                q = Q()
-                for activity in activities:
-                    q |= Q(activities__icontains=activity)
-                places = places.filter(q)
+                act_q = Q()
+                for act in activities:
+                    act_q |= Q(activities__icontains=act)
+                places = places.filter(act_q)
 
         if search and not places.exists():
             place_names = list(
                 Place.objects.filter(is_active=True).values_list("place_name", flat=True)
             )
             match = process.extractOne(search, place_names, scorer=fuzz.WRatio)
-
             if match and match[1] >= 60:
                 suggestion = match[0]
 
@@ -471,7 +468,6 @@ def explore(request):
         "featured_places": places,
         "search": search,
         "selected_categories": categories,
-        "selected_activities": activities,
         "selected_activities": activities,
         "suggestion": suggestion,
     })
@@ -592,3 +588,11 @@ def weather_alert(weather_data):
         return "❄ Snowfall Alert"
     else:
         return "🌡 Normal Weather Conditions"
+
+# =========================
+# CUSTOM ADMIN LOGOUT VIEW
+# =========================
+def custom_admin_logout(request):
+    from django.contrib.auth import logout
+    logout(request)
+    return redirect('/admin/login/')
