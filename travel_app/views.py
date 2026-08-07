@@ -272,7 +272,7 @@ def recommendation(request):
 
             else:
 
-                # Stage 3
+                
                 # Stage 3
              result = apply_filters(
                   df,
