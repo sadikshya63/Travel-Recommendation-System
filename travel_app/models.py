@@ -75,7 +75,6 @@ class RecommendationHistory(models.Model):
     province = models.CharField(max_length=100)
     budget_level = models.CharField(max_length=20)
     duration = models.CharField(max_length=50)
-    tourist_type = models.CharField(max_length=50)
     searched_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

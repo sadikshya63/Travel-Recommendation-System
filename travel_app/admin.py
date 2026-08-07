@@ -1,7 +1,9 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Place, Hotel, EmergencyContact, FAQ, RecommendationHistory,VisitorCounter, Hotspot
+from .models import Place, Hotel, EmergencyContact, FAQ, RecommendationHistory, VisitorCounter, Hotspot
 from django.contrib.admin import SimpleListFilter
+
+
 class ActivityFilter(SimpleListFilter):
     title = "activities"
     parameter_name = "activity"
@@ -22,6 +24,8 @@ class ActivityFilter(SimpleListFilter):
                 activities__icontains=self.value()
             )
         return queryset
+
+
 @admin.register(Place)
 class PlaceAdmin(admin.ModelAdmin):
 
@@ -48,14 +52,14 @@ class PlaceAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
-    "category",
-    ActivityFilter,
-    "province",
-    "budget_level",
-    "tourist_type",
-    "featured",
-    "is_active",
-)
+        "category",
+        ActivityFilter,
+        "province",
+        "budget_level",
+        "tourist_type",
+        "featured",
+        "is_active",
+    )
 
     ordering = ("place_id",)
 
@@ -84,7 +88,6 @@ class HotelAdmin(admin.ModelAdmin):
     search_fields = (
         "hotel_name",
         "place__place_name",
-        "address",
     )
 
     list_filter = (
@@ -126,14 +129,16 @@ class FAQAdmin(admin.ModelAdmin):
         "question",
         "answer",
     )
+
+
 @admin.register(RecommendationHistory)
 class RecommendationHistoryAdmin(admin.ModelAdmin):
-    change_list_template = "admin/recommendation_history.html"
     list_display = (
         "category",
+        "activities",
         "province",
         "budget_level",
-        "tourist_type",
+        "duration",
         "searched_at",
     )
 
@@ -147,24 +152,14 @@ class RecommendationHistoryAdmin(admin.ModelAdmin):
         "category",
         "province",
         "budget_level",
-        "tourist_type",
+        "duration",
     )
-    def changelist_view(self, request, extra_context=None):
-        extra_context = extra_context or {}
 
-        extra_context["domestic_count"] = RecommendationHistory.objects.filter(
-            tourist_type="Domestic"
-        ).count()
 
-        extra_context["international_count"] = RecommendationHistory.objects.filter(
-            tourist_type="International"
-        ).count()
-
-        return super().changelist_view(request, extra_context=extra_context)
-    
 @admin.register(VisitorCounter)
 class VisitorCounterAdmin(admin.ModelAdmin):
     list_display = ("total_visits",)
+
 
 @admin.register(Hotspot)
 class HotspotAdmin(admin.ModelAdmin):
