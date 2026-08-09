@@ -71,17 +71,41 @@ class ActivityFilter(SimpleListFilter):
         for place in Place.objects.all():
             if place.activities:
                 for activity in place.activities.split(","):
-                    activities.add(activity.strip())
+                    activity = activity.strip()
+                    if activity:
+                        activities.add(activity)
 
-        return sorted((a, a) for a in activities)
+        return sorted((activity, activity) for activity in activities)
 
     def queryset(self, request, queryset):
         if self.value():
             return queryset.filter(
                 activities__icontains=self.value()
             )
+
         return queryset
 
+
+class CategoryFilter(SimpleListFilter):
+    title = "category"
+    parameter_name = "category"
+
+    def lookups(self, request, model_admin):
+        return [
+            ("Adventure", "Adventure"),
+            ("Cultural", "Cultural"),
+            ("Nature", "Nature"),
+            ("Wildlife", "Wildlife"),
+            ("Trekking", "Trekking"),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(
+                category__icontains=self.value()
+            )
+
+        return queryset
 
 @admin.register(Place)
 class PlaceAdmin(admin.ModelAdmin):
@@ -109,7 +133,7 @@ class PlaceAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
-        "category",
+        CategoryFilter,
         ActivityFilter,
         "province",
         "budget_level",
