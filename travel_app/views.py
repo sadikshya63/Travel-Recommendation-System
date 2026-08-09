@@ -75,15 +75,17 @@ def recommendation(request):
     budget = ""
     duration = ""
 
-    # Dropdown options
-    category_set = set()
-    for item in Place.objects.values_list("category", flat=True):
-        if item:
-            for cat in item.split(","):
-                category_set.add(cat.strip())
-    categories = sorted(category_set)
-
-    provinces = Place.objects.values_list("province", flat=True).distinct()
+    # Dropdown options - Hardcoded categories and provinces as requested
+    categories = ["Cultural", "Wildlife", "Nature", "Trekking", "Adventure"]
+    provinces = [
+        "Bagmati Province",
+        "Gandaki Province",
+        "Karnali Province",
+        "Koshi Province",
+        "Lumbini Province",
+        "Madhesh Province",
+        "Sudurpashchim Province",
+    ]
 
     activity_set = set()
     for item in Place.objects.values_list("activities", flat=True):
@@ -166,12 +168,10 @@ def recommendation(request):
             t = str(text).lower().strip()
 
             # Handle direct form bucket strings
-            if "1-3" in t:
-                return "1-3 days"
-            elif "4-6" in t:
-                return "4-6 days"
-            elif "7-9" in t:
-                return "7-9 days"
+            if "1-4" in t or "1-3" in t or "2-4" in t or "3-4" in t:
+                return "1-4 days"
+            elif "5-9" in t or "4-6" in t or "7-9" in t:
+                return "5-9 days"
             elif "10+" in t:
                 return "10+ days"
 
@@ -180,12 +180,10 @@ def recommendation(request):
                 return ""
 
             max_days = max(numbers)
-            if max_days <= 3:
-                return "1-3 days"
-            elif max_days <= 6:
-                return "4-6 days"
+            if max_days <= 4:
+                return "1-4 days"
             elif max_days <= 9:
-                return "7-9 days"
+                return "5-9 days"
             else:
                 return "10+ days"
 
@@ -378,9 +376,12 @@ def recommendation(request):
 # GET ACTIVITIES API
 # =========================
 def get_activities(request):
-    category = request.GET.get("category")
+    category = request.GET.get("category", "").strip()
     activities = set()
-    places = Place.objects.filter(category__iexact=category)
+    if category:
+        places = Place.objects.filter(category__icontains=category, is_active=True)
+    else:
+        places = Place.objects.filter(is_active=True)
 
     for place in places:
         if place.activities:

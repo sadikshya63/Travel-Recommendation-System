@@ -257,11 +257,11 @@ function initMeroYatraCharts() {
                         {{ wildlife_count|default:0 }}
                     ],
                     backgroundColor: [
-                        '#2563eb', // Blue
-                        '#16a34a', // Green
-                        '#d97706', // Amber
-                        '#dc2626', // Red
-                        '#0891b2'  # Cyan
+                        '#2563eb', 
+                        '#16a34a', 
+                        '#d97706', 
+                        '#dc2626', 
+                        '#0891b2'  
                     ],
                     borderWidth: 0,
                     hoverOffset: 4
@@ -290,18 +290,18 @@ function initMeroYatraCharts() {
                 datasets: [{
                     label: 'Destinations',
                     data: [
-                        {{ bagmati_count|default:69 }},
-                        {{ gandaki_count|default:93 }},
-                        {{ koshi_count|default:11 }},
-                        {{ lumbini_count|default:11 }},
-                        {{ karnali_count|default:16 }}
+                        {{ bagmati_count|default:0 }},
+                        {{ gandaki_count|default:0 }},
+                        {{ koshi_count|default:0 }},
+                        {{ lumbini_count|default:0 }},
+                        {{ karnali_count|default:0 }}
                     ],
                     backgroundColor: [
-                        '#2563eb', // Bagmati (Blue)
-                        '#16a34a', // Gandaki (Green)
-                        '#d97706', // Koshi (Amber)
-                        '#0891b2', // Lumbini (Cyan)
-                        '#7c3aed'  # Karnali (Purple)
+                        '#2563eb', 
+                        '#16a34a', 
+                        '#d97706', 
+                        '#0891b2', 
+                        '#7c3aed'  
                     ],
                     borderRadius: 8,
                     borderSkipped: false,
