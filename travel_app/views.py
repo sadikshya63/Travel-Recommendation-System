@@ -277,8 +277,8 @@ def recommendation(request):
             if not result_relax_budget.empty:
                 result = result_relax_budget
                 message = (
-                    f"No exact '{budget}' budget option found for '{duration}'. "
-                    f"Showing destinations matching your selected duration ({duration}) and province in available budget tiers."
+                    "No exact matches were found for your selected budget "
+                    "and duration. Showing top recommendations with alternative budgets."
                 )
             else:
                 # Stage 3: Relax duration, keep budget
@@ -287,8 +287,8 @@ def recommendation(request):
                 if not result_relax_duration.empty:
                     result = result_relax_duration
                     message = (
-                        f"No destinations found matching duration '{duration}'. "
-                        f"Showing destinations matching your budget ({budget}) and province."
+                        "No exact matches were found for your selected budget "
+                        "and duration. Showing top recommendations with alternative budgets."
                     )
                 else:
                     # Stage 4: Relax both budget & duration
@@ -297,8 +297,8 @@ def recommendation(request):
                     if not result_cat_prov.empty:
                         result = result_cat_prov
                         message = (
-                            "No destinations matched all budget & duration preferences. "
-                            "Showing destinations matching your category and province."
+                            "No exact matches were found for your selected budget "
+                            "and duration. Showing top recommendations with alternative budgets."
                         )
                     else:
                         # Stage 5: Relax province
@@ -307,11 +307,11 @@ def recommendation(request):
                         if not result_cat.empty:
                             result = result_cat
                             message = (
-                                f"No destinations found in {province}. "
-                                f"Showing closest destinations in the '{category}' category."
+                                "No exact matches were found for your selected budget "
+                                "and duration. Showing top recommendations with alternative budgets."
                             )
                         else:
-                            message = f"No destinations exist in the '{category}' category."
+                            message = "No places found matching all selected preferences."
                             return render(
                                 request,
                                 "recommendation.html",
@@ -330,20 +330,9 @@ def recommendation(request):
                             )
 
         # ---------------------------------------
-        # STAGE 2: ACCURATE SCORING (ACTIVITY OVERLAP + TF-IDF)
+        # FRIEND'S MATCH SCORING (55% similarity + 15% province + 15% budget + 15% duration)
         # ---------------------------------------
         result = result.copy()
-
-        user_act_set = set([a.lower().strip() for a in activities if a.strip()])
-
-        def calc_activity_ratio(place_act_str):
-            if not user_act_set or not place_act_str:
-                return 0.0
-            place_acts = set([a.lower().strip() for a in str(place_act_str).split(",") if a.strip()])
-            matched = user_act_set.intersection(place_acts)
-            return len(matched) / len(user_act_set)
-
-        result["activity_ratio"] = result["activities"].apply(calc_activity_ratio)
 
         result["features"] = (
             result["category"] + " " +
@@ -369,20 +358,26 @@ def recommendation(request):
         except Exception:
             result["tfidf_sim"] = 0.5
 
-        if user_act_set:
-            result["match_score"] = (
-                0.55 + 
-                (result["activity_ratio"] * 0.35) + 
-                (result["tfidf_sim"] * 0.10)
-            )
+        # Calculate matching components
+        sim_score = result["tfidf_sim"] * 0.55
+
+        if province and province != "Any Province":
+            prov_score = (result["province"].str.lower() == province.lower()).astype(float) * 0.15
         else:
-            result["match_score"] = 0.60 + (result["tfidf_sim"] * 0.40)
+            prov_score = 0.15
 
+        if user_budget_clean:
+            budget_score = (result["budget_clean"].str.lower() == user_budget_clean.lower()).astype(float) * 0.15
+        else:
+            budget_score = 0.15
+
+        if user_duration_bucket:
+            duration_score = (result["duration_bucket"].str.lower() == user_duration_bucket.lower()).astype(float) * 0.15
+        else:
+            duration_score = 0.15
+
+        result["match_score"] = sim_score + prov_score + budget_score + duration_score
         result["match"] = (result["match_score"] * 100).round(1)
-
-        if user_act_set:
-            result.loc[(result["activity_ratio"] < 1.0) & (result["match"] > 95.0), "match"] = 92.5
-
         result["match"] = result["match"].clip(upper=100.0)
 
         result = result.sort_values(by="match_score", ascending=False)
