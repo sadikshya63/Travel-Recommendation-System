@@ -429,6 +429,8 @@ def explore(request):
     activities = request.GET.getlist("activity")
 
     suggestion = None
+    filter_mismatch_notice = False
+    destination_results_exist = False
 
     # If no search/filter is applied, show only featured places
     if not (search or categories or activities):
@@ -443,9 +445,10 @@ def explore(request):
             destination_results = places.filter(
                 Q(place_name__icontains=search) | Q(city__icontains=search)
             )
+            destination_results_exist = destination_results.exists()
 
             # If destination not found, try fuzzy suggestion
-            if not destination_results.exists():
+            if not destination_results_exist:
                 place_names = list(
                     Place.objects.filter(is_active=True).values_list(
                         "place_name", flat=True
@@ -503,18 +506,21 @@ def explore(request):
 
         # Fuzzy suggestion if nothing matched
         if search and not places.exists():
-            place_names = list(
-                Place.objects.filter(is_active=True).values_list(
-                    "place_name", flat=True
+            if destination_results_exist:
+                filter_mismatch_notice = True
+            else:
+                place_names = list(
+                    Place.objects.filter(is_active=True).values_list(
+                        "place_name", flat=True
+                    )
                 )
-            )
 
-            match = process.extractOne(
-                search, place_names, scorer=fuzz.WRatio
-            )
+                match = process.extractOne(
+                    search, place_names, scorer=fuzz.WRatio
+                )
 
-            if match and match[1] >= 60:
-                suggestion = match[0]
+                if match and match[1] >= 60:
+                    suggestion = match[0]
 
         # Order results by relevance
         elif search:
@@ -535,6 +541,7 @@ def explore(request):
             "selected_categories": categories,
             "selected_activities": activities,
             "suggestion": suggestion,
+            "filter_mismatch_notice": filter_mismatch_notice,
         },
     )
 

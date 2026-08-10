@@ -192,6 +192,13 @@
             </div>
             {% endif %}
 
+            {% if filter_mismatch_notice %}
+            <div class="alert alert-warning text-center mt-4">
+                <i class="fa-solid fa-circle-info"></i>
+                The destination was found, but it does not match your selected category or activities filters.
+            </div>
+            {% endif %}
+
             {% if filter_notice %}
             <div class="alert alert-info text-center mt-3">
                 <i class="fa-solid fa-circle-info"></i>
