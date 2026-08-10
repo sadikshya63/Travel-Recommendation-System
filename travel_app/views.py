@@ -143,7 +143,7 @@ def recommendation(request):
             province=province,
             budget_level=budget,
             duration=duration,
-            tourist_type=tourist,
+            
         )
 
         # ---------------------------------------

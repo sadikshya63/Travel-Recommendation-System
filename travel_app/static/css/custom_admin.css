@@ -1,0 +1,649 @@
+/* ==========================================================================
+   MEROYATRA MODERN ADMIN THEME OVERRIDES FOR DJANGO JAZZMIN
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    background-color: #f4f7fc !important;
+    color: #1e293b !important;
+}
+
+/* --------------------------------------------------------------------------
+   1. ROYAL BLUE SIDEBAR (MEROYATRA STYLE)
+   -------------------------------------------------------------------------- */
+.main-sidebar,
+.main-sidebar .sidebar,
+.sidebar-dark-primary {
+    background: linear-gradient(180deg, #0b409c 0%, #0d347d 40%, #061c47 100%) !important;
+    box-shadow: 4px 0 25px rgba(11, 64, 156, 0.15) !important;
+}
+
+/* Sidebar Brand Header */
+.brand-link {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 20px 18px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.brand-link .brand-text {
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.5px !important;
+    color: #ffffff !important;
+}
+
+.brand-link img {
+    height: 30px !important;
+    width: auto !important;
+    max-height: 36px !important;
+    margin-right: 12px !important;
+    object-fit: contain !important;
+}
+
+.brand-link i {
+    font-size: 22px !important;
+    color: #10b981 !important;
+    margin-right: 10px !important;
+}
+
+/* Sidebar User Profile Card */
+.sidebar-user-panel {
+    padding: 20px 16px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 15px;
+}
+
+.sidebar-avatar-img {
+    width: 68px;
+    height: 68px;
+    border-radius: 14px;
+    object-fit: cover;
+    border: 3px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    margin-bottom: 10px;
+    background-color: #ffffff;
+}
+
+.sidebar-user-name {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 15px;
+    margin: 0;
+}
+
+.sidebar-user-role {
+    color: #93c5fd;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Navigation Items */
+.sidebar .nav-sidebar .nav-item {
+    margin: 4px 12px !important;
+}
+
+.sidebar .nav-sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.78) !important;
+    border-radius: 10px !important;
+    padding: 10px 16px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+.sidebar .nav-sidebar .nav-link i {
+    color: rgba(255, 255, 255, 0.7) !important;
+    font-size: 16px !important;
+    margin-right: 12px !important;
+}
+
+.sidebar .nav-sidebar .nav-link:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+}
+
+.sidebar .nav-sidebar .nav-link.active,
+.sidebar .nav-sidebar .nav-item.menu-open > .nav-link {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    backdrop-filter: blur(8px);
+}
+
+.sidebar .nav-sidebar .nav-link.active i {
+    color: #38bdf8 !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. TOP NAVIGATION HEADER
+   -------------------------------------------------------------------------- */
+.main-header {
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
+    padding: 6px 16px !important;
+}
+
+/* Hide top menu text links (Home Page, Explore, etc.) and top search bar */
+.main-header .nav-item.d-none.d-sm-inline-block,
+.main-header form.form-inline {
+    display: none !important;
+}
+
+.main-header .nav-link {
+    color: #475569 !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+}
+
+.main-header .nav-link:hover {
+    color: #0b409c !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. HIDE DEFAULT REPEATED DJANGO ADMIN TABLES & SIDEBAR BLOCKS ON DASHBOARD
+   -------------------------------------------------------------------------- */
+.content-wrapper {
+    background-color: #f4f7fc !important;
+}
+
+/* Hide Jazzmin's default model list tables and right-side recent actions column */
+.dashboard-override-active .col-lg-3,
+.dashboard-override-active .card.card-primary:not(.meroyatra-card),
+.dashboard-override-active #content-main > .row > .col-lg-9 > .card,
+.dashboard-override-active #content-main > .row > .col-lg-12 > .card {
+    display: none !important;
+}
+
+.dashboard-override-active .col-lg-9,
+.dashboard-override-active .col-lg-12 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. MEROYATRA DASHBOARD CARDS & WIDGETS
+   -------------------------------------------------------------------------- */
+.meroyatra-dashboard-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 10px 10px 40px 10px;
+}
+
+.meroyatra-page-title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 800;
+    color: #2563eb;
+    margin-bottom: 30px;
+    position: relative;
+    letter-spacing: -0.5px;
+}
+
+.meroyatra-page-title::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: #2563eb;
+    border-radius: 2px;
+    margin: 8px auto 0 auto;
+}
+
+/* Top 2 Cards Grid */
+.meroyatra-top-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 992px) {
+    .meroyatra-top-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.meroyatra-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+    border: 1px solid #e2e8f0;
+    position: relative;
+    overflow: hidden;
+}
+
+.meroyatra-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.meroyatra-card-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2563eb;
+    margin: 0;
+}
+
+.meroyatra-period-select {
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    background: #f8fafc;
+    outline: none;
+    cursor: pointer;
+}
+
+/* Widget 1: Ratings & Reviews */
+.reviews-user-profile {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.reviews-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.reviews-user-info h5 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 16px;
+    color: #1e293b;
+}
+
+.reviews-stars {
+    color: #f59e0b;
+    font-size: 15px;
+    margin-top: 2px;
+}
+
+.reviews-count {
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 500;
+    margin-left: 6px;
+}
+
+.reviews-stats-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 20px 0 25px 0;
+    text-align: center;
+}
+
+.stat-metric-val {
+    font-size: 54px;
+    font-weight: 300;
+    color: #2563eb;
+    line-height: 1;
+    letter-spacing: -1px;
+}
+
+.stat-metric-lbl {
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    margin-top: 8px;
+}
+
+.btn-check-reviews {
+    display: block;
+    width: 200px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 10px 18px;
+    border: 2px solid #3b82f6;
+    color: #2563eb;
+    background: transparent;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+}
+
+.btn-check-reviews:hover {
+    background: #2563eb;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+}
+
+/* Widget 2: Trips Donut & Legend */
+.donut-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+@media (max-width: 576px) {
+    .donut-wrapper {
+        flex-direction: column;
+    }
+}
+
+.donut-chart-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    flex-shrink: 0;
+}
+
+.donut-center-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+}
+
+.donut-center-num {
+    font-size: 32px;
+    font-weight: 800;
+    color: #2563eb;
+    line-height: 1;
+}
+
+.donut-center-txt {
+    font-size: 13px;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+.donut-legend-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-grow: 1;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.legend-color-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+/* Widget 3: Profile Viewers & Regional Breakdown */
+.profile-viewers-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+@media (max-width: 992px) {
+    .profile-viewers-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Nepal Interactive Vector Map Styles */
+.nepal-map-card-wrapper {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.8);
+}
+
+.nepal-map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.nepal-map-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.nepal-map-active-info {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: #ffffff;
+    color: #2563eb;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    transition: all 0.2s ease;
+}
+
+.nepal-svg-container {
+    width: 100%;
+    max-height: 240px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 10px 0;
+}
+
+.nepal-svg {
+    width: 100%;
+    height: 100%;
+    max-height: 220px;
+    filter: drop-shadow(0px 8px 16px rgba(15, 23, 42, 0.08));
+}
+
+.province-path {
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    stroke: #ffffff;
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    opacity: 0.88;
+}
+
+.province-path:hover,
+.province-path.active {
+    opacity: 1;
+    stroke: #ffffff;
+    stroke-width: 3.5;
+    filter: brightness(1.12) drop-shadow(0 6px 14px rgba(0,0,0,0.25));
+    transform: translateY(-3px);
+}
+
+.province-label-text {
+    font-size: 11px;
+    font-weight: 800;
+    fill: #ffffff;
+    pointer-events: none;
+    text-anchor: middle;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+}
+
+.country-row {
+    padding: 8px 10px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.country-row:hover,
+.country-row.active-row {
+    background: #eff6ff;
+    transform: translateX(4px);
+}
+
+#nepal-map-tooltip {
+    position: absolute;
+    display: none;
+    background: rgba(15, 23, 42, 0.92);
+    color: #ffffff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    pointer-events: none;
+    z-index: 1000;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(4px);
+    transition: opacity 0.15s ease;
+}
+
+.viewers-subtitle {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: -16px;
+    margin-bottom: 20px;
+}
+
+.country-breakdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    justify-content: center;
+}
+
+.country-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.country-badge {
+    width: 32px;
+    height: 28px;
+    background: #3b82f6;
+    color: #ffffff;
+    font-weight: 700;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.country-name-bar {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.country-bar-bg {
+    height: 4px;
+    width: 100%;
+    background: #e2e8f0;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.country-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+}
+
+.country-percent {
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    width: 45px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.percent-up { color: #10b981; }
+.percent-down { color: #ef4444; }
+
+/* --------------------------------------------------------------------------
+   4. DASHBOARD CONTAINER LAYOUT
+   -------------------------------------------------------------------------- */
+.meroyatra-dashboard-container {
+    width: 100% !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 10px 15px 40px 15px !important;
+}
+
+.content-wrapper > .content {
+    padding: 15px 20px !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. PERFECTLY CENTERED ADMIN FOOTER
+   -------------------------------------------------------------------------- */
+.main-footer {
+    text-align: center !important;
+    padding: 16px 24px !important;
+    background: #ffffff !important;
+    border-top: 1px solid #e2e8f0 !important;
+    color: #64748b !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    position: relative !important;
+    display: block !important;
+}
+
+.main-footer strong,
+.main-footer span,
+.main-footer a {
+    text-align: center !important;
+    display: inline-block !important;
+}
+
+.main-footer .float-right {
+    position: absolute !important;
+    right: 24px !important;
+    top: 16px !important;
+    float: none !important;
+    margin: 0 !important;
+}
+
+@media (max-width: 768px) {
+    .main-footer .float-right {
+        position: static !important;
+        display: block !important;
+        margin-top: 6px !important;
+    }
+}
+
+
+

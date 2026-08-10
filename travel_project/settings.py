@@ -33,13 +33,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "jazzmin",
+    'travel_app',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'travel_app',
 ]
 
 MIDDLEWARE = [
@@ -57,7 +58,7 @@ ROOT_URLCONF = 'travel_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,4 +126,47 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_SAVE_EVERY_REQUEST = True
+
+# Authentication Redirect Settings
+LOGIN_REDIRECT_URL = '/admin/'
+LOGOUT_REDIRECT_URL = '/admin/login/'
+
+# ==========================================
+# REAL-WORLD POLITRIP ADMIN DASHBOARD CONFIGURATION (JAZZMIN)
+# ==========================================
+JAZZMIN_SETTINGS = {
+    "site_title": "MeroYatra Admin",
+    "site_header": "MeroYatra",
+    "site_brand": "MeroYatra",
+    "site_logo": "images/meroyatra_logo.svg",
+    "site_icon": "images/meroyatra_logo.svg",
+    "welcome_sign": "Welcome to MeroYatra Administration Portal",
+    "copyright": "MeroYatra 2026",
+    "topmenu_links": [
+        {"name": "Log out", "url": "admin:logout", "icon": "fas fa-sign-out-alt"},
+    ],
+    "usermenu_links": [
+        {"name": "Log out", "url": "admin:logout", "icon": "fas fa-sign-out-alt"},
+    ],
+    "user_avatar": None,
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "icons": {
+        "auth.user": "fas fa-user-shield",
+        "auth.Group": "fas fa-users-cog",
+        "travel_app.Place": "fas fa-map-marker-alt",
+        "travel_app.Hotel": "fas fa-hotel",
+        "travel_app.Hotspot": "fas fa-map-marked-alt",
+        "travel_app.RecommendationHistory": "fas fa-tasks",
+        "travel_app.VisitorCounter": "fas fa-user-friends",
+        "travel_app.EmergencyContact": "fas fa-folder-open",
+        "travel_app.FAQ": "fas fa-question-circle",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+    "custom_css": "css/custom_admin.css",
+    "show_ui_builder": False,
+}
 

@@ -230,8 +230,6 @@ style="max-height:250px;overflow-y:auto;">
 
 <option value="1-4 Days" {% if selected_duration == "1-4 Days" %}selected{% endif %}>1-4 Days</option>
 
-
-
 <option value="5-9 Days" {% if selected_duration == "5-9 Days" %}selected{% endif %}>5-9 Days</option>
 
 <option value="10+ Days" {% if selected_duration == "10+ Days" %}selected{% endif %}>10+ Days</option>
@@ -241,25 +239,6 @@ style="max-height:250px;overflow-y:auto;">
 </div>
 
 <!-- Tourist Type -->
-
-<div class="mb-4">
-
-<label class="form-label">Tourist Type</label>
-
-<br>
-
-<input type="radio" name="tourist_type" value="Domestic"
-{% if selected_tourist == "Domestic" %}checked{% endif %} required>
-
-Domestic
-
-&nbsp;&nbsp;
-
-<input type="radio" name="tourist_type" value="International" {% if selected_tourist == "International" %}checked{% endif %}>
-
-International
-
-</div>
 
 <button class="btn btn-success w-100">
 
@@ -366,11 +345,6 @@ Get Recommendation
 <p>
 <strong>Duration:</strong>
 {{ place.duration }}
-</p>
-
-<p>
-<strong>Tourist Type:</strong>
-{{ place.tourist_type }}
 </p>
 
 </div>
@@ -508,20 +482,18 @@ document.addEventListener("DOMContentLoaded", function () {
         const category = categorySelect.value;
         const budget = document.querySelector('[name="budget_level"]').value;
         const duration = document.querySelector('[name="duration"]').value;
-        const tourist = document.querySelector('input[name="tourist_type"]:checked');
         const activities = document.querySelectorAll('input[name="activities"]:checked');
 
         if (
             category === "" ||
             budget === "" ||
             duration === "" ||
-            tourist === null ||
             activities.length === 0
         ) {
 
             e.preventDefault();
 
-            alert("Please select category, activities, budget, duration and tourist type.");
+            alert("Please select category, activities, budget, and duration.");
 
         }
 
