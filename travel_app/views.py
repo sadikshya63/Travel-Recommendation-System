@@ -93,11 +93,11 @@ def recommendation(request):
     # 1. Fixed 5 main categories
     categories = ["Nature", "Wildlife", "Adventure", "Trekking", "Cultural"]
 
-    provinces = Place.objects.values_list("province", flat=True).distinct()
+    provinces = Place.objects.filter(is_active=True).values_list("province", flat=True).distinct()
 
     activity_set = set()
 
-    for item in Place.objects.values_list("activities", flat=True):
+    for item in Place.objects.filter(is_active=True).values_list("activities", flat=True):
         if item:
             for activity in item.split(","):
                 activity_set.add(activity.strip())
@@ -106,11 +106,11 @@ def recommendation(request):
 
     if request.method == "POST":
 
-        category = request.POST.get("category")
+        category = request.POST.get("category", "").strip()
         activities = request.POST.getlist("activities")
-        province = request.POST.get("province")
-        budget = request.POST.get("budget_level")
-        duration = request.POST.get("duration")
+        province = request.POST.get("province", "").strip()
+        budget = request.POST.get("budget_level", "").strip()
+        duration = request.POST.get("duration", "").strip()
 
         # Category is required
         if not category:
@@ -143,16 +143,57 @@ def recommendation(request):
         )
 
         # ---------------------------------------
-        # Normalize Input Values
+        # Helper: Exact Form Duration Bucket
         # ---------------------------------------
-        normalized_budget = budget.split("(")[0].strip() if budget else ""
+        def get_exact_duration_bucket(text):
+            if not text:
+                return ""
+            t = str(text).lower().strip()
+
+            # Handle direct form bucket strings
+            if "1-4" in t or "1-3" in t or "2-4" in t or "3-4" in t:
+                return "1-4 days"
+            elif "5-9" in t or "4-6" in t or "7-9" in t:
+                return "5-9 days"
+            elif "10+" in t:
+                return "10+ days"
+
+            numbers = [int(n) for n in re.findall(r"\d+", t)]
+            if not numbers:
+                return ""
+
+            max_days = max(numbers)
+            if max_days <= 4:
+                return "1-4 days"
+            elif max_days <= 9:
+                return "5-9 days"
+            else:
+                return "10+ days"
+
+        # Helper: Budget Normalization
+        def normalize_budget(text):
+            if not text:
+                return ""
+            t = str(text).lower().strip().replace(" ", "").replace("-", "")
+            if "lowmedium" in t:
+                return "low-medium"
+            elif "mediumhigh" in t:
+                return "medium-high"
+            elif "low" in t:
+                return "low"
+            elif "medium" in t:
+                return "medium"
+            elif "high" in t:
+                return "high"
+            return str(text).lower().strip()
 
         # ---------------------------------------
         # Load Place data into DataFrame
         # ---------------------------------------
         data = []
 
-        for p in Place.objects.all():
+        for p in Place.objects.filter(is_active=True):
+            img_url = p.image.url if hasattr(p.image, 'url') and p.image else str(p.image or '')
             data.append(
                 {
                     "place_id": p.place_id,
@@ -167,120 +208,181 @@ def recommendation(request):
                 }
             )
 
+        if not data:
+            return render(
+                request,
+                "recommendation.html",
+                {
+                    "recommendations": [],
+                    "message": "No active destinations available.",
+                    "categories": categories,
+                    "activities_list": activities_list,
+                    "provinces": provinces,
+                    "selected_category": category,
+                    "selected_activities": activities,
+                    "selected_province": province,
+                    "selected_budget": budget,
+                    "selected_duration": duration,
+                },
+            )
+
         df = pd.DataFrame(data).fillna("")
-        df["duration_bucket"] = df["duration"].str.strip()
+        df["duration_bucket"] = df["duration"].apply(get_exact_duration_bucket)
+        user_duration_bucket = get_exact_duration_bucket(duration)
+
+        df["budget_clean"] = df["budget_level"].apply(normalize_budget)
+        user_budget_clean = normalize_budget(budget)
 
         # ---------------------------------------
-        # 1. Non-Budget Filters (Category, Province, Duration)
+        # Rule-Based Filtering Engine (Strict Bucket Match)
         # ---------------------------------------
-        if category:
-            df = df[df["category"].str.contains(category, case=False, na=False)]
+        def apply_filters(dataframe, cat, prov, dur_bkt, bdg_clean):
+            filtered = dataframe.copy()
 
-        if province and province != "Any Province":
-            df = df[df["province"].str.lower() == province.lower()]
+            if cat:
+                filtered = filtered[
+                    filtered["category"].str.lower().str.contains(cat.lower())
+                ]
 
-        if duration:
-            df = df[df["duration_bucket"].str.lower() == duration.lower()]
+            if prov and prov != "Any Province":
+                filtered = filtered[
+                    filtered["province"].str.lower().str.strip() == prov.lower().strip()
+                ]
+
+            if dur_bkt:
+                filtered = filtered[
+                    filtered["duration_bucket"].str.lower() == dur_bkt.lower()
+                ]
+
+            if bdg_clean:
+                filtered = filtered[
+                    filtered["budget_clean"].str.lower() == bdg_clean.lower()
+                ]
+
+            return filtered
 
         # ---------------------------------------
-        # 2. Exact-Budget-First with Progressive Fallback
+        # Progressive Fallback Handling
         # ---------------------------------------
-        if normalized_budget:
-            user_b = normalized_budget.lower()
-            exact_df = df[df["budget_level"].str.lower() == user_b]
+        # Stage 1: Exact match on Category + Province + Duration Bucket + Budget
+        result = apply_filters(df, category, province, user_duration_bucket, user_budget_clean)
 
-            if not exact_df.empty:
-                # Exact matches exist: filter strictly to chosen budget
-                df = exact_df
+        if not result.empty:
+            message = ""
+        else:
+            # Stage 2 (Impractical Combo Fallback, e.g. 10+ days with Low budget):
+            # Keeps Duration Bucket strictly intact, relaxes Budget
+            result_relax_budget = apply_filters(df, category, province, user_duration_bucket, None)
+            
+            if not result_relax_budget.empty:
+                result = result_relax_budget
+                message = (
+                    "No exact matches were found for your selected budget "
+                    "and duration. Showing top recommendations with alternative budgets."
+                )
             else:
-                # Zero exact matches: check if fallback pool has options
-                if user_b == "low":
-                    # Low is strict ceiling -> no fallback allowed
-                    df = df.iloc[0:0]
-                elif user_b == "medium":
-                    # Medium fallback -> Low only
-                    df = df[df["budget_level"].str.lower() == "low"]
-                elif user_b == "high":
-                    # High fallback -> Medium + Low
-                    df = df[df["budget_level"].str.lower().isin(["medium", "low"])]
+                # Stage 3: Relax duration, keep budget
+                result_relax_duration = apply_filters(df, category, province, None, user_budget_clean)
 
-                # Set notice message if fallback candidates exist
-                if not df.empty:
+                if not result_relax_duration.empty:
+                    result = result_relax_duration
                     message = (
                         "No exact matches were found for your selected budget "
                         "and duration. Showing top recommendations with alternative budgets."
                     )
+                else:
+                    # Stage 4: Relax both budget & duration
+                    result_cat_prov = apply_filters(df, category, province, None, None)
+
+                    if not result_cat_prov.empty:
+                        result = result_cat_prov
+                        message = (
+                            "No exact matches were found for your selected budget "
+                            "and duration. Showing top recommendations with alternative budgets."
+                        )
+                    else:
+                        # Stage 5: Relax province
+                        result_cat = apply_filters(df, category, "Any Province", None, None)
+
+                        if not result_cat.empty:
+                            result = result_cat
+                            message = (
+                                "No exact matches were found for your selected budget "
+                                "and duration. Showing top recommendations with alternative budgets."
+                            )
+                        else:
+                            message = "No places found matching all selected preferences."
+                            return render(
+                                request,
+                                "recommendation.html",
+                                {
+                                    "recommendations": [],
+                                    "message": message,
+                                    "categories": categories,
+                                    "activities_list": activities_list,
+                                    "provinces": provinces,
+                                    "selected_category": category,
+                                    "selected_activities": activities,
+                                    "selected_province": province,
+                                    "selected_budget": budget,
+                                    "selected_duration": duration,
+                                },
+                            )
 
         # ---------------------------------------
-        # 3. Similarity Scoring & Ranking
+        # FRIEND'S MATCH SCORING (55% similarity + 15% province + 15% budget + 15% duration)
         # ---------------------------------------
-        if df.empty:
-            message = "No places found matching all selected preferences."
-        else:
-            result = df.copy()
+        result = result.copy()
 
-            result["features"] = (
-                result["category"]
-                + " "
-                + result["activities"]
-                + " "
-                + result["activities"]  # weighted twice
-            )
+        result["features"] = (
+            result["category"] + " " +
+            result["activities"] + " " +
+            result["activities"] + " " +
+            result["description"]
+        )
 
-            activity_text = " ".join(activities)
-            user_features = f"{category} {activity_text} {activity_text}"
+        activity_text = " ".join(activities) if activities else ""
+        user_features = f"{category} {activity_text} {activity_text}"
 
-            documents = [user_features] + result["features"].tolist()
+        documents = [user_features] + result["features"].tolist()
 
+        try:
             vectorizer = TfidfVectorizer(stop_words="english")
             tfidf_matrix = vectorizer.fit_transform(documents)
 
             similarity = cosine_similarity(
-                tfidf_matrix[0:1], tfidf_matrix[1:]
+                tfidf_matrix[0:1],
+                tfidf_matrix[1:]
             )
+            result["tfidf_sim"] = similarity.flatten()
+        except Exception:
+            result["tfidf_sim"] = 0.5
 
-            result["similarity"] = similarity.flatten()
+        # Calculate matching components
+        sim_score = result["tfidf_sim"] * 0.55
 
-            
+        if province and province != "Any Province":
+            prov_score = (result["province"].str.lower() == province.lower()).astype(float) * 0.15
+        else:
+            prov_score = 0.15
 
-            # --- Individual filter match flags ---
-            result["province_match"] = (
-                (province == "Any Province") or
-                (result["province"].str.lower() == province.lower())
-            )
+        if user_budget_clean:
+            budget_score = (result["budget_clean"].str.lower() == user_budget_clean.lower()).astype(float) * 0.15
+        else:
+            budget_score = 0.15
 
-            if normalized_budget:
-                result["budget_match"] = (
-                    result["budget_level"].str.lower() == normalized_budget.lower()
-                )
-            else:
-                result["budget_match"] = True
+        if user_duration_bucket:
+            duration_score = (result["duration_bucket"].str.lower() == user_duration_bucket.lower()).astype(float) * 0.15
+        else:
+            duration_score = 0.15
 
-            if duration:
-                result["duration_match"] = (
-                    result["duration_bucket"].str.lower() == duration.lower()
-                )
-            else:
-                result["duration_match"] = True
+        result["match_score"] = sim_score + prov_score + budget_score + duration_score
+        result["match"] = (result["match_score"] * 100).round(1)
+        result["match"] = result["match"].clip(upper=100.0)
 
-            # --- Weighted composite score (sums to 1.0 / 100%) ---
-            SIMILARITY_WEIGHT = 0.55
-            PROVINCE_WEIGHT   = 0.15
-            BUDGET_WEIGHT     = 0.15
-            DURATION_WEIGHT   = 0.15
+        result = result.sort_values(by="match_score", ascending=False)
 
-            result["combined_score"] = (
-                result["similarity"] * SIMILARITY_WEIGHT
-                + result["province_match"].astype(int) * PROVINCE_WEIGHT
-                + result["budget_match"].astype(int) * BUDGET_WEIGHT
-                + result["duration_match"].astype(int) * DURATION_WEIGHT
-            ).clip(lower=0, upper=1)
-
-            result["match"] = (result["combined_score"] * 100).round(1)
-
-            result = result.sort_values(by="combined_score", ascending=False)
-
-            recommendations = result.head(5).to_dict("records")
+        recommendations = result.head(5).to_dict("records")
 
     return render(
         request,
@@ -320,6 +422,8 @@ def explore(request):
     activities = request.GET.getlist("activity")
 
     suggestion = None
+    filter_mismatch_notice = False
+    destination_results_exist = False
 
     # If no search/filter is applied, show only featured places
     if not (search or categories or activities):
@@ -334,9 +438,10 @@ def explore(request):
             destination_results = places.filter(
                 Q(place_name__icontains=search) | Q(city__icontains=search)
             )
+            destination_results_exist = destination_results.exists()
 
             # If destination not found, try fuzzy suggestion
-            if not destination_results.exists():
+            if not destination_results_exist:
                 place_names = list(
                     Place.objects.filter(is_active=True).values_list(
                         "place_name", flat=True
@@ -394,18 +499,21 @@ def explore(request):
 
         # Fuzzy suggestion if nothing matched
         if search and not places.exists():
-            place_names = list(
-                Place.objects.filter(is_active=True).values_list(
-                    "place_name", flat=True
+            if destination_results_exist:
+                filter_mismatch_notice = True
+            else:
+                place_names = list(
+                    Place.objects.filter(is_active=True).values_list(
+                        "place_name", flat=True
+                    )
                 )
-            )
 
-            match = process.extractOne(
-                search, place_names, scorer=fuzz.WRatio
-            )
+                match = process.extractOne(
+                    search, place_names, scorer=fuzz.WRatio
+                )
 
-            if match and match[1] >= 60:
-                suggestion = match[0]
+                if match and match[1] >= 60:
+                    suggestion = match[0]
 
         # Order results by relevance
         elif search:
@@ -426,6 +534,7 @@ def explore(request):
             "selected_categories": categories,
             "selected_activities": activities,
             "suggestion": suggestion,
+            "filter_mismatch_notice": filter_mismatch_notice,
         },
     )
 
