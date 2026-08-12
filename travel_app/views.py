@@ -89,7 +89,6 @@ def recommendation(request):
     province = "Any Province"
     budget = ""
     duration = ""
-    tourist = ""
 
     # 1. Fixed 5 main categories
     categories = ["Nature", "Wildlife", "Adventure", "Trekking", "Cultural"]
@@ -112,7 +111,6 @@ def recommendation(request):
         province = request.POST.get("province")
         budget = request.POST.get("budget_level")
         duration = request.POST.get("duration")
-        tourist = request.POST.get("tourist_type")
 
         # Category is required
         if not category:
@@ -132,7 +130,6 @@ def recommendation(request):
                     "selected_province": province,
                     "selected_budget": budget,
                     "selected_duration": duration,
-                    "selected_tourist": tourist,
                 },
             )
 
@@ -143,7 +140,6 @@ def recommendation(request):
             province=province,
             budget_level=budget,
             duration=duration,
-            
         )
 
         # ---------------------------------------
@@ -166,7 +162,6 @@ def recommendation(request):
                     "province": p.province,
                     "budget_level": p.budget_level,
                     "duration": p.duration,
-                    "tourist_type": p.tourist_type,
                     "description": p.description,
                     "image": p.image,
                 }
@@ -215,6 +210,7 @@ def recommendation(request):
                         "No exact matches were found for your selected budget "
                         "and duration. Showing top recommendations with alternative budgets."
                     )
+
         # ---------------------------------------
         # 3. Similarity Scoring & Ranking
         # ---------------------------------------
@@ -245,15 +241,14 @@ def recommendation(request):
 
             result["similarity"] = similarity.flatten()
 
-            # Tourist bonus
-            if tourist:
-                result["tourist_match"] = (
-                    result["tourist_type"].str.lower() == tourist.lower()
-                ) | (result["tourist_type"].str.lower() == "both")
-            else:
-                result["tourist_match"] = False
+            
 
-                # Budget match check (for fallback penalty)
+            # --- Individual filter match flags ---
+            result["province_match"] = (
+                (province == "Any Province") or
+                (result["province"].str.lower() == province.lower())
+            )
+
             if normalized_budget:
                 result["budget_match"] = (
                     result["budget_level"].str.lower() == normalized_budget.lower()
@@ -261,15 +256,24 @@ def recommendation(request):
             else:
                 result["budget_match"] = True
 
-                
+            if duration:
+                result["duration_match"] = (
+                    result["duration_bucket"].str.lower() == duration.lower()
+                )
+            else:
+                result["duration_match"] = True
 
-            TOURIST_BONUS = 0.05
-            BUDGET_PENALTY = 0.10
+            # --- Weighted composite score (sums to 1.0 / 100%) ---
+            SIMILARITY_WEIGHT = 0.55
+            PROVINCE_WEIGHT   = 0.15
+            BUDGET_WEIGHT     = 0.15
+            DURATION_WEIGHT   = 0.15
 
             result["combined_score"] = (
-                result["similarity"]
-                + result["tourist_match"].astype(int) * TOURIST_BONUS
-                - (~result["budget_match"]).astype(int) * BUDGET_PENALTY
+                result["similarity"] * SIMILARITY_WEIGHT
+                + result["province_match"].astype(int) * PROVINCE_WEIGHT
+                + result["budget_match"].astype(int) * BUDGET_WEIGHT
+                + result["duration_match"].astype(int) * DURATION_WEIGHT
             ).clip(lower=0, upper=1)
 
             result["match"] = (result["combined_score"] * 100).round(1)
@@ -292,10 +296,8 @@ def recommendation(request):
             "selected_province": province,
             "selected_budget": budget,
             "selected_duration": duration,
-            "selected_tourist": tourist,
         },
     )
-
 def get_activities(request):
     category = request.GET.get("category")
     activities = set()
@@ -308,7 +310,6 @@ def get_activities(request):
                 activities.add(activity.strip())
 
     return JsonResponse(sorted(list(activities)), safe=False)
-
 
 # =========================
 # EXPLORE

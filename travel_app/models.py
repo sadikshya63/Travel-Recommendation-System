@@ -10,7 +10,7 @@ class Place(models.Model):
     province = models.CharField(max_length=100)
     duration = models.CharField(max_length=50)
     budget_level = models.CharField(max_length=20)
-    tourist_type = models.CharField(max_length=50)
+   
     description = models.TextField()
     latitude = models.DecimalField(max_digits=10, decimal_places=6)
     longitude = models.DecimalField(max_digits=10, decimal_places=6)
