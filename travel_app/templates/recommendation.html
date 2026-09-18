@@ -9,24 +9,24 @@
 
     <title>Recommendation | MeroYatra</title>
 
-    <!-- Bootstrap -->
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Tom Select -->
+    
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
 
-    <!-- Font Awesome -->
+    
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-    <!-- Custom CSS -->
+    
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
 </head>
 
 <body>
 
-<!-- ================= NAVBAR ================= -->
+
 
 <nav class="navbar navbar-expand-lg navbar-dark">
 
@@ -86,7 +86,7 @@
 
 </nav>
 
-<!-- ================= MAIN ================= -->
+
 <div class="all-places-bg">
 <section class="recommendation-banner">
 
@@ -95,7 +95,7 @@
 
 <div class="row">
 
-<!-- ================= LEFT SIDE ================= -->
+
 
 <div class="col-lg-5 mb-4">
 
@@ -113,7 +113,7 @@ Travel Preference Form
 
 {% csrf_token %}
 
-<!-- Category -->
+
 
 <div class="mb-3">
 
@@ -133,7 +133,7 @@ Travel Preference Form
 
 </div>
 
-<!-- Activities -->
+
 
 <div class="mb-3">
 
@@ -178,7 +178,7 @@ style="max-height:250px;overflow-y:auto;">
 
 </div>
 
-<!-- Province -->
+
 
 <div class="mb-3">
 
@@ -198,7 +198,7 @@ style="max-height:250px;overflow-y:auto;">
 </div>
 </div>
 
-<!-- Budget -->
+
 
 <div class="mb-3">
 
@@ -218,7 +218,7 @@ style="max-height:250px;overflow-y:auto;">
 
 </div>
 
-<!-- Duration -->
+
 
 <div class="mb-3">
 
@@ -238,7 +238,7 @@ style="max-height:250px;overflow-y:auto;">
 
 </div>
 
-<!-- Tourist Type -->
+
 
 <button class="btn btn-success w-100">
 
@@ -253,7 +253,6 @@ Get Recommendation
 </div>
 
 </div>
-<!-- ================= RIGHT SIDE ================= -->
 
 <div class="col-lg-7">
 
@@ -395,7 +394,7 @@ Try changing category, activities or budget.
 </div>
 
 </section>
-<!-- ================= FOOTER ================= -->
+
 
 <footer class="bg-dark text-white text-center py-4">
 
@@ -405,11 +404,11 @@ Try changing category, activities or budget.
 
 </footer>
 
-<!-- Bootstrap -->
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- ================= FORM VALIDATION ================= -->
+
 {{ selected_activities|json_script:"selected-activities" }}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -418,12 +417,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const categorySelect = document.getElementById("category");
     const activityBox = document.getElementById("activity-box");
 
-    // Get previously selected activities
+    
     const selectedActivities = JSON.parse(
         document.getElementById("selected-activities").textContent
     );
 
-    // Load activities for selected category
+    
     function loadActivities(category) {
 
         if (!category) {
@@ -466,17 +465,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-    // Reload activities when category changes
+    
     categorySelect.addEventListener("change", function () {
         loadActivities(this.value);
     });
 
-    // Load activities automatically after POST
+    
     if (categorySelect.value) {
         loadActivities(categorySelect.value);
     }
 
-    // Form validation
+    
     form.addEventListener("submit", function (e) {
 
         const category = categorySelect.value;

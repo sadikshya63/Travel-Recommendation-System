@@ -25,9 +25,7 @@ class Place(models.Model):
         return self.place_name
 
 
-# -------------------------
-# HOTEL MODEL
-# -------------------------
+
 class Hotel(models.Model):
     hotel_id = models.IntegerField(unique=True)
     place = models.ForeignKey(
@@ -46,9 +44,7 @@ class Hotel(models.Model):
         return self.hotel_name
 
 
-# -------------------------
-# EMERGENCY CONTACT MODEL
-# -------------------------
+
 class EmergencyContact(models.Model):
     title = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=20)
@@ -58,9 +54,7 @@ class EmergencyContact(models.Model):
         return self.title
 
 
-# -------------------------
-# FAQ MODEL
-# -------------------------
+
 class FAQ(models.Model):
     question = models.CharField(max_length=255)
     answer = models.TextField()
@@ -68,7 +62,7 @@ class FAQ(models.Model):
     def __str__(self):
         return self.question
     
-    #history model
+    
 class RecommendationHistory(models.Model):
     category = models.CharField(max_length=100)
     activities = models.TextField()

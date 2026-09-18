@@ -8,7 +8,7 @@
 
 {% block content %}
 <style>
-    /* Hide standard default Jazzmin app list boxes and recent actions column */
+   
     .col-lg-3,
     .col-lg-9 > .card:not(.meroyatra-card),
     .col-lg-12 > .card:not(.meroyatra-card),
@@ -24,7 +24,7 @@
         width: 100% !important;
     }
 
-    /* Mini highlights grid */
+    
     .highlights-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -68,7 +68,7 @@
         letter-spacing: 0.5px;
     }
 
-    /* Recent Searches Mini Table */
+    
     .recent-searches-box {
         background: #ffffff;
         border: 1px solid #e2e8f0;
@@ -171,7 +171,7 @@
             </a>
         </div>
 
-        <!-- Card 2: Destinations by Category (Donut Chart) -->
+        <!-- Card 2: Destinations by Category -->
         <div class="meroyatra-card">
             <div class="meroyatra-card-header">
                 <h3 class="meroyatra-card-title">Destinations by Category</h3>
@@ -369,7 +369,7 @@
 
 </div>
 
-<!-- Render Donut Chart safely -->
+
 <script>
 function initMeroYatraCharts() {
     if (typeof Chart === 'undefined') {
@@ -377,10 +377,10 @@ function initMeroYatraCharts() {
         return;
     }
 
-    // Add CSS flag class to hide default tables
+    
     document.body.classList.add('dashboard-override-active');
 
-    // 1. Sidebar User Panel Injection
+   
     const sidebar = document.querySelector('.main-sidebar .sidebar');
     const brandLink = document.querySelector('.brand-link');
     
@@ -404,7 +404,7 @@ function initMeroYatraCharts() {
         }
     }
 
-    // 2. Category Donut Chart
+   
     const canvasDonut = document.getElementById('tripsDonutChart');
     if (canvasDonut) {
         const ctxDonut = canvasDonut.getContext('2d');
@@ -421,10 +421,10 @@ function initMeroYatraCharts() {
                         {{ wildlife_count|default:0 }}
                     ],
                     backgroundColor: [
-                        '#2563eb', // Blue
-                        '#16a34a', // Green
-                        '#d97706', // Amber
-                        '#dc2626', // Red
+                        '#2563eb', 
+                        '#16a34a', 
+                        '#d97706', 
+                        '#dc2626', 
                         '#0891b2'  # Cyan
                     ],
                     borderWidth: 0,

@@ -1,6 +1,4 @@
-/* ===============================
-   GOOGLE FONT
-================================ */
+
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
@@ -21,9 +19,7 @@ body{
     color:#333;
 }
 
-/* ===============================
-   NAVBAR
-================================ */
+
 
 .navbar{
     position:absolute;
@@ -66,9 +62,7 @@ body{
     font-weight: bold;
 }
 
-/* ===============================
-   HERO SECTION
-================================ */
+
 
 .hero{
     position: relative;
@@ -139,13 +133,6 @@ body{
 
 }
 
-/* ===============================
-   SEARCH BOX
-================================ */
-
-/* ===============================
-   SECTION TITLE
-================================ */
 
 .recommendation-banner {
     padding: 100px 0;
@@ -167,9 +154,7 @@ body{
     animation: fadeUp .6s ease forwards;
 }
 
-/* ===============================
-   FEATURE CARDS
-================================ */
+
 
 .feature-card{
 
@@ -202,9 +187,7 @@ body{
     font-weight:600;
 
 }
-/* ===============================
-   POPULAR DESTINATIONS
-================================ */
+
 
 .place-card{
     background:#fff;
@@ -245,13 +228,7 @@ body{
     border-radius:20px;
 }
 
-/* ===============================
-   CATEGORY SECTION
-================================ */
 
-/* ===============================
-   CATEGORY SECTION
-================================ */
 
 .category-section{
     background:#f8f9fa;
@@ -306,9 +283,7 @@ body{
 .category-card:hover h5{
     color:#fff;
 }
-/* ===============================
-   STATISTICS
-================================ */
+
 
 .stats{
     background:#198754;
@@ -325,9 +300,6 @@ body{
     font-size:18px;
 }
 
-/* ===============================
-   TRAVEL TIPS
-================================ */
 
 .tip-card{
     background:#fff;
@@ -348,9 +320,7 @@ body{
     margin-bottom:20px;
 }
 
-/* ===============================
-   HOTEL SECTION
-================================ */
+
 
 .hotel-card{
     background:#fff;
@@ -384,9 +354,7 @@ body{
 
 
 
-/* ===============================
-   NEWSLETTER
-================================ */
+
 
 .newsletter{
     background:#198754;
@@ -422,9 +390,7 @@ body{
     width:180px;
 }
 
-/* ===============================
-   FOOTER
-================================ */
+
 
 footer{
     background:#222;
@@ -468,9 +434,7 @@ footer hr{
 
 
 
-/* ===============================
-   BUTTONS
-================================ */
+
 
 .btn{
     transition:.3s;
@@ -480,9 +444,7 @@ footer hr{
     transform:scale(1.05);
 }
 
-/* ===============================
-   SCROLLBAR
-================================ */
+
 
 ::-webkit-scrollbar{
     width:10px;
@@ -496,9 +458,7 @@ footer hr{
 ::-webkit-scrollbar-track{
     background:#eee;
 }
-/* ======================================
-   RESPONSIVE DESIGN
-====================================== */
+
 
 @media (max-width:992px){
 
@@ -678,9 +638,7 @@ section h2{
 
 }
 
-/* ======================================
-   STICKY NAVBAR
-====================================== */
+
 
 .navbar.scrolled{
 
@@ -690,9 +648,7 @@ section h2{
 
 }
 
-/* ======================================
-   HOVER EFFECTS
-====================================== */
+
 
 .feature-card,
 .place-card,
@@ -716,9 +672,7 @@ section h2{
 
 }
 
-/* ======================================
-   IMAGE ZOOM
-====================================== */
+
 
 .place-card img,
 .hotel-card img{
@@ -734,9 +688,7 @@ section h2{
 
 }
 
-/* ======================================
-   HERO BUTTONS
-====================================== */
+
 
 .hero-buttons .btn{
 
@@ -750,9 +702,7 @@ section h2{
 
 }
 
-/* ======================================
-   SEARCH BOX
-====================================== */
+
 
 .search-box{
 
@@ -760,9 +710,7 @@ section h2{
 
 }
 
-/* ======================================
-   HERO TEXT
-====================================== */
+
 
 .hero h5{
 
@@ -788,9 +736,7 @@ section h2{
 
 }
 
-/* ======================================
-   SECTION ANIMATION
-====================================== */
+
 
 .feature-card{
 
@@ -810,9 +756,7 @@ section h2{
 
 }
 
-/* ======================================
-   KEYFRAMES
-====================================== */
+
 
 @keyframes fadeUp{
 
@@ -868,9 +812,6 @@ transform:translateX(0);
 
 }
 
-/* ======================================
-   SCROLL TO TOP BUTTON
-====================================== */
 
 #topBtn{
 
@@ -896,9 +837,7 @@ background:#0d6b3c;
 
 }
 
-/* ======================================
-   SELECTION COLOR
-====================================== */
+
 
 ::selection{
 
@@ -907,9 +846,7 @@ color:white;
 
 }
 
-/* ===============================
-   EXPLORE PAGE
-================================ */
+
 
 
 
@@ -930,7 +867,7 @@ color:white;
 }
 
 .view-all-link:hover {
-    color: #00d26a !important;   /* Bootstrap success green */
+    color: #00d26a !important;   
 }
 
 .search-box{
@@ -979,7 +916,7 @@ color:white;
     background:#00b85d;
 }
 
-/* Equal height cards for All Places */
+
 .all-places-bg{
     background:
         linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),

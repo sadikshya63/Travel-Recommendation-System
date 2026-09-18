@@ -1,6 +1,4 @@
-/* ==========================================================================
-   MEROYATRA MODERN ADMIN THEME OVERRIDES FOR DJANGO JAZZMIN
-   ========================================================================== */
+
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
@@ -10,9 +8,7 @@ body {
     color: #1e293b !important;
 }
 
-/* --------------------------------------------------------------------------
-   1. ROYAL BLUE SIDEBAR (MEROYATRA STYLE)
-   -------------------------------------------------------------------------- */
+
 .main-sidebar,
 .main-sidebar .sidebar,
 .sidebar-dark-primary {
@@ -20,7 +16,7 @@ body {
     box-shadow: 4px 0 25px rgba(11, 64, 156, 0.15) !important;
 }
 
-/* Sidebar Brand Header */
+
 .brand-link {
     background: transparent !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -50,7 +46,7 @@ body {
     margin-right: 10px !important;
 }
 
-/* Sidebar User Profile Card */
+
 .sidebar-user-panel {
     padding: 20px 16px;
     text-align: center;
@@ -82,7 +78,7 @@ body {
     font-weight: 500;
 }
 
-/* Navigation Items */
+
 .sidebar .nav-sidebar .nav-item {
     margin: 4px 12px !important;
 }
@@ -120,9 +116,7 @@ body {
     color: #38bdf8 !important;
 }
 
-/* --------------------------------------------------------------------------
-   2. TOP NAVIGATION HEADER
-   -------------------------------------------------------------------------- */
+
 .main-header {
     background: #ffffff !important;
     border-bottom: 1px solid #e2e8f0 !important;
@@ -130,7 +124,7 @@ body {
     padding: 6px 16px !important;
 }
 
-/* Hide top menu text links (Home Page, Explore, etc.) and top search bar */
+
 .main-header .nav-item.d-none.d-sm-inline-block,
 .main-header form.form-inline {
     display: none !important;
@@ -146,14 +140,12 @@ body {
     color: #0b409c !important;
 }
 
-/* --------------------------------------------------------------------------
-   3. HIDE DEFAULT REPEATED DJANGO ADMIN TABLES & SIDEBAR BLOCKS ON DASHBOARD
-   -------------------------------------------------------------------------- */
+
 .content-wrapper {
     background-color: #f4f7fc !important;
 }
 
-/* Hide Jazzmin's default model list tables and right-side recent actions column */
+
 .dashboard-override-active .col-lg-3,
 .dashboard-override-active .card.card-primary:not(.meroyatra-card),
 .dashboard-override-active #content-main > .row > .col-lg-9 > .card,
@@ -168,9 +160,7 @@ body {
     width: 100% !important;
 }
 
-/* --------------------------------------------------------------------------
-   4. MEROYATRA DASHBOARD CARDS & WIDGETS
-   -------------------------------------------------------------------------- */
+
 .meroyatra-dashboard-container {
     max-width: 1280px;
     margin: 0 auto;
@@ -197,7 +187,7 @@ body {
     margin: 8px auto 0 auto;
 }
 
-/* Top 2 Cards Grid */
+
 .meroyatra-top-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -247,7 +237,7 @@ body {
     cursor: pointer;
 }
 
-/* Widget 1: Ratings & Reviews */
+
 .reviews-user-profile {
     display: flex;
     align-items: center;
@@ -329,7 +319,7 @@ body {
     box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
 }
 
-/* Widget 2: Trips Donut & Legend */
+
 .donut-wrapper {
     display: flex;
     align-items: center;
@@ -395,7 +385,7 @@ body {
     margin-right: 10px;
 }
 
-/* Widget 3: Profile Viewers & Regional Breakdown */
+
 .profile-viewers-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -408,7 +398,7 @@ body {
     }
 }
 
-/* Nepal Interactive Vector Map Styles */
+
 .nepal-map-card-wrapper {
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     border: 1px solid #e2e8f0;
@@ -593,9 +583,7 @@ body {
 .percent-up { color: #10b981; }
 .percent-down { color: #ef4444; }
 
-/* --------------------------------------------------------------------------
-   4. DASHBOARD CONTAINER LAYOUT
-   -------------------------------------------------------------------------- */
+
 .meroyatra-dashboard-container {
     width: 100% !important;
     max-width: 1200px !important;
@@ -607,9 +595,7 @@ body {
     padding: 15px 20px !important;
 }
 
-/* --------------------------------------------------------------------------
-   5. PERFECTLY CENTERED ADMIN FOOTER
-   -------------------------------------------------------------------------- */
+
 .main-footer {
     text-align: center !important;
     padding: 16px 24px !important;

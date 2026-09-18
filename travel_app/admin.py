@@ -14,10 +14,6 @@ from .models import (
 )
 
 
-# =========================================================
-# CUSTOM ADMIN TITLES & LIVE ANALYTICS DATA
-# =========================================================
-
 admin.site.site_header = "MeroYatra Administration"
 admin.site.site_title = "MeroYatra Admin Portal"
 admin.site.index_title = "Welcome to MeroYatra Analytics & Management Dashboard"
@@ -29,9 +25,7 @@ original_index = admin.site.index
 def custom_admin_index(request, extra_context=None):
     extra_context = extra_context or {}
 
-    # =====================================================
-    # BASIC STATISTICS
-    # =====================================================
+    
 
     counter = VisitorCounter.objects.filter(pk=1).first()
     total_visits = counter.total_visits if counter else 0
@@ -47,9 +41,7 @@ def custom_admin_index(request, extra_context=None):
     extra_context["total_searches"] = total_searches
     extra_context["total_hotspots"] = total_hotspots
 
-    # =====================================================
-    # CATEGORY COUNTS
-    # =====================================================
+   
 
     extra_context["nature_count"] = Place.objects.filter(
         category__icontains="Nature"
@@ -71,9 +63,7 @@ def custom_admin_index(request, extra_context=None):
         category__icontains="Wildlife"
     ).count()
 
-    # =====================================================
-    # PROVINCE BREAKDOWN
-    # =====================================================
+   
 
     extra_context["bagmati_count"] = Place.objects.filter(
         province__icontains="Bagmati"
@@ -97,9 +87,7 @@ def custom_admin_index(request, extra_context=None):
         | Q(province__icontains="Sudurpashchim")
     ).count()
 
-    # =====================================================
-    # DYNAMIC TOP SPOTS
-    # =====================================================
+    
 
     gandaki_spots = list(
         Place.objects.filter(
@@ -133,10 +121,7 @@ def custom_admin_index(request, extra_context=None):
         else "Kathmandu Valley, Nagarkot"
     )
 
-    # =====================================================
-    # RECENT RECOMMENDATION SEARCHES
-    # =====================================================
-
+    
     extra_context["recent_searches"] = (
         RecommendationHistory.objects
         .order_by("-searched_at")[:5]
@@ -151,9 +136,7 @@ def custom_admin_index(request, extra_context=None):
 admin.site.index = custom_admin_index
 
 
-# =========================================================
-# CUSTOM FILTERS
-# =========================================================
+
 
 class ActivityFilter(SimpleListFilter):
 
@@ -217,9 +200,7 @@ class CategoryFilter(SimpleListFilter):
         return queryset
 
 
-# =========================================================
-# PLACE ADMIN
-# =========================================================
+
 
 @admin.register(Place)
 class PlaceAdmin(admin.ModelAdmin):
@@ -272,9 +253,6 @@ class PlaceAdmin(admin.ModelAdmin):
     image_tag.short_description = "Image"
 
 
-# =========================================================
-# EMERGENCY CONTACT ADMIN
-# =========================================================
 
 @admin.register(EmergencyContact)
 class EmergencyContactAdmin(admin.ModelAdmin):
@@ -290,9 +268,7 @@ class EmergencyContactAdmin(admin.ModelAdmin):
     )
 
 
-# =========================================================
-# FAQ ADMIN
-# =========================================================
+
 
 @admin.register(FAQ)
 class FAQAdmin(admin.ModelAdmin):
@@ -307,9 +283,7 @@ class FAQAdmin(admin.ModelAdmin):
     )
 
 
-# =========================================================
-# RECOMMENDATION HISTORY ADMIN
-# =========================================================
+
 
 @admin.register(RecommendationHistory)
 class RecommendationHistoryAdmin(admin.ModelAdmin):
@@ -337,9 +311,7 @@ class RecommendationHistoryAdmin(admin.ModelAdmin):
     )
 
 
-# =========================================================
-# VISITOR COUNTER ADMIN
-# =========================================================
+
 
 @admin.register(VisitorCounter)
 class VisitorCounterAdmin(admin.ModelAdmin):
@@ -352,18 +324,15 @@ class VisitorCounterAdmin(admin.ModelAdmin):
         "total_visits",
     )
 
-    # Disable Add button
+    
     def has_add_permission(self, request):
         return False
 
-    # Disable Delete button
+    
     def has_delete_permission(self, request, obj=None):
         return False
 
 
-# =========================================================
-# HOTSPOT ADMIN
-# =========================================================
 
 @admin.register(Hotspot)
 class HotspotAdmin(admin.ModelAdmin):

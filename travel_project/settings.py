@@ -14,14 +14,11 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-!r5j9j#vqbt)lpe)m6-u2rumyxaac*807vk-x*smgyv!xka5&f'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -133,9 +130,7 @@ SESSION_SAVE_EVERY_REQUEST = True
 LOGIN_REDIRECT_URL = '/admin/'
 LOGOUT_REDIRECT_URL = '/admin/login/'
 
-# ==========================================
-# REAL-WORLD POLITRIP ADMIN DASHBOARD CONFIGURATION (JAZZMIN)
-# ==========================================
+
 JAZZMIN_SETTINGS = {
     "site_title": "MeroYatra Admin",
     "site_header": "MeroYatra",

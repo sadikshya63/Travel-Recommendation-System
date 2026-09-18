@@ -33,3 +33,10 @@ place_id,hotspot_name,category,latitude,longitude,description,image,google_map
 19,Buddha Peace Park,Park,27.714980,85.517860,Peaceful park with Buddha statue and scenic surroundings near Nagarkot.,buddhapeacepark.jpg,"https://maps.google.com/?q=27.714980,85.517860"
 19,Telkot,Hiking,27.700820,85.500420,Starting point of the popular Nagarkot–Telkot hiking trail.,telkot.jpg,"https://maps.google.com/?q=27.700820,85.500420"
 19,Rohini Bhanjyang Viewpoint,Viewpoint,27.726480,85.531250,Scenic viewpoint offering beautiful landscapes and mountain vistas near Nagarkot.,rohinibhanjyang.jpg,"https://maps.google.com/?q=27.726480,85.531250"
+
+
+5,Namche Bazaar,Sherpa Town,27.8069,86.7139,Major Sherpa settlement and important acclimatization stop on the Everest Base Camp trekking route.,namche_bazaar.jpg,"https://maps.google.com/?q=27.8069,86.7139"
+5,Tengboche Monastery,Monastery,27.8367,86.7625,Famous Buddhist monastery on the Everest trekking route with spectacular views of Ama Dablam and surrounding mountains.,tengboche_monastery.jpg,"https://maps.google.com/?q=27.8367,86.7625"
+5,Gorak Shep,Trekking Stop,27.9833,86.8000,The last settlement before Everest Base Camp and a major overnight stop for trekkers.,gorak_shep.jpg,"https://maps.google.com/?q=27.9833,86.8000"
+5,Kala Patthar,Viewpoint,27.9958,86.8284,Popular viewpoint above Gorak Shep offering close-up panoramic views of Mount Everest and surrounding peaks.,kala_patthar.jpg,"https://maps.google.com/?q=27.9958,86.8284"
+5,Khumbu Glacier,Glacier,28.0000,86.8500,Iconic Himalayan glacier near Everest Base Camp and an important feature of the Everest trekking region.,khumbu_glacier.jpg,"https://maps.google.com/?q=28.0000,86.8500"

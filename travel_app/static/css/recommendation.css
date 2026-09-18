@@ -1,6 +1,4 @@
-/* =====================================
-   GLOBAL RESET
-===================================== */
+
 
 *{
     margin:0;
@@ -14,9 +12,7 @@ body{
     overflow-x:hidden;
 }
 
-/* =====================================
-   NAVBAR
-===================================== */
+
 
 .navbar{
     position:fixed;
@@ -51,9 +47,7 @@ body{
     color:#00d26a!important;
 }
 
-/* =====================================
-   BACKGROUND
-===================================== */
+
 
 .recommendation-banner{
     min-height:100vh;
@@ -66,9 +60,6 @@ body{
     background-attachment:fixed;
 }
 
-/* =====================================
-   LEFT FORM
-===================================== */
 
 .recommendation-card{
     background:#fff;
@@ -122,9 +113,7 @@ input[type="radio"]{
     margin-right:5px;
 }
 
-/* =====================================
-   BUTTONS
-===================================== */
+
 
 .btn-success{
     background:#198754;
@@ -141,9 +130,7 @@ input[type="radio"]{
     box-shadow:0 8px 20px rgba(0,0,0,.25);
 }
 
-/* =====================================
-   RIGHT SIDE
-===================================== */
+
 
 .col-lg-7{
     max-height:85vh;
@@ -160,9 +147,7 @@ input[type="radio"]{
     border-radius:20px;
 }
 
-/* =====================================
-   CARD
-===================================== */
+
 
 .custom-card{
     border:none;
@@ -229,18 +214,14 @@ input[type="radio"]{
     margin-top:auto;
     border-radius:25px;
 }
-/* =====================================
-   RECOMMENDATION PAGE
-===================================== */
+
 
 body{
     font-family:Arial,Helvetica,sans-serif;
     background:#f4f6f9;
 }
 
-/* =====================================
-   Banner
-===================================== */
+
 
 .recommendation-banner{
     min-height:100vh;
@@ -253,9 +234,7 @@ body{
     background-attachment:fixed;
 }
 
-/* =====================================
-   Left Form
-===================================== */
+
 
 .recommendation-card{
     background:#fff;
@@ -288,9 +267,7 @@ body{
     overflow-y:auto;
 }
 
-/* =====================================
-   Right Section
-===================================== */
+
 
 .result-title{
     color:#fff;
@@ -299,9 +276,7 @@ body{
     font-weight:bold;
 }
 
-/* =====================================
-   Recommendation Cards
-===================================== */
+
 
 .place-link{
     text-decoration:none;
@@ -372,9 +347,7 @@ body{
     pointer-events:none;
 }
 
-/* =====================================
-   Buttons
-===================================== */
+
 
 .btn-success{
     border-radius:30px;
@@ -385,17 +358,12 @@ body{
     transform:translateY(-2px);
 }
 
-/* =====================================
-   Alerts
-===================================== */
 
 .alert{
     border-radius:12px;
 }
 
-/* =====================================
-   Footer
-===================================== */
+
 
 footer{
     background:#111;
@@ -404,9 +372,7 @@ footer{
     padding:18px;
 }
 
-/* =====================================
-   Responsive
-===================================== */
+
 
 @media(max-width:992px){
 

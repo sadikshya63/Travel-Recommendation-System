@@ -21,14 +21,12 @@ from .models import (
 from .utils import haversine
 
 
-# =========================
-# HOME
-# =========================
+
 def home(request):
     places = Place.objects.filter(featured=True, is_active=True)
     counter, created = VisitorCounter.objects.get_or_create(pk=1)
 
-    # Increment counter ONLY ONCE per browser session
+    
     if not request.session.get("has_visited"):
         request.session["has_visited"] = True
         counter.total_visits += 1
@@ -39,9 +37,7 @@ def home(request):
     return render(request, "home.html", {"places": places})
 
 
-# =========================
-# PLACE DETAIL
-# =========================
+
 def place_detail(request, place_id):
     place = get_object_or_404(Place, place_id=place_id)
     hotels = Hotel.objects.filter(place=place)
@@ -75,9 +71,8 @@ def place_detail(request, place_id):
             "hotspots": hotspots,
         },
     )
-# =========================
-# RECOMMENDATION
-# =========================
+
+
 def recommendation(request):
 
     recommendations = []
@@ -90,7 +85,7 @@ def recommendation(request):
     budget = ""
     duration = ""
 
-    # 1. Fixed 5 main categories
+    
     categories = ["Nature", "Wildlife", "Adventure", "Trekking", "Cultural"]
 
     provinces = Place.objects.filter(is_active=True).values_list("province", flat=True).distinct()
@@ -112,7 +107,7 @@ def recommendation(request):
         budget = request.POST.get("budget_level", "").strip()
         duration = request.POST.get("duration", "").strip()
 
-        # Category is required
+        
         if not category:
             message = "Please select a category."
 
@@ -133,7 +128,7 @@ def recommendation(request):
                 },
             )
 
-        # Save history
+       
         RecommendationHistory.objects.create(
             category=category,
             activities=", ".join(activities),
@@ -142,15 +137,13 @@ def recommendation(request):
             duration=duration,
         )
 
-        # ---------------------------------------
-        # Helper: Exact Form Duration Bucket
-        # ---------------------------------------
+        
         def get_exact_duration_bucket(text):
             if not text:
                 return ""
             t = str(text).lower().strip()
 
-            # Handle direct form bucket strings
+            
             if "1-4" in t or "1-3" in t or "2-4" in t or "3-4" in t:
                 return "1-4 days"
             elif "5-9" in t or "4-6" in t or "7-9" in t:
@@ -170,7 +163,7 @@ def recommendation(request):
             else:
                 return "10+ days"
 
-        # Helper: Budget Normalization
+        #  Budget Normalization
         def normalize_budget(text):
             if not text:
                 return ""
@@ -187,9 +180,7 @@ def recommendation(request):
                 return "high"
             return str(text).lower().strip()
 
-        # ---------------------------------------
-        # Load Place data into DataFrame
-        # ---------------------------------------
+       
         data = []
 
         for p in Place.objects.filter(is_active=True):
@@ -233,9 +224,9 @@ def recommendation(request):
         df["budget_clean"] = df["budget_level"].apply(normalize_budget)
         user_budget_clean = normalize_budget(budget)
 
-        # ---------------------------------------
+        
         # Rule-Based Filtering Engine (Strict Bucket Match)
-        # ---------------------------------------
+       
         def apply_filters(dataframe, cat, prov, dur_bkt, bdg_clean):
             filtered = dataframe.copy()
 
@@ -261,9 +252,9 @@ def recommendation(request):
 
             return filtered
 
-        # ---------------------------------------
+        
         # Progressive Fallback Handling
-        # ---------------------------------------
+       
         # Stage 1: Exact match on Category + Province + Duration Bucket + Budget
         result = apply_filters(df, category, province, user_duration_bucket, user_budget_clean)
 
@@ -288,7 +279,7 @@ def recommendation(request):
                     result = result_relax_duration
                     message = (
                         "No exact matches were found for your selected budget "
-                        "and duration. Showing top recommendations with alternative budgets."
+                        "and duration. Showing top recommendations with alternative durations."
                     )
                 else:
                     # Stage 4: Relax both budget & duration
@@ -329,20 +320,18 @@ def recommendation(request):
                                 },
                             )
 
-        # ---------------------------------------
-        # FRIEND'S MATCH SCORING (55% similarity + 15% province + 15% budget + 15% duration)
-        # ---------------------------------------
+        
+        # MATCH SCORING (55% similarity + 15% province + 15% budget + 15% duration)
+
         result = result.copy()
 
         result["features"] = (
             result["category"] + " " +
-            result["activities"] + " " +
-            result["activities"] + " " +
-            result["description"]
+            result["activities"]
         )
 
         activity_text = " ".join(activities) if activities else ""
-        user_features = f"{category} {activity_text} {activity_text}"
+        user_features = f"{category} {activity_text}"
 
         documents = [user_features] + result["features"].tolist()
 
@@ -354,7 +343,9 @@ def recommendation(request):
                 tfidf_matrix[0:1],
                 tfidf_matrix[1:]
             )
+
             result["tfidf_sim"] = similarity.flatten()
+
         except Exception:
             result["tfidf_sim"] = 0.5
 
@@ -362,60 +353,77 @@ def recommendation(request):
         sim_score = result["tfidf_sim"] * 0.55
 
         if province and province != "Any Province":
-            prov_score = (result["province"].str.lower() == province.lower()).astype(float) * 0.15
+            prov_score = (
+                result["province"].str.lower() == province.lower()
+            ).astype(float) * 0.15
         else:
             prov_score = 0.15
 
         if user_budget_clean:
-            budget_score = (result["budget_clean"].str.lower() == user_budget_clean.lower()).astype(float) * 0.15
+            budget_score = (
+                result["budget_clean"].str.lower() == user_budget_clean.lower()
+            ).astype(float) * 0.15
         else:
             budget_score = 0.15
 
         if user_duration_bucket:
-            duration_score = (result["duration_bucket"].str.lower() == user_duration_bucket.lower()).astype(float) * 0.15
+            duration_score = (
+                result["duration_bucket"].str.lower()
+                == user_duration_bucket.lower()
+            ).astype(float) * 0.15
         else:
             duration_score = 0.15
 
-        result["match_score"] = sim_score + prov_score + budget_score + duration_score
+        result["match_score"] = (
+            sim_score +
+            prov_score +
+            budget_score +
+            duration_score
+        )
+
         result["match"] = (result["match_score"] * 100).round(1)
         result["match"] = result["match"].clip(upper=100.0)
 
-        result = result.sort_values(by="match_score", ascending=False)
+        result = result.sort_values(
+            by="match_score",
+            ascending=False
+        )
 
-        recommendations = result.head(5).to_dict("records")
+        recommendations = result.to_dict("records")
+        return render(
+            request,
+            "recommendation.html",
+            {
+                "recommendations": recommendations,
+                "message": message,
+                "categories": categories,
+                "activities_list": activities_list,
+                "provinces": provinces,
+                "selected_category": category,
+                "selected_activities": activities,
+                "selected_province": province,
+                "selected_budget": budget,
+                "selected_duration": duration,
+            },
+        )
 
-    return render(
-        request,
-        "recommendation.html",
-        {
-            "recommendations": recommendations,
-            "message": message,
-            "categories": categories,
-            "activities_list": activities_list,
-            "provinces": provinces,
-            "selected_category": category,
-            "selected_activities": activities,
-            "selected_province": province,
-            "selected_budget": budget,
-            "selected_duration": duration,
-        },
-    )
+
 def get_activities(request):
-    category = request.GET.get("category")
-    activities = set()
+            category = request.GET.get("category")
+            activities = set()
 
-    places = Place.objects.filter(category__iexact=category)
+            places = Place.objects.filter(category__iexact=category)
 
-    for place in places:
-        if place.activities:
-            for activity in place.activities.split(","):
-                activities.add(activity.strip())
+            for place in places:
+                if place.activities:
+                    for activity in place.activities.split(","):
+                        activities.add(activity.strip())
 
-    return JsonResponse(sorted(list(activities)), safe=False)
+            return JsonResponse(sorted(list(activities)), safe=False)
 
-# =========================
+
 # EXPLORE
-# =========================
+
 def explore(request):
     search = request.GET.get("search", "").strip()
     categories = request.GET.getlist("category")
@@ -539,9 +547,9 @@ def explore(request):
     )
 
 
-# =========================
+
 # ALL PLACES
-# =========================
+
 def all_places(request):
     search = request.GET.get("search", "").strip()
 
@@ -553,8 +561,7 @@ def all_places(request):
             | Q(city__icontains=search)
             | Q(category__icontains=search)
             | Q(province__icontains=search)
-            | Q(activities__icontains=search)
-            | Q(description__icontains=search)
+            
         )
 
     return render(
@@ -567,16 +574,16 @@ def all_places(request):
     )
 
 
-# =========================
+
 # CONTACT
-# =========================
+
 def contact(request):
     return render(request, "contact.html")
 
 
-# =========================
+
 # LIVE SEARCH API
-# =========================
+
 def search_suggestions(request):
     query = request.GET.get("q", "").strip()
 
@@ -588,8 +595,7 @@ def search_suggestions(request):
         | Q(city__icontains=query)
         | Q(category__icontains=query)
         | Q(province__icontains=query)
-        | Q(activities__icontains=query)
-        | Q(description__icontains=query)
+        
     )[:8]
 
     return JsonResponse(
@@ -606,9 +612,9 @@ def search_suggestions(request):
     )
 
 
-# =========================
+
 # CATEGORY PLACES
-# =========================
+
 def category_places(request, category):
     places = Place.objects.filter(category__icontains=category, is_active=True)
 
@@ -622,9 +628,9 @@ def category_places(request, category):
     )
 
 
-# =========================
+
 # SUPPORT PAGES
-# =========================
+
 def emergency(request):
     contacts = EmergencyContact.objects.all()
     return render(request, "emergency.html", {"contacts": contacts})
@@ -643,9 +649,9 @@ def terms_conditions(request):
     return render(request, "terms_conditions.html")
 
 
-# =========================
+
 # WEATHER API
-# =========================
+
 def get_weather(lat, lon):
     url = (
         f"https://api.openweathermap.org/data/2.5/weather"
@@ -660,22 +666,22 @@ def weather_alert(weather_data):
     main = weather_data["weather"][0]["main"].lower()
 
     if "rain" in main:
-        return "🌧 Heavy Rain Warning"
+        return "🌧 Rainy Weather"
     elif "thunderstorm" in main:
         return "⛈ Thunderstorm Alert"
     elif "fog" in main or "mist" in main:
-        return "🌫 Dense Fog"
+        return "🌫 Foggy Weather"
     elif "clear" in main:
         return "☀ Clear Weather"
     elif "snow" in main:
-        return "❄ Snowfall Alert"
+        return "❄ Snowy Weather"
     else:
         return "🌡 Normal Weather Conditions"
 
 
-# =========================
+
 # CUSTOM ADMIN LOGOUT VIEW
-# =========================
+
 def custom_admin_logout(request):
     from django.contrib.auth import logout
 
